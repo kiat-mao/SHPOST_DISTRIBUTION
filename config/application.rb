@@ -36,6 +36,8 @@ module ShpostDistribution
                         controller_specs: true,
                         request_specs: false
         g.fixture_replacement :factory_girl, dir: "spec/factories"
+
+    config.action_dispatch.cookies_serializer = :hybrid
     end
   end
 end
