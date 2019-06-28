@@ -1,7 +1,7 @@
-source 'https://ruby.taobao.org'
+source 'https://rubygems.com/'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.2'
+gem 'rails', '4.1.0'
 
 gem 'rails-i18n', '~> 4.0.0' # For 4.0.x
 
@@ -109,3 +109,8 @@ gem 'whenever'
 gem 'rqrcode'
 
 gem 'rqrcode_png'
+
+
+gem 'web-console', '~> 2.0'
+
+gem 'spring', group: :development
