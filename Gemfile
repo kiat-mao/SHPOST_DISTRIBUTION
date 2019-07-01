@@ -115,3 +115,7 @@ gem 'rqrcode_png'
 gem 'web-console', '~> 2.0'
 
 gem 'spring', group: :development
+
+gem 'better_errors', '~> 2.5', '>= 2.5.1'
+
+#gem 'annotate', '~> 2.7', '>= 2.7.2', group: :development
