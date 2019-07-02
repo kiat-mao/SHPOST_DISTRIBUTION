@@ -11,12 +11,49 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180208065955) do
+ActiveRecord::Schema.define(version: 20190701055556) do
+
+  create_table "commodities", force: true do |t|
+    t.string   "cno",                        null: false
+    t.string   "dms_no",                     null: false
+    t.string   "name",                       null: false
+    t.integer  "supplier_id",                null: false
+    t.float    "cost_price",                 null: false
+    t.float    "sell_price",                 null: false
+    t.string   "desc"
+    t.boolean  "is_on_sell",  default: true, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "import_files", force: true do |t|
+    t.string   "file_name",                            null: false
+    t.string   "file_path",               default: "", null: false
+    t.integer  "user_id"
+    t.integer  "unit_id"
+    t.integer  "symbol_id"
+    t.string   "symbol_type"
+    t.string   "size"
+    t.string   "category"
+    t.string   "file_ext"
+    t.string   "desc",        limit: 200
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "roles", force: true do |t|
     t.integer  "user_id"
     t.integer  "unit_id"
     t.string   "role"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "suppliers", force: true do |t|
+    t.string   "sno",                         null: false
+    t.string   "name",                        null: false
+    t.datetime "valid_before"
+    t.boolean  "is_valid",     default: true, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

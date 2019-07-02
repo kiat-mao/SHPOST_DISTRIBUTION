@@ -1,0 +1,55 @@
+<%- model_class = ImportFile -%>
+<div class="page-header">
+  <h1><%="图片管理"%></h1>
+  <div style="float:right">
+    <% if category.eql?"commodity" %>
+      <% if can? :image_import, Commodity %>
+        <%= link_to "上传",to_image_import_commodities_path(@symbol_id), :class => 'btn btn-primary' %>                 
+      <% end %>
+    <% elsif category.eql?"supplier" %>
+      <% if can? :image_import, Supplier %>
+      <%= link_to "上传",to_image_import_suppliers_path(@symbol_id), :class => 'btn btn-primary' %>                 
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%= grid(@import_files_grid) do |g|
+    # g.column do |import_file|
+    #   radio_button_tag("ifid","#{import_file.id}",false) 
+    # end
+
+    g.column name: model_class.human_attribute_name(:file_name), attribute: 'file_name'
+
+    g.column name: model_class.human_attribute_name(:user_id), attribute: 'id', assoc: :user do |import_file|
+      import_file.user.try :name
+    end
+
+    g.column name: model_class.human_attribute_name(:file_ext), attribute: 'file_ext'
+
+    g.column name: model_class.human_attribute_name(:size), attribute: 'size' do |import_file|
+      import_file.size.blank? ? "" : (import_file.size.to_i/1024).round(0).to_s + "k"
+    end
+
+    g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |import_file|
+       import_file.created_at.localtime.to_s(:db)
+    end
+
+    g.column do |import_file|
+       link_to image_tag(import_file.img_relative_path(true), height: '70', width: '90'), image_path(import_file.img_relative_path(false)), target: '_blank'
+    end
+
+    g.column do |import_file|
+      if category.eql?"commodity"
+      ActiveSupport::SafeBuffer.new << 
+        (link_to t('.download', :default => t("helpers.links.download")), image_download_commodity_path(import_file.symbol.blank? ? nil : import_file.symbol.detail, import_file),:method => 'post', :class => 'btn btn-xs btn-primary' if (can? :image_download, Commodity)) << ' ' <<
+        (link_to t('.destroy', :default => t("helpers.links.destroy")), image_destroy_commodity_path(import_file.symbol.blank? ? nil : import_file.symbol.detail, import_file), :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :image_destroy, Commodity)
+      elsif category.eql?"supplier"
+        (link_to t('.download', :default => t("helpers.links.download")), image_download_supplier_path(import_file.symbol.blank? ? nil : import_file.symbol.detail, import_file),:method => 'post', :class => 'btn btn-xs btn-primary' if (can? :image_download, Supplier)) << ' ' <<
+        (link_to t('.destroy', :default => t("helpers.links.destroy")), image_destroy_supplier_path(import_file.symbol.blank? ? nil : import_file.symbol.detail, import_file), :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :image_destroy, Supplier) 
+      end
+    end
+
+  end 
+%>
+

@@ -1,4 +1,5 @@
 ShpostDistribution::Application.routes.draw do
+  
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -64,7 +65,11 @@ ShpostDistribution::Application.routes.draw do
   end
 
   resources :users do
-     resources :roles, :controller => 'user_roles'
+    member do
+      get 'to_reset_pwd'
+      patch 'reset_pwd'
+    end
+    resources :roles, :controller => 'user_roles'
   end
 
   resources :up_downloads do
@@ -81,5 +86,41 @@ ShpostDistribution::Application.routes.draw do
       post 'up_download_export' => 'up_downloads#up_download_export'
     end
   end
+
+  resources :import_files do
+    collection do
+      get 'image_index'
+    end
+    
+    member do 
+      get 'download'
+      post 'download' => 'import_files#download'
+    end
+  end
+
+  resources :suppliers do
+    collection do 
+      get 'supplier_import'
+      post 'supplier_import' => 'suppliers#supplier_import'
+    end
+
+    member do
+      get 'to_set_valid'
+      patch 'set_valid'
+    end
+  end
+
+  resources :commodities do
+    collection do 
+      get 'commodity_import'
+      post 'commodity_import' => 'commodities#commodity_import'
+    end
+
+    member do
+      get 'to_set_on_sell'
+      patch 'set_on_sell'
+    end
+  end
+
   
 end

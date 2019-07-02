@@ -1,0 +1,32 @@
+<%= form_for @supplier, :html => { :class => 'form-horizontal' } do |f| %>
+  <div class="control-group">
+    <%= f.label :sno, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :sno, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :name, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :name, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :valid_before, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :valid_before, value: @supplier.valid_before.blank? ? "" : @supplier.valid_before.localtime.strftime('%Y-%m-%d').to_s %>
+    </div>
+  </div>
+  <!-- <div class="control-group">
+    <%= f.label :is_valid, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.select(:is_valid, Supplier::IS_VALID.invert) %>
+    </div>
+  </div> -->
+  
+  
+  <%= f.submit nil, :class => 'btn btn-primary' %>
+  <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+            suppliers_path, :class => 'btn btn-default' %>
+ 
+<% end %>

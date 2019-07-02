@@ -1,0 +1,26 @@
+<%- model_class = Supplier -%>
+<%= grid(@suppliers, :show_filters => :always) do |g|
+    g.column name: model_class.human_attribute_name(:sno), attribute: 'sno'
+
+    g.column name: model_class.human_attribute_name(:name), attribute: 'name'
+
+    g.column name: model_class.human_attribute_name(:valid_before), attribute: 'valid_before' do |supplier|
+        supplier.valid_before.blank? ? "" : supplier.valid_before.localtime.strftime('%Y-%m-%d').to_s
+    end
+
+    g.column name: model_class.human_attribute_name(:is_valid), attribute: 'is_valid', filter_type: :boolean do |supplier|
+        supplier.is_valid_name
+    end
+
+    g.column in_csv: false do |supplier|
+      ActiveSupport::SafeBuffer.new << 
+      (link_to t('.edit', :default => t("helpers.links.edit")),
+                      edit_supplier_path(supplier), :class => 'btn btn-xs btn-primary' if can? :update, supplier) << ' ' <<
+      (link_to t('.destroy', :default => t("helpers.links.destroy")),
+                      supplier_path(supplier),
+                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, supplier) << ' ' <<
+      (link_to t('.set_valid', :default => t("helpers.links.set_valid")),
+                      to_set_valid_supplier_path(supplier), :class => 'btn btn-xs btn-primary' if can? :set_valid, supplier)
+      end
+  end 
+%>

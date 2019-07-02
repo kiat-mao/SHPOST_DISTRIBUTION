@@ -1,0 +1,26 @@
+<%- model_class = Commodity -%>
+<div class="page-header">
+  <h1><%="上架/下架" %></h1>
+</div>
+<%= form_for @commodity, :html => { :class => 'form-horizontal' }, :url => set_on_sell_commodity_path(@commodity) do |f| %>
+  <%= f.error_messages %>
+  <div class="control-group">
+    <%= f.label :is_on_sell, :class => 'control-label' %>
+    <div class="controls">
+      <% if @commodity.is_on_sell %>
+      <%= f.select(:is_on_sell, {"否" => false})%>
+      <% else %>
+      <%= f.select(:is_on_sell, {"是" => true})%>
+      <% end %>
+    </div>
+  </div>
+  <br><br><br>
+  <div class="form-actions">
+    <%= f.submit "确定", :class => 'btn btn-primary' %>
+    <% if can? :index, Commodity%>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                commodities_path, :class => 'btn' %>
+    <% end %>
+  </div>
+<% end %>
+
