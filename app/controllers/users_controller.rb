@@ -28,6 +28,7 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     respond_to do |format|
+      @user.role = 'user'
       if @user.save
         format.html { redirect_to @user, notice: I18n.t('controller.create_success_notice', model: '用户') }
         format.json { render action: 'show', status: :created, location: @user }
@@ -70,6 +71,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params[:user].permit(:username, :name, :password, :unit_id, :email, :role)
+      params[:user].permit(:username, :name, :password, :email, :unit_id,  :role)
     end
 end

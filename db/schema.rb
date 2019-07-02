@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180208065955) do
+ActiveRecord::Schema.define(version: 20190626081621) do
 
   create_table "roles", force: true do |t|
     t.integer  "user_id"
@@ -31,6 +31,8 @@ ActiveRecord::Schema.define(version: 20180208065955) do
     t.integer  "parent_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "typename"
+    t.string   "unit_type"
   end
 
   add_index "units", ["name"], name: "index_units_on_name", unique: true

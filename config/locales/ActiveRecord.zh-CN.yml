@@ -144,6 +144,8 @@ zh-CN:
     links:
       edit: 修改
       new: 新增
+      new_user: 新增用户
+      new_branch: 新增区分公司
       destroy: 删除
       cancel: 取消
       back: 返回
@@ -298,8 +300,12 @@ zh-CN:
         desc: "单位描述"
         short_name: "英文缩写"
         tcbd_khdh: "商务投递客户编号"
-        level: "单位级别"
-        parent_id: "上级单位"
+        unit_type: "单位类别"
+        
+        # parent_id: "上级单位"
+        unit_type_branch: "区分公司"
+        unit_type_delivery: "寄递事业部"
+        unit_type_postbuy: "国际邮购"
       role:
         user_id: "用户"
         unit_id: "单位"

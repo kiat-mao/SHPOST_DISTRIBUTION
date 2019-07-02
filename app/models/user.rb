@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
 
   validate :password_complexity
 
-  ROLE = { superadmin: '超级管理员', unitadmin: '机构管理员', user: '用户' }
+  ROLE = { superadmin: '超级管理员', unitadmin: '系统管理员', user: '用户' }
 
   def rolename
     User::ROLE[role.to_sym]
