@@ -19,6 +19,13 @@ class Unit < ActiveRecord::Base
     unit_type.blank? ? "" : self.class.human_attribute_name("unit_type_#{unit_type}")
   end
 
+  def can_destroy?
+		if self.users.blank?
+			return true
+		else
+			return false
+		end
+  end
   # def delivery?
   #   (unit_type.eql? 'delivery') ? true : false
   # end
