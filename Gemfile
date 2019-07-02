@@ -118,4 +118,5 @@ gem 'spring', group: :development
 
 gem 'better_errors', '~> 2.5', '>= 2.5.1'
 
+gem 'carrierwave', '~> 1.3', '>= 1.3.1'
 #gem 'annotate', '~> 2.7', '>= 2.7.2', group: :development
