@@ -1,5 +1,5 @@
 zh-CN:
-  title: "上海邮政号段管理系统"
+  title: "上海邮政寄递事业部分销系统"
   welcome: "欢迎登陆"
   date:
     abbr_day_names:
@@ -153,6 +153,11 @@ zh-CN:
       roles: 角色管理
       up_download_import: 模板上传
       up_download_export: 模板下载
+      reset_pwd: 重置密码
+      image_index: 图片管理
+      import: 导入
+      set_valid: 有效/无效
+      set_on_sell: 上架/下架
     titles:
       edit: 编辑%{model}
       new: 新增%{model}
@@ -282,6 +287,15 @@ zh-CN:
       up_download:
         one: 上传下载模板
         other: 上传下载模板
+      import_file:
+        one: 导入文件信息
+        other: 导入文件信息
+      supplier:
+        one: 供应商管理
+        other: 供应商管理
+      commodity:
+        one: 商品管理
+        other: 商品管理
     attributes:
       user:
         email: "电子邮件"
@@ -325,6 +339,32 @@ zh-CN:
         ver_no: "版本号"
         url: "地址"
         oper_date: "操作时间"
+      import_file:
+        file_name: "文件名"
+        file_path: "文件存放路径"
+        user_id: "用户"
+        unit_id: "单位"
+        symbol_id: "所属对象id"
+        symbol_type: "所属对象类型"
+        size: "文件大小"
+        category: "商品大类"
+        created_at: "导入时间"
+        file_ext: "文件后缀名"
+        desc: "备注"
+      supplier:
+        sno: "供应商编码"
+        name: "供应商名称"
+        valid_before: "合同到期日"
+        is_valid: "是否有效"
+      commodity:
+        cno: "商品编码"
+        dms_no: "DMS商品编码"
+        name: "商品名称"
+        supplier_id: "供应商"
+        cost_price: "商家结算价"
+        sell_price: "最低销售价"
+        desc: "商品详情"
+        is_on_sell: "是否上架"
   menu:
     permission:
       name: "权限管理"
@@ -346,19 +386,45 @@ zh-CN:
           needrole:
             can: :read
             role: :User
-        # role_admin:
-        #   name: "角色管理"
-        #   link: "/roles/"
-        #   needrole:
-        #     can: :read
-        #     role: :User
-    logs:
-      name: "日志查询"
+    supplier:
+      name: "供应商管理"
+      needrole:
+        can: :read
+        role: :Supplier
       submenu:
-        user_log:
-          name: "日志查询"
-          link: "/user_logs"
+        supplier:
+          name: "供应商管理"
+          link: "/suppliers"
           need_count: false
+          needrole:
+            can: :read
+            role: :Supplier
+    commodity:
+      name: "商品管理"
+      needrole:
+        can: :read
+        role: :Commodity
+      submenu:
+        supplier:
+          name: "商品管理"
+          link: "/commodities"
+          need_count: false
+          needrole:
+            can: :read
+            role: :Commodity
+    import:
+      name: "文件管理"
+      needrole:
+          can: :read
+          role: :ImportFile
+      submenu:
+        import_file:
+          name: "文件管理"
+          link: "/import_files"
+          need_count: false
+          needrole:
+            can: :read
+            role: :ImportFile
     up_downloads:
       name: "模板管理"
       needrole:
@@ -368,6 +434,13 @@ zh-CN:
         up_download:
           name: "模板上传下载"
           link: "/up_downloads"
+          need_count: false
+    logs:
+      name: "日志查询"
+      submenu:
+        user_log:
+          name: "日志查询"
+          link: "/user_logs"
           need_count: false
         
         # interface_log:

@@ -1,0 +1,26 @@
+<%- model_class = Supplier -%>
+<div class="page-header">
+  <h1><%="标记有效/无效" %></h1>
+</div>
+<%= form_for @supplier, :html => { :class => 'form-horizontal' }, :url => set_valid_supplier_path(@supplier) do |f| %>
+  <%= f.error_messages %>
+  <div class="control-group">
+    <%= f.label :is_valid, :class => 'control-label' %>
+    <div class="controls">
+      <% if @supplier.is_valid %>
+      <%= f.select(:is_valid, {"否" => false})%>
+      <% else %>
+      <%= f.select(:is_valid, {"是" => true})%>
+      <% end %>
+    </div>
+  </div>
+  <br><br><br>
+  <div class="form-actions">
+    <%= f.submit "确定", :class => 'btn btn-primary' %>
+    <% if can? :index, Supplier%>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                suppliers_path, :class => 'btn' %>
+    <% end %>
+  </div>
+<% end %>
+

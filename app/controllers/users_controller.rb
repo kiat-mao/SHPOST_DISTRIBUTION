@@ -63,6 +63,22 @@ class UsersController < ApplicationController
     end
   end
 
+  def to_reset_pwd
+  end
+
+  def reset_pwd
+    @operation = "reset_pwd"
+    respond_to do |format|
+      if @user.update(user_params)
+        format.html { redirect_to users_url, notice: "密码重置成功" }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'reset_pwd' }
+        format.json { render json: @user.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     # def set_user

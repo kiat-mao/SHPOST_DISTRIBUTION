@@ -1,0 +1,34 @@
+<%- model_class = Commodity -%>
+<%= grid(@commodities, :show_filters => :always) do |g|
+    g.column name: model_class.human_attribute_name(:cno), attribute: 'cno'
+
+    g.column name: model_class.human_attribute_name(:dms_no), attribute: 'dms_no'
+
+    g.column name: model_class.human_attribute_name(:name), attribute: 'name'
+
+    g.column name: model_class.human_attribute_name(:supplier_id), attribute: 'name', assoc: :supplier do |commodity|
+      commodity.supplier.try :name
+    end
+
+    g.column name: model_class.human_attribute_name(:cost_price), attribute: 'cost_price'
+
+    g.column name: model_class.human_attribute_name(:sell_price), attribute: 'sell_price'
+
+    g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'
+
+    g.column name: model_class.human_attribute_name(:is_on_sell), attribute: 'is_on_sell', filter_type: :boolean do |commodity|
+        commodity.is_on_sell_name
+    end
+
+    g.column in_csv: false do |commodity|
+      ActiveSupport::SafeBuffer.new << 
+      (link_to t('.edit', :default => t("helpers.links.edit")),
+                      edit_commodity_path(commodity), :class => 'btn btn-xs btn-primary' if can? :update, commodity) << ' ' <<
+      (link_to t('.destroy', :default => t("helpers.links.destroy")),
+                      commodity_path(commodity),
+                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, commodity) << ' ' <<
+      (link_to t('.set_on_sell', :default => t("helpers.links.set_on_sell")),
+                      to_set_on_sell_commodity_path(commodity), :class => 'btn btn-xs btn-primary' if can? :set_on_sell, commodity) 
+      end
+  end 
+%>

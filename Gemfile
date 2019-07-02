@@ -1,12 +1,12 @@
-source 'https://ruby.taobao.org'
+source 'https://rubygems.com/'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.2'
+gem 'rails', '4.2.0'
 
 gem 'rails-i18n', '~> 4.0.0' # For 4.0.x
 
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+gem 'sqlite3', '~> 1.3.6'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
@@ -49,7 +49,8 @@ gem 'devise-i18n-views'
 #gem 'cancan', git: 'https://github.com/francocatena/cancan'
 gem 'cancancan'
 
-gem "wice_grid", '3.6.0.pre4'
+gem 'wice_grid', '~> 3.6', '>= 3.6.2'
+
 gem 'font-awesome-sass',  '~> 4.3'
 
 gem 'jquery-ui-rails','4.2.1'
@@ -109,3 +110,13 @@ gem 'whenever'
 gem 'rqrcode'
 
 gem 'rqrcode_png'
+
+
+gem 'web-console', '~> 2.0'
+
+gem 'spring', group: :development
+
+gem 'better_errors', '~> 2.5', '>= 2.5.1'
+
+gem 'carrierwave', '~> 1.3', '>= 1.3.1'
+#gem 'annotate', '~> 2.7', '>= 2.7.2', group: :development

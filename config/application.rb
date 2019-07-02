@@ -36,6 +36,10 @@ module ShpostDistribution
                         controller_specs: true,
                         request_specs: false
         g.fixture_replacement :factory_girl, dir: "spec/factories"
+
+    config.action_dispatch.cookies_serializer = :hybrid
+
+    config.web_console.whitelisted_ips  = '192.168.180.2'
     end
   end
 end

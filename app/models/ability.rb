@@ -16,7 +16,9 @@ class Ability
         # cannot :role, :superadmin
         cannot [:role, :create, :destroy, :update], User, role: 'superadmin'
         can :update, User, id: user.id
-
+        can :manage, ImportFile
+        can :manage, Supplier
+        can :manage, Commodity
         
     elsif user.unitadmin?
     #can :manage, :all
@@ -43,13 +45,16 @@ class Ability
         can :update, User, id: user.id
         can :manage, UpDownload
         # can :manage,BusinessRelationship
-        
+        can :manage, ImportFile
+        can :manage, Supplier
+        can :manage, Commodity
     elsif user.user?
         can :update, User, id: user.id
         can :read, UserLog, user: {id: user.id}
 
         can :read, Unit, id: user.unit_id
         can [:read, :up_download_export], UpDownload
+        can [:read, :download], ImportFile
     else
         cannot :manage, :all
         #can :update, User, id: user.id

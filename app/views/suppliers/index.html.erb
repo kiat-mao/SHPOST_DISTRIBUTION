@@ -1,0 +1,23 @@
+<%- model_class = Supplier -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human %></h1>
+  <%= form_tag('', :method => "get", name: 'form1') do %>
+  <div style="float:right">   
+      <% if can? :new, Supplier %>
+      <%= link_to t('.new', :default => t("helpers.links.new")),
+            new_supplier_path,
+            :class => 'btn btn-primary' %>
+      <% end %>
+      <%= link_to t('.import', :default => t("helpers.links.import")),
+                  supplier_import_suppliers_path,
+                  :class => 'btn btn-primary' %>
+      <button class="btn btn-primary wg-external-csv-export-button" data-grid-name="suppliers" >导出</button>
+  </div>
+  <%= render partial: 'suppliers_grid' %>
+
+<%end %>
+</div>
+
+
+
+

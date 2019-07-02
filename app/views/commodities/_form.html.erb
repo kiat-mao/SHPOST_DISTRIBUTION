@@ -1,0 +1,57 @@
+<%= form_for @commodity, :html => { :class => 'form-horizontal' } do |f| %>
+  <div class="control-group">
+    <%= f.label :cno, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :cno, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :dms_no, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :dms_no, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :name, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :name, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :supplier_id, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.select(:supplier_id, Supplier.accessible_by(current_ability).map{|u| [u.name,u.id]})%>
+      <%= hidden_field_tag('c_sid',@csid) %>     
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :cost_price, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :cost_price, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :sell_price, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :sell_price, :class => 'text_field' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :desc, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_area :desc, :class => 'text_field' %>
+    </div>
+  </div>
+  <!-- <div class="control-group">
+    <%= f.label :is_on_sell, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.select(:is_on_sell, Commodity::IS_ON_SELL.invert) %>
+    </div>
+  </div> -->
+  
+  
+  <%= f.submit nil, :class => 'btn btn-primary' %>
+  <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+            commodities_path, :class => 'btn btn-default' %>
+ 
+<% end %>

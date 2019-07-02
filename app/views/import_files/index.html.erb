@@ -1,0 +1,40 @@
+<%- model_class = ImportFile -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human%></h1>
+</div>
+
+<%= grid(@import_files_grid) do |g|
+    g.column name: model_class.human_attribute_name(:file_name), attribute: 'file_name'
+
+    g.column name: model_class.human_attribute_name(:user_id), attribute: 'id', assoc: :user do |import_file|
+      import_file.user.try :name
+    end
+
+    g.column name: model_class.human_attribute_name(:symbol_id), attribute: 'symbol_id'
+
+    g.column name: model_class.human_attribute_name(:symbol_type), attribute: 'symbol_type'
+
+    g.column name: model_class.human_attribute_name(:category), attribute: 'category' do |import_file|
+      import_file.category.blank? ? " " : ImportFile::CATEGORY[import_file.category.to_sym]
+    end
+
+    g.column name: model_class.human_attribute_name(:file_ext), attribute: 'file_ext'
+
+    g.column name: model_class.human_attribute_name(:size), attribute: 'size' do |import_file|
+      import_file.size.blank? ? "" : (import_file.size.to_i/1024).round(0).to_s + "k"
+    end
+
+    g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'
+
+    g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at'do |import_file|
+       import_file.created_at.localtime.to_s(:db)
+    end
+
+    g.column do |import_file|
+      ActiveSupport::SafeBuffer.new << 
+      (link_to t('.download', :default => t("helpers.links.download")), download_import_file_path(import_file),:method => 'post', :class => 'btn btn-xs btn-primary' if (can? :download, import_file) and File.exist?(import_file.absolute_path))
+      
+      end
+
+  end 
+%>
