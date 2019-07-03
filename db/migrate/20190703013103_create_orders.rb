@@ -9,8 +9,8 @@ class CreateOrders < ActiveRecord::Migration
 
       t.text :desc
 
-      t.references :created_user, foreign_key: {to_table: :user}, index: true
-      t.references :created_unit, foreign_key: {to_table: :user}, index: true
+      t.references :user, index: true
+      t.references :unit, index: true
 
       t.timestamps null: false
     end

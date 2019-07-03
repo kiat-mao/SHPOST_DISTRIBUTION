@@ -59,20 +59,20 @@ ActiveRecord::Schema.define(version: 20190703014654) do
   add_index "order_details", ["at_unit_id"], name: "index_order_details_on_at_unit_id"
 
   create_table "orders", force: :cascade do |t|
-    t.string   "no",              null: false
+    t.string   "no",         null: false
     t.string   "name"
     t.string   "address"
     t.string   "phone"
     t.string   "tel"
     t.text     "desc"
-    t.integer  "created_user_id"
-    t.integer  "created_unit_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.integer  "user_id"
+    t.integer  "unit_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  add_index "orders", ["created_unit_id"], name: "index_orders_on_created_unit_id"
-  add_index "orders", ["created_user_id"], name: "index_orders_on_created_user_id"
+  add_index "orders", ["unit_id"], name: "index_orders_on_unit_id"
+  add_index "orders", ["user_id"], name: "index_orders_on_user_id"
 
   create_table "roles", force: :cascade do |t|
     t.integer  "user_id"
