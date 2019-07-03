@@ -165,18 +165,17 @@ class SuppliersController < ApplicationController
     xls_report.string  
   end            
 
-  def to_set_valid
-  end
-
   def set_valid
     @operation = "set_valid"
+    @supplier.is_valid = !@supplier.is_valid
+      
     respond_to do |format|
-      if @supplier.update(supplier_params)
+      if @supplier.save
         txt = @supplier.is_valid ? "有效" : "无效"
         format.html { redirect_to suppliers_url, notice: "已成功标记为#{txt}" }
         format.json { head :no_content }
       else
-        format.html { render action: 'set_valid' }
+        format.html { redirect_to suppliers_url }
         format.json { render json: @supplier.errors, status: :unprocessable_entity }
       end
     end

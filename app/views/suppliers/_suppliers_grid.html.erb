@@ -19,8 +19,8 @@
       (link_to t('.destroy', :default => t("helpers.links.destroy")),
                       supplier_path(supplier),
                        :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, supplier) << ' ' <<
-      (link_to t('.set_valid', :default => t("helpers.links.set_valid")),
-                      to_set_valid_supplier_path(supplier), :class => 'btn btn-xs btn-primary' if can? :set_valid, supplier)
+      (link_to t(supplier.is_valid? ? "标记无效" : "标记有效"),
+                      set_valid_supplier_path(supplier), :onclick => "if (#{supplier.is_valid} ){if(!confirm('确定标记为无效吗？无效后该供应商下的所有商品信息将不可被订单选择。')){return false;}}else{if(!confirm('确定标记为有效吗？有效后该供应商下的所有商品信息将可被订单选择。')){return false;}}", :class => 'btn btn-xs btn-primary' if can? :set_valid, supplier)
       end
   end 
 %>

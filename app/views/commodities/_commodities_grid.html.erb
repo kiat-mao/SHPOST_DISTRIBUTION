@@ -27,8 +27,8 @@
       (link_to t('.destroy', :default => t("helpers.links.destroy")),
                       commodity_path(commodity),
                        :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, commodity) << ' ' <<
-      (link_to t('.set_on_sell', :default => t("helpers.links.set_on_sell")),
-                      to_set_on_sell_commodity_path(commodity), :class => 'btn btn-xs btn-primary' if can? :set_on_sell, commodity) 
+      (link_to t(commodity.is_on_sell? ? "标记下架" : "标记上架"),
+                      set_on_sell_commodity_path(commodity), :onclick => "if (#{commodity.is_on_sell} ){if(!confirm('确定标记为下架吗？下架后该商品不可再在订单中选择。')){return false;}}else{if(!confirm('确定标记为上架吗？上架后该商品可在订单中选择。')){return false;}}", :class => 'btn btn-xs btn-primary' if can? :set_on_sell, commodity) 
       end
   end 
 %>
