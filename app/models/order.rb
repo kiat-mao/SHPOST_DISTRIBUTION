@@ -5,7 +5,7 @@ class Order < ActiveRecord::Base
 
   before_create :generate_no
 
-  validates :name, :address, :unit, presence: true, :message => '不能为空'
+  validates :name, :address, :unit, presence: {:message => "不能为空"}
 
   scope :fresh, -> { where(is_fresh: true)}
   scope :by_status, ->(status = []) { joins(:order_details).where(order_details: {status: status}).distinct }
