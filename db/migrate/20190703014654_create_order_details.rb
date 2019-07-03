@@ -4,7 +4,7 @@ class CreateOrderDetails < ActiveRecord::Migration
       t.string :no, :null => false, :unique => true
 
       t.integer :amount
-      t.decimal :price, :null => false, precision: 5, scale: 2
+      t.decimal :price, :null => false, precision: 10, scale: 2
        
       t.string :status 
 
@@ -16,7 +16,7 @@ class CreateOrderDetails < ActiveRecord::Migration
       
       t.references :order
       t.references :commodity
-      t.references :unit, index: {name: 'at_unit'}
+      t.references :at_unit, foreign_key: {to_table: :user}
 
       t.timestamps null: false
     end
