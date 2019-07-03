@@ -6,6 +6,36 @@ class OrdersController < ApplicationController
   def index
   end
 
+  #新建订单
+  def fresh
+    @orders = initialize_grid(@orders.fresh)
+  end
+
+  #审核被驳回订单
+  def pending
+    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:pending]])
+  end
+
+  #待审核订单
+  def checking
+    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:checking])
+  end
+
+  #复核被驳回订单
+  def declined
+    @orders = initialize_grid(@orders.by_status [ OrderDetail.statuses[:declined]]
+  end
+
+  #待复核订单
+  def rechecking
+    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:rechecking]])
+  end
+
+  #待收货订单
+  def receiving
+    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:receiving]])
+  end
+
   # GET /orders/1
   # GET /orders/1.json
   def show
@@ -59,9 +89,9 @@ class OrdersController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_order
-      @order = Order.find(params[:id])
-    end
+    # def set_order
+    #   @order = Order.find(params[:id])
+    # end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def order_params
