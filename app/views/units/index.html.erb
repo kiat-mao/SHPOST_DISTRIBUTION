@@ -3,7 +3,7 @@
   <h1><%=t '.title', :default => model_class.model_name.human%></h1>
   <div style="float:right">
     <% if can? :new, Unit %>
-      <%= link_to t('.new', :default => t("helpers.links.new")),
+      <%= link_to t('.new_branch', :default => t("helpers.links.new_branch")),
                   new_unit_path,
                   :class => 'btn btn-primary' %>
     <% end %>
@@ -19,15 +19,15 @@
 
     g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'
 
-    g.column name: model_class.human_attribute_name(:tcbd_khdh), attribute: 'tcbd_khdh'
+    # g.column name: model_class.human_attribute_name(:tcbd_khdh), attribute: 'tcbd_khdh'
 
-    g.column name: model_class.human_attribute_name(:level), attribute: 'level',custom_filter: Unit::UNIT_LEVEL.invert do |unit| 
-      unit.level
+    g.column name: model_class.human_attribute_name(:unit_type), attribute: 'unit_type',custom_filter: Unit::TYPE.invert do |unit| 
+      unit.unit_type_name
     end
     
-    g.column name: model_class.human_attribute_name(:parent_id), attribute: 'parent_id' ,custom_filter: Unit.accessible_by(current_ability).map{|u| [u.name,u.id]} do |unit|
-        unit.parent_id.blank? ? "" : Unit.find_by(id:unit.parent_id).name
-    end
+    # g.column name: model_class.human_attribute_name(:parent_id), attribute: 'parent_id' ,custom_filter: Unit.accessible_by(current_ability).map{|u| [u.name,u.id]} do |unit|
+    #     unit.parent_id.blank? ? "" : Unit.find_by(id:unit.parent_id).name
+    # end
 
     
     g.column do |unit|

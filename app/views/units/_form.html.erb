@@ -23,25 +23,26 @@
       <%= f.text_field :desc, :class => 'text_field' %>
     </div>
   </div>
-  <div class="control-group">
+ <!--  <div class="control-group">
     <%= f.label :tcbd_khdh, :class => 'control-label' %>
     <div class="controls">
       <%= f.text_field :tcbd_khdh, :class => 'text_field' %>
     </div>
   </div>
-  <div class="control-group">
-    <%= f.label :level, :class => 'control-label' %>
-    <div class="controls">
-      <%= f.select(:level, Unit::UNIT_LEVEL.invert) %>
+ <div hidden class="control-group">
+    <%= f.label :unit_type, :class => 'control-label' %>
+    <div hidden class="controls">
+      <%= f.select(:unit_type, Unit::TYPE.invert) %>
     </div>
-  </div>
-  <div class="control-group">
+  </div> -->
+
+  <!-- <div class="control-group">
     <%= f.label :parent_id, :class => 'control-label' %>
     <div class="controls">
       <%= f.select(:parent_id, Unit.where("level in (1,2)").order(:level,:id).map{|u| [u.name,u.id]})%>
     </div>
   </div>
-  
+   -->
   <%= f.submit nil, :class => 'btn btn-primary' %>
   <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
             units_path, :class => 'btn btn-default' %>

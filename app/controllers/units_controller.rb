@@ -26,7 +26,8 @@ class UnitsController < ApplicationController
   # POST /units.json
   def create
     respond_to do |format|
-      if @unit.save
+      @unit.unit_type = 'branch'
+       if @unit.save
         format.html { redirect_to @unit, notice: I18n.t('controller.create_success_notice', model: '单位')}
         format.json { render action: 'show', status: :created, location: @unit }
       else
@@ -53,7 +54,11 @@ class UnitsController < ApplicationController
   # DELETE /units/1
   # DELETE /units/1.json
   def destroy
-    @unit.destroy
+    if @unit.can_destroy?
+      @unit.destroy
+    else
+      flash[:alert] = "区分公司下存在用户，不可删除。只能标记为无效。"
+    end
     respond_to do |format|
       format.html { redirect_to units_url }
       format.json { head :no_content }
@@ -68,6 +73,6 @@ class UnitsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def unit_params
-      params.require(:unit).permit(:no, :name, :desc, :short_name, :tcbd_khdh, :unit_level, :parent_id)
+      params.require(:unit).permit(:no, :name, :desc, :short_name, :tcbd_khdh, :unit_level, :parent_id, :unit_type)
     end
 end

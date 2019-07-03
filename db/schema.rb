@@ -11,17 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190701055556) do
+ActiveRecord::Schema.define(version: 20190703014654) do
 
   create_table "commodities", force: :cascade do |t|
-    t.string   "cno",                                                 null: false
-    t.string   "dms_no",                                              null: false
-    t.string   "name",                                                null: false
-    t.integer  "supplier_id",                                         null: false
-    t.decimal  "cost_price",  precision: 10, scale: 2,                null: false
-    t.decimal  "sell_price",  precision: 10, scale: 2,                null: false
+    t.string   "cno",                                                null: false
+    t.string   "dms_no",                                             null: false
+    t.string   "name",                                               null: false
+    t.integer  "supplier_id",                                        null: false
+    t.decimal  "cost_price",  precision: 5, scale: 2,                null: false
+    t.decimal  "sell_price",  precision: 5, scale: 2,                null: false
     t.text     "desc"
-    t.boolean  "is_on_sell",                           default: true, null: false
+    t.boolean  "is_on_sell",                          default: true, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -40,6 +40,39 @@ ActiveRecord::Schema.define(version: 20190701055556) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "order_details", force: :cascade do |t|
+    t.string   "no",                                    null: false
+    t.integer  "amount"
+    t.decimal  "price",        precision: 10, scale: 2, null: false
+    t.string   "status"
+    t.text     "desc"
+    t.string   "why_decline"
+    t.datetime "closed_at"
+    t.integer  "order_id"
+    t.integer  "commodity_id"
+    t.integer  "at_unit_id"
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+  end
+
+  add_index "order_details", ["at_unit_id"], name: "index_order_details_on_at_unit_id"
+
+  create_table "orders", force: :cascade do |t|
+    t.string   "no",         null: false
+    t.string   "name"
+    t.string   "address"
+    t.string   "phone"
+    t.string   "tel"
+    t.text     "desc"
+    t.integer  "user_id"
+    t.integer  "unit_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "orders", ["unit_id"], name: "index_orders_on_unit_id"
+  add_index "orders", ["user_id"], name: "index_orders_on_user_id"
 
   create_table "roles", force: :cascade do |t|
     t.integer  "user_id"
@@ -68,6 +101,7 @@ ActiveRecord::Schema.define(version: 20190701055556) do
     t.integer  "parent_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "unit_type"
   end
 
   add_index "units", ["name"], name: "index_units_on_name", unique: true
