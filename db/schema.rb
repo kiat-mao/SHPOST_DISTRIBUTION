@@ -42,9 +42,9 @@ ActiveRecord::Schema.define(version: 20190703014654) do
   end
 
   create_table "order_details", force: :cascade do |t|
-    t.string   "no",                                   null: false
+    t.string   "no",                                    null: false
     t.integer  "amount"
-    t.decimal  "price",        precision: 5, scale: 2, null: false
+    t.decimal  "price",        precision: 10, scale: 2, null: false
     t.string   "status"
     t.text     "desc"
     t.string   "why_decline"
@@ -52,9 +52,11 @@ ActiveRecord::Schema.define(version: 20190703014654) do
     t.integer  "order_id"
     t.integer  "commodity_id"
     t.integer  "at_unit_id"
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
   end
+
+  add_index "order_details", ["at_unit_id"], name: "index_order_details_on_at_unit_id"
 
   create_table "orders", force: :cascade do |t|
     t.string   "no",              null: false
@@ -68,6 +70,9 @@ ActiveRecord::Schema.define(version: 20190703014654) do
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
   end
+
+  add_index "orders", ["created_unit_id"], name: "index_orders_on_created_unit_id"
+  add_index "orders", ["created_user_id"], name: "index_orders_on_created_user_id"
 
   create_table "roles", force: :cascade do |t|
     t.integer  "user_id"
