@@ -104,8 +104,7 @@ ShpostDistribution::Application.routes.draw do
     end
 
     member do
-      get 'to_set_valid'
-      patch 'set_valid'
+      get 'set_valid'
     end
   end
 
@@ -116,8 +115,14 @@ ShpostDistribution::Application.routes.draw do
     end
 
     member do
-      get 'to_set_on_sell'
-      patch 'set_on_sell'
+      get 'set_on_sell'
+    end
+  end
+
+  resources :supplier_autocom do
+    collection do
+      get 'c_autocomplete_supplier_name'
+        
     end
   end
 

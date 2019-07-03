@@ -2,6 +2,9 @@ class Commodity < ActiveRecord::Base
 	belongs_to :supplier
 	# has_and_belongs_to_many :Order
 
+	validates_presence_of :cno, :dms_no, :name, :supplier_id, :cost_price, :sell_price, :message => '不能为空'
+	validates_uniqueness_of :cno, :message => '该商品编码已存在'
+
 	IS_ON_SELL = { true: '是', false: '否'}
 
 	def is_on_sell_name

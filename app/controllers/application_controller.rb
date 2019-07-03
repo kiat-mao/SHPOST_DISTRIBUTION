@@ -130,6 +130,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def set_autocom_update(objid)
+      @supplier_name = Supplier.find(objid.supplier_id).name
+  end
+
      
   private
   def access_denied exception

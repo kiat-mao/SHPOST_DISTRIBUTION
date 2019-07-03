@@ -156,8 +156,6 @@ zh-CN:
       reset_pwd: 重置密码
       image_index: 图片管理
       import: 导入
-      set_valid: 有效/无效
-      set_on_sell: 上架/下架
     titles:
       edit: 编辑%{model}
       new: 新增%{model}

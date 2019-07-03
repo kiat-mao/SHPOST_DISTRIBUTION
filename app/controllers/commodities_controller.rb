@@ -18,6 +18,7 @@ class CommoditiesController < ApplicationController
   end
 
   def edit
+    set_autocom_update(@commodity)
   end
 
   def create
@@ -191,18 +192,17 @@ class CommoditiesController < ApplicationController
     xls_report.string  
   end      
 
-  def to_set_on_sell
-  end
-
   def set_on_sell
     @operation = "set_on_sell"
+    @commodity.is_on_sell = !@commodity.is_on_sell
+      
     respond_to do |format|
-      if @commodity.update(commodity_params)
+      if @commodity.save
         txt = @commodity.is_on_sell ? "上架" : "下架"
         format.html { redirect_to commodities_url, notice: "已成功#{txt}" }
         format.json { head :no_content }
       else
-        format.html { render action: 'set_on_sell' }
+        format.html { redirect_to commodities_url }
         format.json { render json: @commodity.errors, status: :unprocessable_entity }
       end
     end

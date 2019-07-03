@@ -20,20 +20,19 @@
   <div class="control-group">
     <%= f.label :supplier_id, :class => 'control-label' %>
     <div class="controls">
-      <%= f.select(:supplier_id, Supplier.accessible_by(current_ability).map{|u| [u.name,u.id]})%>
-      <%= hidden_field_tag('c_sid',@csid) %>     
+      <%= supplier_select_autocom("commodity",@commodity.id) %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :cost_price, :class => 'control-label' %>
     <div class="controls">
-      <%= f.text_field :cost_price, :class => 'text_field' %>
+      <%= f.text_field :cost_price, :class => 'text_field', :id => 'cost_price' %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :sell_price, :class => 'control-label' %>
     <div class="controls">
-      <%= f.text_field :sell_price, :class => 'text_field' %>
+      <%= f.text_field :sell_price, :class => 'text_field', :id => 'sell_price'%>
     </div>
   </div>
   <div class="control-group">
@@ -50,8 +49,27 @@
   </div> -->
   
   
-  <%= f.submit nil, :class => 'btn btn-primary' %>
+  <%= f.submit nil, :class => 'btn btn-primary', onclick: "check_num()" %>
   <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
             commodities_path, :class => 'btn btn-default' %>
  
 <% end %>
+
+<script type="text/javascript">
+function check_num()
+{
+  var cost_price=document.getElementById('cost_price').value;
+  var sell_price=document.getElementById('sell_price').value;
+  if(isNaN(cost_price)==true) 
+  {
+    alert('商家结算价必须为数字');
+    document.getElementById('cost_price').value='';
+  }
+  else if(isNaN(sell_price)==true) 
+  {
+    alert('最低销售价必须为数字');
+    document.getElementById('sell_price').value='';
+  }
+}
+</script>
+

@@ -20,3 +20,14 @@
 //= require twitter/bootstrap
 //= require turbolinks
 //= require_tree .
+
+function ajaxsuppliers() {
+	$('#supplier_name').bind('railsAutocomplete.select', function(event, data){
+    /* Do something here */
+    var sid = "#"+data.item.obj+"_supplier_id";
+    $(sid).val(data.item.id);
+  });
+}
+
+$(document).ready(ready);
+$(document).on('page:load', ready);
