@@ -1,9 +1,4 @@
 ShpostDistribution::Application.routes.draw do
-  
-  resources :order_details
-
-  resources :orders
-
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -130,6 +125,21 @@ ShpostDistribution::Application.routes.draw do
         
     end
   end
+
+  resources :orders do
+    collection do
+      get 'fresh' => 'orders#fresh'
+      get 'pending' => 'orders#pending'
+      get 'checking' => 'orders#checking'
+      get 'declined' => 'orders#declined'
+      get 'rechecking' => 'orders#rechecking'
+      get 'receiving' => 'orders#receiving'
+    end
+    resources :order_details
+  end
+
+  get 'order_details' => 'order_details#index'
+
 
   
 end

@@ -19,6 +19,9 @@ class Ability
         can :manage, ImportFile
         can :manage, Supplier
         can :manage, Commodity
+
+        can :manage, Order
+        can :manage, OrderDetail
         
     elsif user.unitadmin?
     #can :manage, :all
