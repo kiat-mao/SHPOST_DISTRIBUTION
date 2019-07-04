@@ -14,14 +14,14 @@
 ActiveRecord::Schema.define(version: 20190703014654) do
 
   create_table "commodities", force: :cascade do |t|
-    t.string   "cno",                                                null: false
-    t.string   "dms_no",                                             null: false
-    t.string   "name",                                               null: false
-    t.integer  "supplier_id",                                        null: false
-    t.decimal  "cost_price",  precision: 5, scale: 2,                null: false
-    t.decimal  "sell_price",  precision: 5, scale: 2,                null: false
+    t.string   "cno",                                                 null: false
+    t.string   "dms_no",                                              null: false
+    t.string   "name",                                                null: false
+    t.integer  "supplier_id",                                         null: false
+    t.decimal  "cost_price",  precision: 10, scale: 2,                null: false
+    t.decimal  "sell_price",  precision: 10, scale: 2,                null: false
     t.text     "desc"
-    t.boolean  "is_on_sell",                          default: true, null: false
+    t.boolean  "is_on_sell",                           default: true, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

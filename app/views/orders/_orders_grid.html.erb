@@ -1,0 +1,29 @@
+<%- model_class = Order -%>
+<%= grid(@orders, :show_filters => :always) do |g|
+    g.column name: model_class.human_attribute_name(:no), attribute: 'no'
+
+    g.column name: model_class.human_attribute_name(:name), attribute: 'name'
+
+    g.column name: model_class.human_attribute_name(:address), attribute: 'address'
+
+    g.column name: model_class.human_attribute_name(:phone), attribute: 'phone'
+
+    g.column name: model_class.human_attribute_name(:tel), attribute: 'tel'
+
+    g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'
+
+    
+    g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |order|
+        order.created_at.localtime.to_s(:db)
+    end
+
+    g.column do |order|
+      ActiveSupport::SafeBuffer.new << 
+      (link_to t('.edit', :default => t("helpers.links.edit")),
+                      edit_order_path(order), :class => 'btn btn-xs btn-primary' if can? :update, order) << ' ' <<
+      (link_to t('.destroy', :default => t("helpers.links.destroy")),
+                      order_path(order),
+                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order)
+      end
+  end 
+%>

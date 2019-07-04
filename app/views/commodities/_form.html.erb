@@ -41,13 +41,6 @@
       <%= f.text_area :desc, :class => 'text_field' %>
     </div>
   </div>
-  <!-- <div class="control-group">
-    <%= f.label :is_on_sell, :class => 'control-label' %>
-    <div class="controls">
-      <%= f.select(:is_on_sell, Commodity::IS_ON_SELL.invert) %>
-    </div>
-  </div> -->
-  
   
   <%= f.submit nil, :class => 'btn btn-primary', onclick: "check_num()" %>
   <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
