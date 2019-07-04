@@ -4,9 +4,12 @@ class OrderDetail < ActiveRecord::Base
 
   before_create :generate_no
 
-  # validates_presence_of :amount, :price, :commodity, :order, :message => '不能为空'
 
-  validates :amount, :price, :order, presence: {:message => "不能为空"}
+  validates :amount, :price, :order, :commodity, presence: {:message => "不能为空"}
+
+  validates :amount, numericality: {:greater_than => 0 }
+
+  validates :price, numericality: { only_integer: true, :greater_than => 0 }
 
   enum status: { waiting: 'waiting', checking: 'checking', rechecking: 'rechecking', receiving: 'receiving', closed: 'closed', canceled: 'canceled' , pending: 'pending', declined: 'declined'}
 
