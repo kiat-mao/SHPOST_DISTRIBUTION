@@ -57,7 +57,7 @@ class UnitsController < ApplicationController
     if @unit.can_destroy?
       @unit.destroy
     else
-      flash[:alert] = "区分公司下存在用户，不可删除。只能标记为无效。"
+      flash[:alert] = " 该区分公司下存在用户，不可删除。"
     end
     respond_to do |format|
       format.html { redirect_to units_url }
