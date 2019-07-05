@@ -36,6 +36,13 @@ class OrdersController < ApplicationController
     @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:receiving]])
   end
 
+  #提交（审核）
+  def to_check
+    @order.checking!
+  end
+
+
+
   # GET /orders/1
   # GET /orders/1.json
   def show
@@ -53,7 +60,10 @@ class OrdersController < ApplicationController
   # POST /orders.json
   def create
     respond_to do |format|
-      if @order.save
+      @order.is_fresh = true
+      @order.user = current_user
+      @order.unit = current_user.unit
+      if @order.save!
         format.html { redirect_to @order, notice: I18n.t('controller.create_success_notice', model: '订单')}
         format.json { render action: 'show', status: :created, location: @order }
       else
@@ -67,7 +77,7 @@ class OrdersController < ApplicationController
   # PATCH/PUT /orders/1.json
   def update
     respond_to do |format|
-      if @order.save
+      if @order.update!(order_params)
         format.html { redirect_to @order, notice: I18n.t('controller.create_success_notice', model: '订单')}
         format.json { head :no_content }
       else
@@ -80,7 +90,7 @@ class OrdersController < ApplicationController
   # DELETE /orders/1
   # DELETE /orders/1.json
   def destroy
-    @order.destroy
+    @order.destroy!
     respond_to do |format|
       format.html { redirect_to orders_url }
       format.json { head :no_content }
