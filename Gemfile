@@ -79,7 +79,9 @@ gem 'minitest'
 
 gem 'dynamic_form'
 
-gem 'roo'
+gem 'roo', '~> 2.7', '>= 2.7.1'
+
+gem 'roo-xls', '~> 1.2'
 
 gem 'httpclient'
 # Use unicorn as the app server
@@ -116,7 +118,10 @@ gem 'web-console', '~> 2.0'
 
 gem 'spring', group: :development
 
-gem 'better_errors', '~> 2.5', '>= 2.5.1'
+group :development do
+  gem "better_errors"
+  gem "binding_of_caller"
+end
 
 gem 'carrierwave', '~> 1.3', '>= 1.3.1'
 #gem 'annotate', '~> 2.7', '>= 2.7.2', group: :development
