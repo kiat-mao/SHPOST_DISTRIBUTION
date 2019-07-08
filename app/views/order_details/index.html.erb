@@ -1,24 +1,63 @@
-<p id="notice"><%= notice %></p>
+<%- model_class = OrderDetail -%>
+<%- omodel_class = Order -%>
+<%- cmodel_class = Commodity -%>
+<%- smodel_class = Supplier -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human%></h1>
+</div>
 
-<h1>Listing Order Details</h1>
+<%= grid(@order_details) do |g|
 
-<table>
-  <thead>
-    <tr>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+    g.column name: model_class.human_attribute_name(:no), attribute: 'no'
 
-  <tbody>
-    <% @order_details.each do |order_detail| %>
-      <tr>
-        <td><%= link_to 'Show', order_detail %></td>
-        <td><%= link_to 'Edit', edit_order_detail_path(order_detail) %></td>
-        <td><%= link_to 'Destroy', order_detail, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    g.column name: omodel_class.human_attribute_name(:no), attribute: 'no', assoc: :order do |order_detail|
+      order_detail.order.try :no
+    end
 
-<br>
+    g.column name: omodel_class.human_attribute_name(:name), attribute: 'name', assoc: :order do |order_detail|
+      order_detail.order.try :name
+    end
 
+    g.column name: smodel_class.human_attribute_name(:name), attribute: 'name', assoc: [:commodity, :supplier] do |order_detail|
+      order_detail.commodity.supplier.try :name
+    end
+
+    g.column name: cmodel_class.human_attribute_name(:cno), attribute: 'cno', assoc: :commodity do |order_detail|
+      order_detail.commodity.try :cno
+    end
+
+    g.column name: cmodel_class.human_attribute_name(:dms_no), attribute: 'dms_no', assoc: :commodity do |order_detail|
+      order_detail.commodity.try :dms_no
+    end
+
+    g.column name: cmodel_class.human_attribute_name(:name), attribute: 'name', assoc: :commodity do |order_detail|
+      order_detail.commodity.try :name
+    end
+
+    g.column name: model_class.human_attribute_name(:amount), attribute: 'amount'
+
+    g.column name: model_class.human_attribute_name(:price), attribute: 'price' do |order_detail|
+      number_with_precision(order_detail.price, precision: 2)
+    end
+
+    g.column name: model_class.human_attribute_name(:status), attribute: 'status',custom_filter: OrderDetail::STATUS_NAME.invert do |order_detail| 
+      order_detail.status_name
+    end
+
+    g.column name: model_class.human_attribute_name(:why_decline), attribute: 'why_decline'
+
+    g.column name: model_class.human_attribute_name(:closed_at), attribute: 'closed_at' do |order_detail|
+      order_detail.closed_at.blank? ? "" : order_detail.closed_at.localtime.to_s(:db)
+    end
+
+    g.column name: model_class.human_attribute_name(:at_unit_id), attribute: 'name', assoc: :at_unit do |order_detail|
+      order_detail.at_unit.try :name
+    end
+
+    g.column do |order_detail|
+      ActiveSupport::SafeBuffer.new << 
+        (link_to t('.edit', :default => t("helpers.links.edit")), edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if can? :update, order_detail) << ' ' <<
+          (link_to t('.destroy', :default => t("helpers.links.destroy")), order_detail_path(order_detail), :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order_detail)
+    end
+  end 
+%>

@@ -23,7 +23,7 @@ class CommoditiesController < ApplicationController
 
   def create
     respond_to do |format|
-      if @commodity.save
+      if @commodity.save!
         format.html { redirect_to @commodity, notice: I18n.t('controller.create_success_notice', model: '商品') }
         format.json { render action: 'show', status: :created, location: @commodity }
       else
@@ -46,11 +46,11 @@ class CommoditiesController < ApplicationController
   end
 
   def destroy
-    # if @commodity.can_destroy?
+    if @commodity.can_destroy?
       @commodity.destroy
-    # else
-    #   flash[:alert] = "已有订单中包含该商品，不可删除"
-    # end
+    else
+      flash[:alert] = "已有子订单中包含该商品，不可删除"
+    end
     respond_to do |format|
       format.html { redirect_to commodities_url }
       format.json { head :no_content }
@@ -213,9 +213,9 @@ class CommoditiesController < ApplicationController
   def set_on_sell
     @operation = "set_on_sell"
     @commodity.is_on_sell = !@commodity.is_on_sell
-      
+    
     respond_to do |format|
-      if @commodity.save
+      if @commodity.save!
         txt = @commodity.is_on_sell ? "上架" : "下架"
         format.html { redirect_to commodities_url, notice: "已成功#{txt}" }
         format.json { head :no_content }

@@ -135,11 +135,15 @@ ShpostDistribution::Application.routes.draw do
       get 'rechecking' => 'orders#rechecking'
       get 'receiving' => 'orders#receiving'
     end
+
+    member do
+      get 'commodity_choose'
+    end
     resources :order_details
   end
 
   get 'order_details' => 'order_details#index'
 
-
+  resources :order_details
   
 end

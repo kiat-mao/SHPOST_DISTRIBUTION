@@ -1,5 +1,94 @@
 <%- model_class = Order -%>
 <%= grid(@orders, :show_filters => :always) do |g|
+  g.after_row do |order, number_of_columns|
+    # content_tag(:div, class: 'extra-row') do
+        buffer = ""
+        i = 1
+        order.order_details.each do |order_detail|
+          buffer += content_tag(:tr, :bgcolor=>"#ACD6FF") do
+            content_tag(:td) do
+              content_tag(:div) do
+                       # without buffer only the last tag will appear
+                content_tag(:b,"序号") +
+                content_tag(:p,i)
+                # raw buffer
+              end
+            end +
+            content_tag(:td) do
+              content_tag(:div) do
+                       # without buffer only the last tag will appear
+                content_tag(:b,"子订单编码") +
+                content_tag(:p,order_detail.try(:no))
+              end
+            end +
+            content_tag(:td) do
+              content_tag(:div) do
+                         # without buffer only the last tag will appear
+                content_tag(:b,"商品")+
+                content_tag(:p,order_detail.commodity.name)
+              end
+            end +
+            content_tag(:td) do
+              content_tag(:div) do
+                         # without buffer only the last tag will appear
+                content_tag(:b,"供应商")+
+                content_tag(:p,order_detail.commodity.supplier.name)
+              end
+            end +
+            content_tag(:td) do
+              content_tag(:div) do
+                         # without buffer only the last tag will appear
+                content_tag(:b,"数量")+
+                content_tag(:p,order_detail.amount)
+              end
+            end +
+            content_tag(:td) do
+              content_tag(:div) do
+                         # without buffer only the last tag will appear
+                content_tag(:b,"销售单价")+
+                content_tag(:p,number_with_precision(order_detail.price, precision: 2))
+              end
+            end +
+            content_tag(:td) do
+              content_tag(:div) do
+                         # without buffer only the last tag will appear
+                content_tag(:b,"状态")+
+                content_tag(:p,order_detail.status_name)
+              end
+            end +
+            content_tag(:td) do
+              content_tag(:div) do
+                         # without buffer only the last tag will appear
+                content_tag(:b,"目前单位")+
+                content_tag(:p,order_detail.at_unit.name)
+              end
+            end +
+            content_tag(:td) do
+              content_tag(:div) do
+                         # without buffer only the last tag will appear
+                content_tag(:b,"创建时间")+
+                content_tag(:p,order_detail.created_at.localtime.strftime('%Y-%m-%d').to_s)
+              end
+            end +
+            content_tag(:td) do
+              content_tag(:div) do
+                         # without buffer only the last tag will appear
+                content_tag(:b,"操作")+
+                content_tag(:p,(link_to t('.edit', :default => t("helpers.links.edit")),
+                      edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if can? :update, order_detail)) +
+                content_tag(:p,(link_to t('.destroy', :default => t("helpers.links.destroy")),
+                      order_detail_path(order_detail),
+                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order_detail))
+              end
+            end
+          end
+          i+=1
+        end
+        buffer  
+      # end
+  end
+
+
     g.column name: model_class.human_attribute_name(:no), attribute: 'no'
 
     g.column name: model_class.human_attribute_name(:name), attribute: 'name'
@@ -12,18 +101,27 @@
 
     g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'
 
-    
+    g.column name: model_class.human_attribute_name(:user_id), attribute: 'name', assoc: :user do |order|
+      order.user.try :name
+    end
+
+    g.column name: model_class.human_attribute_name(:unit_id), attribute: 'name', assoc: :unit do |order|
+      order.unit.try :name
+    end
+
     g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |order|
         order.created_at.localtime.to_s(:db)
     end
 
-    g.column do |order|
+    g.column name: "操作" do |order|
       ActiveSupport::SafeBuffer.new << 
       (link_to t('.edit', :default => t("helpers.links.edit")),
                       edit_order_path(order), :class => 'btn btn-xs btn-primary' if can? :update, order) << ' ' <<
       (link_to t('.destroy', :default => t("helpers.links.destroy")),
                       order_path(order),
-                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order)
-      end
+                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order) << ' ' <<
+      (link_to t('新建子订单'),
+              commodity_choose_order_path(order), :class => 'btn btn-xs btn-primary' if can? :create, OrderDetail) 
+    end
   end 
 %>

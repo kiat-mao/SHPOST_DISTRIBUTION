@@ -20,6 +20,7 @@
 //= require twitter/bootstrap
 //= require turbolinks
 //= require_tree .
+var ready;
 
 function ajaxsuppliers() {
 	$('#supplier_name').bind('railsAutocomplete.select', function(event, data){

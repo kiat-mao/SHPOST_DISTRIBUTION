@@ -298,8 +298,8 @@ zh-CN:
         one: 订单管理
         other: 订单管理
       order_detail:
-        one: 订单明细管理
-        other: 订单明细管理
+        one: 子订单管理
+        other: 子订单管理
     attributes:
       user:
         email: "电子邮件"
@@ -378,6 +378,7 @@ zh-CN:
         desc: "备注"
         user_id: "创建人"
         unit_id: "创建单位"
+        created_at: "创建时间"
       order_detail:
         "no": "子订单编码"
         amount: "数量"
@@ -436,6 +437,19 @@ zh-CN:
           needrole:
             can: :read
             role: :Commodity
+    order:
+      name: "订单管理"
+      needrole:
+        can: :read
+        role: :Order
+      submenu:
+        supplier:
+          name: "新建的订单"
+          link: "/orders/fresh"
+          need_count: false
+          needrole:
+            can: :create
+            role: :Order
     import:
       name: "文件管理"
       needrole:

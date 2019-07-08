@@ -1,6 +1,5 @@
-<h1>Editing Order Detail</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Show', @order_detail %> |
-<%= link_to 'Back', order_details_path %>
+<%- model_class = OrderDetail -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => [:'helpers.titles.edit', 'New %{model}'], :model => model_class.model_name.human.titleize %></h1>
+</div>
+<%= render :partial => 'form' %>
