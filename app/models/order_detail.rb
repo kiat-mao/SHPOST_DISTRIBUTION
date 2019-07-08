@@ -20,6 +20,14 @@ class OrderDetail < ActiveRecord::Base
     status.blank? ? "" : OrderDetail::STATUS_NAME["#{status}".to_sym]
   end
 
+  def can_update?
+    waiting? || pending?
+  end
+
+  def can_destroy?
+    waiting?
+  end
+
 
   private
   def generate_no

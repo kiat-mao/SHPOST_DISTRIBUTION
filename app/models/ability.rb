@@ -30,6 +30,7 @@ class Ability
         # can :manage, Unit, id: user.unit_id
         can :manage, Unit, unit_type: 'branch'
         can :read, Unit, unit_type: ['delivery', 'postbuy']
+        can :user, Unit, unit_type: ['delivery', 'postbuy']
 
         can :read, UserLog, user: {unit_id: user.unit_id}
 
