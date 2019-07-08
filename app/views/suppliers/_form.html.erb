@@ -17,13 +17,6 @@
       <%= f.text_field :valid_before, value: @supplier.valid_before.blank? ? "" : @supplier.valid_before.localtime.strftime('%Y-%m-%d').to_s %>
     </div>
   </div>
-  <!-- <div class="control-group">
-    <%= f.label :is_valid, :class => 'control-label' %>
-    <div class="controls">
-      <%= f.select(:is_valid, Supplier::IS_VALID.invert) %>
-    </div>
-  </div> -->
-  
   
   <%= f.submit nil, :class => 'btn btn-primary' %>
   <%= link_to t('.cancel', :default => t("helpers.links.cancel")),

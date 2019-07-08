@@ -10,9 +10,13 @@
       commodity.supplier.try :name
     end
 
-    g.column name: model_class.human_attribute_name(:cost_price), attribute: 'cost_price'
+    g.column name: model_class.human_attribute_name(:cost_price), attribute: 'cost_price' do |commodity|
+      number_with_precision(commodity.cost_price, precision: 2)
+    end
 
-    g.column name: model_class.human_attribute_name(:sell_price), attribute: 'sell_price'
+    g.column name: model_class.human_attribute_name(:sell_price), attribute: 'sell_price' do |commodity|
+      number_with_precision(commodity.sell_price, precision: 2)
+    end
 
     g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'
 

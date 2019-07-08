@@ -153,10 +153,15 @@ ShpostDistribution::Application.routes.draw do
         post 'cancel'
       end
     end
+
+    member do
+      get 'commodity_choose'
+    end
+    resources :order_details
   end
 
   get 'order_details' => 'order_details#index'
 
-
+  resources :order_details
   
 end
