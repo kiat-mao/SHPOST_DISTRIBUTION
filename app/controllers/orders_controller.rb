@@ -18,12 +18,12 @@ class OrdersController < ApplicationController
 
   #待审核订单
   def checking
-    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:checking])
+    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:checking]])
   end
 
   #复核被驳回订单
   def declined
-    @orders = initialize_grid(@orders.by_status [ OrderDetail.statuses[:declined]]
+    @orders = initialize_grid(@orders.by_status [ OrderDetail.statuses[:declined]])
   end
 
   #待复核订单
@@ -38,7 +38,7 @@ class OrdersController < ApplicationController
 
   #提交（审核）
   def to_check
-    @order.checking!
+    @order.checking! 
   end
 
 
