@@ -118,7 +118,7 @@ class OrderDetailsController < ApplicationController
 
   #驳回（审核）
   def check_decline
-    @order_detail.declined!
+    @order_detail.pending!
     if params[:format].eql?"from_order"
       redirect_to checking_orders_url
     else
