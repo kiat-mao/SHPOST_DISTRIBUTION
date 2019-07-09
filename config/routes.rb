@@ -128,12 +128,30 @@ ShpostDistribution::Application.routes.draw do
 
   resources :orders do
     collection do
-      get 'fresh' => 'orders#fresh'
-      get 'pending' => 'orders#pending'
-      get 'checking' => 'orders#checking'
-      get 'declined' => 'orders#declined'
-      get 'rechecking' => 'orders#rechecking'
-      get 'receiving' => 'orders#receiving'
+      get 'fresh'
+      get 'pending'
+      get 'checking'
+      get 'declined'
+      get 'rechecking'
+      get 'receiving'
+    end
+    resources :order_details do
+      collection do
+        get 'pending'
+        get 'checking'
+        get 'declined'
+        get 'rechecking'
+        get 'receiving'
+      end
+      member do
+        post 'to_check'
+        post 'to_recheck'
+        post 'check_decline'
+        post 'place'
+        post 'recheck_decline'
+        post 'confirm'
+        post 'cancel'
+      end
     end
 
     member do

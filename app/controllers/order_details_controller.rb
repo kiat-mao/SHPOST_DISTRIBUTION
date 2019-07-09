@@ -20,7 +20,7 @@ class OrderDetailsController < ApplicationController
 
   #复核被驳回子订单
   def declined
-    @order_details = initialize_grid(@order_details.where(status: OrderDetail.statuses[:declined])]
+    @order_details = initialize_grid(@order_details.where(status: OrderDetail.statuses[:declined]))
   end
 
   #待复核子订单
