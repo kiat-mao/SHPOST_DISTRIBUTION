@@ -33,7 +33,7 @@ class CommoditiesController < ApplicationController
 
   def create
     respond_to do |format|
-      if @commodity.save
+      if @commodity.save!
         format.html { redirect_to @commodity, notice: I18n.t('controller.create_success_notice', model: '商品') }
         format.json { render action: 'show', status: :created, location: @commodity }
       else
@@ -56,11 +56,11 @@ class CommoditiesController < ApplicationController
   end
 
   def destroy
-    # if @commodity.can_destroy?
+    if @commodity.can_destroy?
       @commodity.destroy
-    # else
-    #   flash[:alert] = "已有订单中包含该商品，不可删除"
-    # end
+    else
+      flash[:alert] = "已有子订单中包含该商品，不可删除"
+    end
     respond_to do |format|
       format.html { redirect_to commodities_url }
       format.json { head :no_content }
@@ -89,16 +89,20 @@ class CommoditiesController < ApplicationController
             end
             instance.default_sheet = instance.sheets.first
             title_row = instance.row(1)
-            name_index = title_row.index("商品名称").blank? ? 0 : title_row.index("商品名称")
-            supplier_index = title_row.index("供应商").blank? ? 1 : title_row.index("供应商")
-            cost_price_index = title_row.index("商家结算价").blank? ? 2 : title_row.index("商家结算价")
-            sell_price_index = title_row.index("最低销售价").blank? ? 3 : title_row.index("最低销售价")
-            desc_index = title_row.index("商品详情").blank? ? 4 : title_row.index("商品详情")
-            is_on_sell_index = title_row.index("是否上架").blank? ? 5 : title_row.index("是否上架")
+            cno_index = title_row.index("商品编码").blank? ? 0 : title_row.index("商品编码")
+            dms_no_index = title_row.index("DMS商品编码").blank? ? 1 : title_row.index("DMS商品编码")
+            name_index = title_row.index("商品名称").blank? ? 2 : title_row.index("商品名称")
+            supplier_index = title_row.index("供应商").blank? ? 3 : title_row.index("供应商")
+            cost_price_index = title_row.index("商家结算价").blank? ? 4 : title_row.index("商家结算价")
+            sell_price_index = title_row.index("最低销售价").blank? ? 5 : title_row.index("最低销售价")
+            desc_index = title_row.index("商品详情").blank? ? 6 : title_row.index("商品详情")
+            is_on_sell_index = title_row.index("是否上架").blank? ? 7 : title_row.index("是否上架")
 
             2.upto(instance.last_row) do |line|
               current_line = line
               rowarr = instance.row(line)
+              cno = rowarr[cno_index].blank? ? "" : rowarr[cno_index].to_s.split('.0')[0]
+              dms_no = rowarr[dms_no_index].blank? ? "" : rowarr[dms_no_index].to_s.split('.0')[0]
               name = rowarr[name_index].blank? ? "" : rowarr[name_index].to_s.split('.0')[0]
               supplier = rowarr[supplier_index].blank? ? "" : rowarr[supplier_index].to_s.split('.0')[0]
               cost_price = rowarr[cost_price_index].blank? ? "" : rowarr[cost_price_index].to_f
@@ -107,46 +111,60 @@ class CommoditiesController < ApplicationController
               is_on_sell = rowarr[is_on_sell_index].blank? ? "" : rowarr[is_on_sell_index].to_s.split('.0')[0]
               is_on_sell = (is_on_sell.eql?"否") ? false : true
               
-              if name.blank?
+              if cno.blank?
                 is_error = true
                 is_red = "yes"
-                txt = "缺少商品名称"
+                txt = "缺少商品编码"
                 sheet_back << (rowarr << txt << is_red)
               else
-                if supplier.blank?
+                if dms_no.blank?
                   is_error = true
                   is_red = "yes"
-                  txt = "缺少供应商"
+                  txt = "缺少DMS商品编码"
                   sheet_back << (rowarr << txt << is_red)
                 else
-                  if Supplier.find_by(name: supplier).blank?
+                  if name.blank?
                     is_error = true
                     is_red = "yes"
-                    txt = "供应商不存在"
+                    txt = "缺少商品名称"
                     sheet_back << (rowarr << txt << is_red)
                   else
-                    supplier_id = Supplier.find_by(name: supplier).id
-                    if cost_price.blank?
+                    if supplier.blank?
                       is_error = true
                       is_red = "yes"
-                      txt = "缺少商家结算价"
+                      txt = "缺少供应商"
                       sheet_back << (rowarr << txt << is_red)
                     else
-                      if sell_price.blank?
+                      if Supplier.find_by(name: supplier).blank?
                         is_error = true
                         is_red = "yes"
-                        txt = "缺少最低销售价"
+                        txt = "供应商不存在"
                         sheet_back << (rowarr << txt << is_red)
                       else
-                        if !Commodity.find_by(cno: cno).blank?
-                          is_red = "no"
-                          txt = "商品已存在"
+                        supplier_id = Supplier.find_by(name: supplier).id
+                        if cost_price.blank?
+                          is_error = true
+                          is_red = "yes"
+                          txt = "缺少商家结算价"
                           sheet_back << (rowarr << txt << is_red)
                         else
-                          Commodity.create!(name: name, supplier_id: supplier_id, cost_price: cost_price, sell_price: sell_price, desc: desc, is_on_sell: is_on_sell)
-                          is_red = "no"
-                          txt = "商品新建成功"
-                          sheet_back << (rowarr << txt << is_red)
+                          if sell_price.blank?
+                            is_error = true
+                            is_red = "yes"
+                            txt = "缺少最低销售价"
+                            sheet_back << (rowarr << txt << is_red)
+                          else
+                            if !Commodity.find_by(cno: cno).blank?
+                              is_red = "no"
+                              txt = "商品已存在"
+                              sheet_back << (rowarr << txt << is_red)
+                            else
+                              Commodity.create!(cno: cno, dms_no: dms_no, name: name, supplier_id: supplier_id, cost_price: cost_price, sell_price: sell_price, desc: desc, is_on_sell: is_on_sell)
+                              is_red = "no"
+                              txt = "商品新建成功"
+                              sheet_back << (rowarr << txt << is_red)
+                            end
+                          end
                         end
                       end
                     end
@@ -205,9 +223,9 @@ class CommoditiesController < ApplicationController
   def set_on_sell
     @operation = "set_on_sell"
     @commodity.is_on_sell = !@commodity.is_on_sell
-      
+    
     respond_to do |format|
-      if @commodity.save
+      if @commodity.save!
         txt = @commodity.is_on_sell ? "上架" : "下架"
         format.html { redirect_to commodities_url, notice: "已成功#{txt}" }
         format.json { head :no_content }

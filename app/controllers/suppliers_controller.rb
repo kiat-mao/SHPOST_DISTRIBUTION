@@ -31,7 +31,7 @@ class SuppliersController < ApplicationController
 
   def create
     respond_to do |format|
-      if @supplier.save
+      if @supplier.save!
         format.html { redirect_to @supplier, notice: I18n.t('controller.create_success_notice', model: '供应商') }
         format.json { render action: 'show', status: :created, location: @supplier }
       else
@@ -179,7 +179,7 @@ class SuppliersController < ApplicationController
     @supplier.is_valid = !@supplier.is_valid
       
     respond_to do |format|
-      if @supplier.save
+      if @supplier.save!
         txt = @supplier.is_valid ? "有效" : "无效"
         format.html { redirect_to suppliers_url, notice: "已成功标记为#{txt}" }
         format.json { head :no_content }

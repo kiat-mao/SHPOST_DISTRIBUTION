@@ -8,7 +8,9 @@ class OrdersController < ApplicationController
 
   #新建订单
   def fresh
+    @type = "fresh"
     @orders = initialize_grid(@orders.fresh)
+    render "index"
   end
 
   #审核被驳回订单
@@ -18,12 +20,12 @@ class OrdersController < ApplicationController
 
   #待审核订单
   def checking
-    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:checking])
+    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:checking]])
   end
 
   #复核被驳回订单
   def declined
-    @orders = initialize_grid(@orders.by_status [ OrderDetail.statuses[:declined]]
+    @orders = initialize_grid(@orders.by_status [ OrderDetail.statuses[:declined]])
   end
 
   #待复核订单
@@ -35,6 +37,13 @@ class OrdersController < ApplicationController
   def receiving
     @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:receiving]])
   end
+
+  #提交（审核）
+  def to_check
+    @order.checking! 
+  end
+
+
 
   # GET /orders/1
   # GET /orders/1.json
@@ -52,8 +61,15 @@ class OrdersController < ApplicationController
   # POST /orders
   # POST /orders.json
   def create
+    @order.user_id = current_user.id
+    @order.unit_id = current_user.unit.id
+
     respond_to do |format|
-      if @order.save
+      @order.is_fresh = true
+      @order.user = current_user
+      @order.unit = current_user.unit
+
+      if @order.save!
         format.html { redirect_to @order, notice: I18n.t('controller.create_success_notice', model: '订单')}
         format.json { render action: 'show', status: :created, location: @order }
       else
@@ -67,7 +83,7 @@ class OrdersController < ApplicationController
   # PATCH/PUT /orders/1.json
   def update
     respond_to do |format|
-      if @order.save
+      if @order.update!(order_params)
         format.html { redirect_to @order, notice: I18n.t('controller.create_success_notice', model: '订单')}
         format.json { head :no_content }
       else
@@ -80,11 +96,16 @@ class OrdersController < ApplicationController
   # DELETE /orders/1
   # DELETE /orders/1.json
   def destroy
-    @order.destroy
+    @order.destroy!
     respond_to do |format|
-      format.html { redirect_to orders_url }
+      format.html { redirect_to fresh_orders_url }
       format.json { head :no_content }
     end
+  end
+
+  def commodity_choose
+    @order = Order.find(params[:id].to_i)
+    @commodities = initialize_grid(Commodity.joins(:supplier).where("commodities.is_on_sell=? and suppliers.is_valid=?", true, true).order(:supplier_id, :cno))
   end
 
   private

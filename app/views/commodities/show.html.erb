@@ -13,9 +13,9 @@
   <dt><strong><%= model_class.human_attribute_name(:supplier_id) %>:</strong></dt>
   <dd><%= @commodity.supplier.name %></dd>
   <dt><strong><%= model_class.human_attribute_name(:cost_price) %>:</strong></dt>
-  <dd><%= @commodity.cost_price %></dd>
+  <dd><%= number_with_precision(@commodity.cost_price, precision: 2) %></dd>
   <dt><strong><%= model_class.human_attribute_name(:sell_price) %>:</strong></dt>
-  <dd><%= @commodity.sell_price %></dd>
+  <dd><%= number_with_precision(@commodity.sell_price, precision: 2) %></dd>
   <dt><strong><%= model_class.human_attribute_name(:desc) %>:</strong></dt>
   <dd><%= @commodity.desc %></dd>
   <dt><strong><%= model_class.human_attribute_name(:is_on_sell) %>:</strong></dt>

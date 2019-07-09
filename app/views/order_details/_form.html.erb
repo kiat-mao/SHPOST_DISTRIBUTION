@@ -1,17 +1,23 @@
-<%= form_for(@order_detail) do |f| %>
-  <% if @order_detail.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@order_detail.errors.count, "error") %> prohibited this order_detail from being saved:</h2>
-
-      <ul>
-      <% @order_detail.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+<%= form_for @order_detail, :html => { :class => 'form-horizontal' } do |f| %>
+  <div class="control-group">
+    <%= f.label :amount, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :amount, :class => 'text_field' %>
     </div>
-  <% end %>
-
-  <div class="actions">
-    <%= f.submit %>
   </div>
+  <div class="control-group">
+    <%= f.label :price, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :price, :class => 'text_field' %>
+    </div>
+  </div>
+  <%= hidden_field_tag('commodity_id', @commodity_id) %> 
+  <%= hidden_field_tag('order_id', @order.id) %> 
+  <%= f.submit nil, :class => 'btn btn-primary' %>
+  <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+            commodity_choose_order_path(@order), :class => 'btn btn-default' %>
+
 <% end %>
+
+
+

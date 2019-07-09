@@ -1,4 +1,26 @@
-<p id="notice"><%= notice %></p>
+<%- model_class = Order -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.titleize %></h1>
+</div>
 
-<%= link_to 'Edit', edit_order_path(@order) %> |
-<%= link_to 'Back', orders_path %>
+<dl class="dl-horizontal">
+  <dt><strong><%= model_class.human_attribute_name(:no) %>:</strong></dt>
+  <dd><%= @order.no %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:name) %>:</strong></dt>
+  <dd><%= @order.name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:address) %>:</strong></dt>
+  <dd><%= @order.address %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:tel) %>:</strong></dt>
+  <dd><%= @order.tel %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:phone) %>:</strong></dt>
+  <dd><%= @order.phone %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:user_id) %>:</strong></dt>
+  <dd><%= @order.user.name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:unit_id) %>:</strong></dt>
+  <dd><%= @order.unit.name %></dd>
+</dl>
+
+<%= link_to t('.back', :default => t("helpers.links.back")),
+              fresh_orders_path, :class => 'btn btn-default'  %>
+<%= link_to t('继续创建子订单'),
+              commodity_choose_order_path(@order), :class => 'btn btn-default' %>

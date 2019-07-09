@@ -297,6 +297,12 @@ zh-CN:
       commodity:
         one: 商品管理
         other: 商品管理
+      order:
+        one: 订单管理
+        other: 订单管理
+      order_detail:
+        one: 子订单管理
+        other: 子订单管理
     attributes:
       user:
         email: "电子邮件"
@@ -367,6 +373,27 @@ zh-CN:
         desc: "商品详情"
         is_on_sell: "是否上架"
         cover: "商品图片"
+      order:
+        "no": "订单编码"
+        name: "收货人"
+        address: "收货地址"
+        phone: "收货人电话"
+        tel: "收货人手机"
+        desc: "备注"
+        user_id: "创建人"
+        unit_id: "创建单位"
+        created_at: "创建时间"
+      order_detail:
+        "no": "子订单编码"
+        amount: "数量"
+        price: "销售单价"
+        status: "状态"
+        desc: "备注"
+        why_decline: "最后一次驳回理由"
+        closed_at: "结单时间"
+        order_id: "主订单"
+        commodity_id: "商品"
+        at_unit_id: "目前单位"
   menu:
     permission:
       name: "权限管理"
@@ -414,6 +441,19 @@ zh-CN:
           needrole:
             can: :read
             role: :Commodity
+    order:
+      name: "订单管理"
+      needrole:
+        can: :read
+        role: :Order
+      submenu:
+        supplier:
+          name: "新建的订单"
+          link: "/orders/fresh"
+          need_count: false
+          needrole:
+            can: :create
+            role: :Order
     import:
       name: "文件管理"
       needrole:
