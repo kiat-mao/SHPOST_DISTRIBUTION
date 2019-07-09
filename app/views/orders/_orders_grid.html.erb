@@ -60,7 +60,7 @@
               content_tag(:div) do
                          # without buffer only the last tag will appear
                 content_tag(:b,"目前单位")+
-                content_tag(:p,order_detail.at_unit.name)
+                content_tag(:p,order_detail.at_unit.blank? ? "" : order_detail.at_unit.name)
               end
             end +
             content_tag(:td) do
@@ -78,7 +78,15 @@
                       edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if can? :update, order_detail)) +
                 content_tag(:p,(link_to t('.destroy', :default => t("helpers.links.destroy")),
                       order_detail_path(order_detail),
-                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order_detail))
+                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order_detail))+
+                content_tag(:p,(link_to t('.to_recheck', :default => t("helpers.links.to_recheck")),
+                      to_recheck_order_detail_path(order_detail,"from_order"), :method => :post, :class => 'btn btn-xs btn-primary' if ((can? :to_recheck, order_detail)&&order_detail.checking?)))+
+                content_tag(:p,(link_to t('.check_decline', :default => t("helpers.links.check_decline")),
+                      check_decline_order_detail_path(order_detail,"from_order"), :method => :post, :class => 'btn btn-xs btn-primary' if ((can? :check_decline, order_detail)&&order_detail.checking?)))+
+                content_tag(:p,(link_to t('.place', :default => t("helpers.links.place")),
+                      place_order_detail_path(order_detail,"from_order"), :method => :post, :class => 'btn btn-xs btn-primary' if ((can? :place, order_detail)&&order_detail.rechecking?)))+
+                content_tag(:p,(link_to t('.recheck_decline', :default => t("helpers.links.recheck_decline")),
+                      recheck_decline_order_detail_path(order_detail,"from_order"), :method => :post, :class => 'btn btn-xs btn-primary' if ((can? :recheck_decline, order_detail)&&order_detail.rechecking?)))
               end
             end
           end

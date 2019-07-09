@@ -59,6 +59,22 @@ class Ability
         can :read, Unit, id: user.unit_id
         can [:read, :up_download_export], UpDownload
         can [:read, :download], ImportFile
+
+        if user.unit.unit_type.eql?"branch"
+            can [:read, :fresh, :create, :to_check, :update, :destroy, :new, :commodity_choose], Order, user_id: user.id
+            can [:read], Order, unit_id: user.unit_id
+            can [:read], OrderDetail, order: {unit_id: user.unit_id}
+            can [:read, :update, :destroy, :new, :create], OrderDetail, order: {user_id: user.id}
+            can :manage, OrderDetail
+        end
+        if user.unit.eql? Unit::DELIVERY
+            can [:read, :checking], Order
+            can [:read, :checking, :to_recheck, :check_decline], OrderDetail
+        end
+        if user.unit.eql? Unit::POSTBUY
+            can [:read, :rechecking], Order
+            can [:read, :rechecking, :place, :recheck_decline], OrderDetail
+        end
     else
         cannot :manage, :all
         #can :update, User, id: user.id

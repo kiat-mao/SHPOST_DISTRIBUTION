@@ -8,36 +8,35 @@ class OrdersController < ApplicationController
 
   #新建订单
   def fresh
-    @type = "fresh"
-    @orders = initialize_grid(@orders.fresh)
+    @orders = initialize_grid(@orders.accessible_by(current_ability).fresh)
     render "index"
   end
 
   #审核被驳回订单
   def pending
-    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:pending]])
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [OrderDetail.statuses[:pending]])
   end
 
   #待审核订单
   def checking
-    @type = "checking"
-    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:checking]])
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [OrderDetail.statuses[:checking]])
     render "index"
   end
 
   #复核被驳回订单
   def declined
-    @orders = initialize_grid(@orders.by_status [ OrderDetail.statuses[:declined]])
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [ OrderDetail.statuses[:declined]])
   end
 
   #待复核订单
   def rechecking
-    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:rechecking]])
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [OrderDetail.statuses[:rechecking]])
+    render "index"
   end
 
   #待收货订单
   def receiving
-    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:receiving]])
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [OrderDetail.statuses[:receiving]])
   end
 
   #提交（审核）

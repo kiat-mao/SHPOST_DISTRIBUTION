@@ -4,6 +4,11 @@
 <%- smodel_class = Supplier -%>
 <div class="page-header">
   <h1><%=t '.title', :default => model_class.model_name.human%></h1>
+  <div style="float:right">   
+    <%= link_to t('.back', :default => t("helpers.links.back")),
+            eval(@status + '_orders_' +'path'),
+            :class => 'btn btn-primary' %>
+  </div>
 </div>
 
 <%= grid(@order_details) do |g|
@@ -51,13 +56,21 @@
     end
 
     g.column name: model_class.human_attribute_name(:at_unit_id), attribute: 'name', assoc: :at_unit do |order_detail|
-      order_detail.at_unit.blank? ? "" : order_detail.at_unit.try :name
+      order_detail.at_unit.blank? ? "" : order_detail.at_unit.name
     end
 
     g.column do |order_detail|
       ActiveSupport::SafeBuffer.new << 
         (link_to t('.edit', :default => t("helpers.links.edit")), edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if can? :update, order_detail) << ' ' <<
-          (link_to t('.destroy', :default => t("helpers.links.destroy")), order_detail_path(order_detail), :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order_detail)
+          (link_to t('.destroy', :default => t("helpers.links.destroy")), order_detail_path(order_detail), :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order_detail) << ' ' << 
+          (link_to t('.to_recheck', :default => t("helpers.links.to_recheck")),
+            to_recheck_order_detail_path(order_detail), :method => :post, :class => 'btn btn-xs btn-primary' if ((can? :to_recheck, order_detail)&&order_detail.checking?)) << ' ' << 
+          (link_to t('.check_decline', :default => t("helpers.links.check_decline")),
+            check_decline_order_detail_path(order_detail), :method => :post, :class => 'btn btn-xs btn-primary' if ((can? :check_decline, order_detail)&&order_detail.checking?)) << ' ' << 
+          (link_to t('.place', :default => t("helpers.links.place")),
+            place_order_detail_path(order_detail), :method => :post, :class => 'btn btn-xs btn-primary' if ((can? :place, order_detail)&&order_detail.rechecking?)) << ' ' << 
+          (link_to t('.recheck_decline', :default => t("helpers.links.recheck_decline")),
+            recheck_decline_order_detail_path(order_detail), :method => :post, :class => 'btn btn-xs btn-primary' if ((can? :recheck_decline, order_detail)&&order_detail.rechecking?))
     end
   end 
 %>

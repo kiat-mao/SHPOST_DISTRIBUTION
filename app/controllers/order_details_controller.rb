@@ -4,33 +4,38 @@ class OrderDetailsController < ApplicationController
   # GET /order_details
   # GET /order_details.json
   def index
-    status = params[:status].to_sym
-    @order_details = initialize_grid(@order_details.accessible_by(current_ability))
+    # @order_details = initialize_grid(@order_details.accessible_by(current_ability))
   end
 
   #审核被驳回子订单
   def pending
-    @order_details = initialize_grid(@order_details.where(status: OrderDetail.statuses[:pending]).where(user: current_user))
+    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:pending]).where(user: current_user).order("orders.no, order_details.no"))
+    render "index"
   end
 
   #待审核子订单
   def checking
-    @order_details = initialize_grid(@order_details.where(status: OrderDetail.statuses[:checking]))
+    @status = "checking"
+    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:checking]).order("orders.no, order_details.no"))
+    render "index"
   end
 
   #复核被驳回子订单
   def declined
-    @order_details = initialize_grid(@order_details.where(status: OrderDetail.statuses[:declined]))
+    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:declined]).order("orders.no, order_details.no"))
+    render "index"
   end
 
   #待复核子订单
   def rechecking
-    @order_details = initialize_grid(@order_details.where(status: OrderDetail.statuses[:rechecking]))
+    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:rechecking]).order("orders.no, order_details.no"))
+    render "index"
   end
 
   #待收货子订单
   def receiving
-    @order_details = initialize_grid(@order_details.where(status: OrderDetail.statuses[:receiving]).(user: current_user))
+    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:receiving]).(user: current_user).order("orders.no, order_details.no"))
+    render "index"
   end
 
   # GET /order_details/1
@@ -104,21 +109,41 @@ class OrderDetailsController < ApplicationController
   #通过（审核）
   def to_recheck
     @order_detail.rechecking!
+    if params[:format].eql?"from_order"
+      redirect_to checking_orders_url
+    else
+      redirect_to checking_order_details_url
+    end
   end
 
   #驳回（审核）
   def check_decline
     @order_detail.declined!
+    if params[:format].eql?"from_order"
+      redirect_to checking_orders_url
+    else
+      redirect_to checking_order_details_url
+    end
   end
 
   #下单
   def place
     @order_detail.receiving!
+    if params[:format].eql?"from_order"
+      redirect_to rechecking_orders_url
+    else
+      redirect_to rechecking_order_details_url
+    end
   end
 
-  #驳回（审核）
+  #驳回（复核）
   def recheck_decline
     @order_detail.declined!
+    if params[:format].eql?"from_order"
+      redirect_to rechecking_orders_url
+    else
+      redirect_to rechecking_order_details_url
+    end
   end
 
   #收货
