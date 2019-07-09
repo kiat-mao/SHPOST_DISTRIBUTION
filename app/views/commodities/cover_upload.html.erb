@@ -1,0 +1,12 @@
+<%- model_class = Commodity -%>
+<div class="page-header">
+  <font face="微软雅黑" color='#D9B300' size=3>上传商品图片:
+  </font>
+  <%= form_for @commodity, :html => { :class => 'form-horizontal' } do |f| %>
+  <div class="controls">
+    <%= f.file_field :cover, :class => 'text_field' %>
+    <%= f.hidden_field :cover_cache %>
+    <%= f.submit "确认上传", :class => 'btn btn-primary'%>
+  </div>
+  <%end%>
+</div>

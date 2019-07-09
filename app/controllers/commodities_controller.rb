@@ -21,6 +21,16 @@ class CommoditiesController < ApplicationController
     set_autocom_update(@commodity)
   end
 
+  
+  def cover_upload
+    # @operation = "commodity_upload"
+    # @commodity = Commodity.find_by(id: params[:format])
+    @commodity.cover = params[:cover]
+    # redirect_to commodity_upload_commodities_path(commodity) , :notice => '设置成功'
+  end
+
+  
+
   def create
     respond_to do |format|
       if @commodity.save
@@ -215,7 +225,7 @@ class CommoditiesController < ApplicationController
     end
 
     def commodity_params
-      params.require(:commodity).permit(:cno, :dms_no, :name, :supplier_id, :cost_price, :sell_price, :desc, :is_on_sell)
+      params.require(:commodity).permit(:cno, :dms_no, :name, :supplier_id, :cost_price, :sell_price, :desc, :is_on_sell, :cover)
     end
 
     def upload_commodity(file)

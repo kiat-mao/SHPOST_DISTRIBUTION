@@ -1,0 +1,8 @@
+<%- model_class = Supplier -%>
+
+<dl class="dl-horizontal">
+<% @supplier.contracts.each do |x|%>
+  
+  <dt><%= image_tag(x.url, height: '150', width: '150')%></dt>
+  <% end %>
+</dl>

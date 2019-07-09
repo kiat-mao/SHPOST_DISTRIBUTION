@@ -101,10 +101,14 @@ ShpostDistribution::Application.routes.draw do
     collection do 
       get 'supplier_import'
       post 'supplier_import' => 'suppliers#supplier_import'
+      
     end
 
     member do
       get 'set_valid'
+      get 'contracts_upload'
+      post 'contracts_upload' => 'suppliers#contracts_upload'
+      get 'contracts_show'
     end
   end
 
@@ -115,6 +119,8 @@ ShpostDistribution::Application.routes.draw do
     end
 
     member do
+      get 'cover_upload'
+      post 'cover_upload' => 'commodities#cover_upload'
       get 'set_on_sell'
     end
   end

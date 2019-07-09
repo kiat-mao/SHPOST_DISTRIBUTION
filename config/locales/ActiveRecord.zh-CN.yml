@@ -156,6 +156,9 @@ zh-CN:
       reset_pwd: 重置密码
       image_index: 图片管理
       import: 导入
+      cover_upload: 商品图片上传
+      contracts_upload: 合同上传
+      contracts_show: 查看合同
     titles:
       edit: 编辑%{model}
       new: 新增%{model}
@@ -363,6 +366,7 @@ zh-CN:
         sell_price: "最低销售价"
         desc: "商品详情"
         is_on_sell: "是否上架"
+        cover: "商品图片"
   menu:
     permission:
       name: "权限管理"

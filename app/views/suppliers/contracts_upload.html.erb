@@ -1,0 +1,12 @@
+<%- model_class = Supplier -%>
+<div class="page-header">
+  <font face="微软雅黑" color='#D9B300' size=3>上传合同:
+  </font>
+  <%= form_for @supplier, :html => { :class => 'form-horizontal' } do |f| %>
+  <div class="controls">
+    <%= f.file_field :contracts, multiple: true%>
+    <%= f.hidden_field :contracts_cache %>
+    <%= f.submit "确认上传", :class => 'btn btn-primary'%>
+  </div>
+  <%end%>
+</div>

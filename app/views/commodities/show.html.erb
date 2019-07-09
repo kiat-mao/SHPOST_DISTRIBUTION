@@ -20,6 +20,7 @@
   <dd><%= @commodity.desc %></dd>
   <dt><strong><%= model_class.human_attribute_name(:is_on_sell) %>:</strong></dt>
   <dd><%= @commodity.is_on_sell_name %></dd>
+  <%= image_tag(@commodity.cover_url, height: '150', width: '150') if @commodity.cover? %>
 </dl>
 
 <%= link_to t('.back', :default => t("helpers.links.back")),

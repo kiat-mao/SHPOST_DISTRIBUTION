@@ -12,6 +12,10 @@
   <dd><%= @supplier.valid_before.blank? ? "" : @supplier.valid_before.localtime.strftime('%Y-%m-%d').to_s %></dd>
   <dt><strong><%= model_class.human_attribute_name(:is_valid) %>:</strong></dt>
   <dd><%= @supplier.is_valid_name %></dd>
+  <% @supplier.contracts.each do |x|%>
+  
+  <dt><%= image_tag(x.url)%></dt>
+  <% end %>
 </dl>
 
 <%= link_to t('.back', :default => t("helpers.links.back")),

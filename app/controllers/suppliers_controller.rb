@@ -20,6 +20,15 @@ class SuppliersController < ApplicationController
   def edit
   end
 
+  def contracts_upload
+    # @supplier = Supplier.find_by(id: params[:format])
+    # @supplier.contracts = params[:contracts]
+    s = Supplier.new(params[:supplier])
+    s.save!
+  end
+  def contracts_show
+  end
+
   def create
     respond_to do |format|
       if @supplier.save
@@ -188,7 +197,7 @@ class SuppliersController < ApplicationController
     end
 
     def supplier_params
-      params.require(:supplier).permit(:sno, :name, :valid_before, :is_valid)
+      params.require(:supplier).permit(:sno, :name, :valid_before, :is_valid, {contracts: []})
     end
 
     def upload_supplier(file)
