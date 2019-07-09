@@ -19,9 +19,9 @@ class Order < ActiveRecord::Base
     # @order.at_unit
     Order.transaction do
       begin
-        order.is_fresh = false
-        order.save!
-        order_details.each do |x|
+        self.is_fresh = false
+        self.save!
+        self.order_details.each do |x|
           x.at_unit = Unit::DELIVERY
           x.checking!
         end

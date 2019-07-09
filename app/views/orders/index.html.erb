@@ -8,7 +8,9 @@
             new_order_path,
             :class => 'btn btn-primary' %>
       <% end %>
-      
+      <% if !params[:action].eql?"fresh" %>
+      <%= check_box("checkbox","order_detail", onclick: "window.location.href= #{ eval(params[:action] + '_order_details_' +'path')}") %>只显示子订单
+      <% end %>
   </div>
   <%= render partial: 'orders_grid' %>
 <%end %>

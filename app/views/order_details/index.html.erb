@@ -51,7 +51,7 @@
     end
 
     g.column name: model_class.human_attribute_name(:at_unit_id), attribute: 'name', assoc: :at_unit do |order_detail|
-      order_detail.at_unit.try :name
+      order_detail.at_unit.blank? ? "" : order_detail.at_unit.try :name
     end
 
     g.column do |order_detail|

@@ -20,7 +20,9 @@ class OrdersController < ApplicationController
 
   #待审核订单
   def checking
+    @type = "checking"
     @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:checking]])
+    render "index"
   end
 
   #复核被驳回订单
@@ -41,6 +43,7 @@ class OrdersController < ApplicationController
   #提交（审核）
   def to_check
     @order.checking!
+    redirect_to fresh_orders_url
   end
 
 

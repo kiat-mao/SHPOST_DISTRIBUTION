@@ -138,12 +138,17 @@ ShpostDistribution::Application.routes.draw do
 
     member do
       get 'commodity_choose'
+      get 'to_check'
     end
     resources :order_details
   end
 
   get 'order_details' => 'order_details#index'
 
-  resources :order_details
+  resources :order_details do
+    collection do
+      get 'checking' => 'order_details#checking'
+    end
+  end
   
 end

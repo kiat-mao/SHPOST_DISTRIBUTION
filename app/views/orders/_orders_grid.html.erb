@@ -121,7 +121,9 @@
                       order_path(order),
                        :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order) << ' ' <<
       (link_to t('新建子订单'),
-              commodity_choose_order_path(order), :class => 'btn btn-xs btn-primary' if can? :create, OrderDetail) 
+              commodity_choose_order_path(order), :class => 'btn btn-xs btn-primary' if can? :create, OrderDetail) << ' ' <<
+      (link_to t('.to_check', :default => t("helpers.links.to_check")),
+              to_check_order_path(order), :class => 'btn btn-xs btn-primary' if can? :to_check, order) 
     end
   end 
 %>
