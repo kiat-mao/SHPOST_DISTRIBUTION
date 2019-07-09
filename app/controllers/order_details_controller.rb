@@ -108,7 +108,7 @@ class OrderDetailsController < ApplicationController
 
   #驳回（审核）
   def check_decline
-    @order_detail.declined!
+    @order_detail.pending!
   end
 
   #下单
