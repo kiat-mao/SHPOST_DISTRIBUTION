@@ -1,5 +1,9 @@
 class OrderDetailsController < ApplicationController
-  load_and_authorize_resource
+  load_and_authorize_resource :order
+  load_and_authorize_resource :order_detail, through: :order
+  
+  after_action :logging, only: [:create, :to_check, :to_recheck, :check_decline, :place, :recheck_decline, :confirm, :cancel]
+  after_action :logging,  only: [:update], unless: -> {@order_detail.try :waiting?}
 
   # GET /order_details
   # GET /order_details.json
@@ -76,7 +80,7 @@ class OrderDetailsController < ApplicationController
   def update
     @order = @order_detail.order
     respond_to do |format|
-      if @order_detail.update!(order_detail_params)
+      if @order_detail.update(order_detail_params)
         format.html { redirect_to fresh_orders_url, notice: I18n.t('controller.create_success_notice', model: '子订单') }
         format.json { head :no_content }
       else
@@ -109,6 +113,8 @@ class OrderDetailsController < ApplicationController
   #驳回（审核）
   def check_decline
     @order_detail.pending!
+
+    @why_decline = @order_detail.why_decline
   end
 
   #下单
@@ -119,6 +125,8 @@ class OrderDetailsController < ApplicationController
   #驳回（审核）
   def recheck_decline
     @order_detail.declined!
+
+    @why_decline = @order_detail.why_decline
   end
 
   #收货
@@ -132,6 +140,9 @@ class OrderDetailsController < ApplicationController
   end
 
   private
+    def logging
+      order_detail_log = OrderDetailLog.create!(user: current_user, operation: params[:action], order_detail: @order_detail, desc: @why_decline)
+    end
     # Use callbacks to share common setup or constraints between actions.
     # def set_order_detail
     #   @order_detail = OrderDetail.find(params[:id])
