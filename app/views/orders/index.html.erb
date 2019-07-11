@@ -3,15 +3,16 @@
   <h1><%=t '.title', :default => model_class.model_name.human %></h1>
   <%= form_tag('', :method => "get", name: 'form1') do %>
   <div style="float:right">   
-      <% if can? :new, Order %>
+      <% if (can? :new, Order) && (params[:action].eql?"fresh") %>
       <%= link_to t('.new', :default => t("helpers.links.new")),
             new_order_path,
             :class => 'btn btn-primary' %>
       <% end %>
       <% if !params[:action].eql?"fresh" %>
-      <%= check_box("checkbox","order_detail", onclick: "window.location.href= #{ eval(params[:action] + '_order_details_' +'path')}") %>只显示子订单
+      <%= check_box("checkbox","order_detail", onclick: "window.location.href= '#{ eval(params[:action] + '_order_details_path')}'") %>只显示子订单
       <% end %>
   </div>
+
   <%= render partial: 'orders_grid' %>
 <%end %>
 </div>

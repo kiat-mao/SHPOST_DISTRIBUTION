@@ -156,6 +156,12 @@ zh-CN:
       reset_pwd: 重置密码
       image_index: 图片管理
       import: 导入
+      to_check: 送审
+      to_recheck: 通过
+      check_decline: 驳回
+      place: 下单
+      recheck_decline: 驳回
+      confirm: 收货
     titles:
       edit: 编辑%{model}
       new: 新增%{model}
@@ -443,12 +449,47 @@ zh-CN:
         can: :read
         role: :Order
       submenu:
-        supplier:
-          name: "新建的订单"
+        fresh_order:
+          name: "新建订单"
           link: "/orders/fresh"
           need_count: false
           needrole:
-            can: :create
+            can: :fresh
+            role: :Order
+        checking_order:
+          name: "待审核订单"
+          link: "/orders/checking"
+          need_count: false
+          needrole:
+            can: :checking
+            role: :Order
+        rechecking_order:
+          name: "待复核订单"
+          link: "/orders/rechecking"
+          need_count: false
+          needrole:
+            can: :rechecking
+            role: :Order
+        receiving_order:
+          name: "待收货订单"
+          link: "/orders/receiving"
+          need_count: false
+          needrole:
+            can: :receiving
+            role: :Order
+        pending_order:
+          name: "待处理订单"
+          link: "/orders/pending"
+          need_count: false
+          needrole:
+            can: :pending
+            role: :Order
+        declined_order:
+          name: "待处理订单"
+          link: "/orders/declined"
+          need_count: false
+          needrole:
+            can: :declined
             role: :Order
     import:
       name: "文件管理"

@@ -15,6 +15,7 @@ class OrdersController < ApplicationController
   #审核被驳回订单
   def pending
     @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [OrderDetail.statuses[:pending]])
+    render "index"
   end
 
   #待审核订单
@@ -26,6 +27,7 @@ class OrdersController < ApplicationController
   #复核被驳回订单
   def declined
     @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [ OrderDetail.statuses[:declined]])
+    render "index"
   end
 
   #待复核订单
@@ -37,6 +39,7 @@ class OrdersController < ApplicationController
   #待收货订单
   def receiving
     @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [OrderDetail.statuses[:receiving]])
+    render "index"
   end
 
   #提交（审核）

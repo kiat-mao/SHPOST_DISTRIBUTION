@@ -61,16 +61,20 @@
 
     g.column do |order_detail|
       ActiveSupport::SafeBuffer.new << 
-        (link_to t('.edit', :default => t("helpers.links.edit")), edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if can? :update, order_detail) << ' ' <<
-          (link_to t('.destroy', :default => t("helpers.links.destroy")), order_detail_path(order_detail), :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order_detail) << ' ' << 
+        (link_to t('.edit', :default => t("helpers.links.edit")), edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if (can? :update, order_detail) && (order_detail.waiting? || order_detail.pending?)) << ' ' <<
+          (link_to t('.destroy', :default => t("helpers.links.destroy")), order_detail_path(order_detail), :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if (can? :destroy, order_detail) && order_detail.waiting?) << ' ' << 
           (link_to t('.to_recheck', :default => t("helpers.links.to_recheck")),
-            to_recheck_order_detail_path(order_detail), :method => :post, :class => 'btn btn-xs btn-primary' if ((can? :to_recheck, order_detail)&&order_detail.checking?)) << ' ' << 
+            to_recheck_order_detail_path(order_detail), :method => :post, :onclick => "if(!confirm('确定通过吗？')){return false;}", :class => 'btn btn-xs btn-primary' if ((can? :to_recheck, order_detail) && ((order_detail.checking?) || (order_detail.declined?)))) << ' ' << 
           (link_to t('.check_decline', :default => t("helpers.links.check_decline")),
-            check_decline_order_detail_path(order_detail), :method => :post, :class => 'btn btn-xs btn-primary' if ((can? :check_decline, order_detail)&&order_detail.checking?)) << ' ' << 
+            check_decline_order_detail_path(order_detail), :method => :post, :onclick => "if(!confirm('确定驳回吗？')){return false;}", :class => 'btn btn-xs btn-primary' if ((can? :check_decline, order_detail) && ((order_detail.checking?) || (order_detail.declined?)))) << ' ' << 
           (link_to t('.place', :default => t("helpers.links.place")),
-            place_order_detail_path(order_detail), :method => :post, :class => 'btn btn-xs btn-primary' if ((can? :place, order_detail)&&order_detail.rechecking?)) << ' ' << 
+            place_order_detail_path(order_detail), :method => :post, :onclick => "if(!confirm('确定下单吗？')){return false;}", :class => 'btn btn-xs btn-primary' if ((can? :place, order_detail) && order_detail.rechecking?)) << ' ' << 
           (link_to t('.recheck_decline', :default => t("helpers.links.recheck_decline")),
-            recheck_decline_order_detail_path(order_detail), :method => :post, :class => 'btn btn-xs btn-primary' if ((can? :recheck_decline, order_detail)&&order_detail.rechecking?))
+            recheck_decline_order_detail_path(order_detail), :method => :post, :onclick => "if(!confirm('确定驳回吗？')){return false;}", :class => 'btn btn-xs btn-primary' if ((can? :recheck_decline, order_detail) && order_detail.rechecking?)) << ' ' << 
+          (link_to t('.confirm', :default => t("helpers.links.confirm")),
+            confirm_order_detail_path(order_detail), :method => :post, :onclick => "if(!confirm('确定收货吗？')){return false;}", :class => 'btn btn-xs btn-primary' if ((can? :confirm, order_detail) && order_detail.receiving?)) << ' ' << 
+          (link_to t('.cancel', :default => t("helpers.links.cancel")),
+                      cancel_order_detail_path(order_detail), :method => :post, :onclick => "if(!confirm('确定取消吗？')){return false;}", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && order_detail.pending?))
     end
   end 
 %>

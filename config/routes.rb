@@ -143,15 +143,6 @@ ShpostDistribution::Application.routes.draw do
         get 'rechecking'
         get 'receiving'
       end
-      member do
-        post 'to_check'
-        post 'to_recheck'
-        post 'check_decline'
-        post 'place'
-        post 'recheck_decline'
-        post 'confirm'
-        post 'cancel'
-      end
     end
 
     member do
@@ -166,6 +157,19 @@ ShpostDistribution::Application.routes.draw do
   resources :order_details do
     collection do
       get 'checking' => 'order_details#checking'
+      get 'rechecking' => 'order_details#rechecking'
+      get 'receiving' => 'order_details#receiving'
+      get 'pending' => 'order_details#pending'
+      get 'declined' => 'order_details#declined'
+    end
+    member do
+      post 'to_check'
+      post 'to_recheck'
+      post 'check_decline'
+      post 'place'
+      post 'recheck_decline'
+      post 'confirm'
+      post 'cancel'
     end
   end
   
