@@ -1,5 +1,9 @@
 class OrderDetailsController < ApplicationController
-  load_and_authorize_resource
+  load_and_authorize_resource :order
+  load_and_authorize_resource :order_detail, through: :order
+  
+  after_action :logging, only: [:create, :to_check, :to_recheck, :check_decline, :place, :recheck_decline, :confirm, :cancel]
+  after_action :logging,  only: [:update], unless: -> {@order_detail.try :waiting?}
 
   # GET /order_details
   # GET /order_details.json
@@ -146,6 +150,7 @@ class OrderDetailsController < ApplicationController
     status = @order_detail.status
     @order_detail.update why_decline: params[:why_decline]    
     @order_detail.pending!
+<<<<<<< HEAD
     if params[:format].eql?"from_order"
       if status.eql?"declined"
         redirect_to declined_orders_url
@@ -159,6 +164,10 @@ class OrderDetailsController < ApplicationController
         redirect_to checking_order_details_url
       end
     end
+=======
+
+    @why_decline = @order_detail.why_decline
+>>>>>>> 36a5d7ef6566084c9263d06aa0bacae5b6b757c3
   end
 
   #下单
@@ -174,11 +183,16 @@ class OrderDetailsController < ApplicationController
   #驳回（复核）
   def recheck_decline
     @order_detail.declined!
+<<<<<<< HEAD
     if params[:format].eql?"from_order"
       redirect_to rechecking_orders_url
     else
       redirect_to rechecking_order_details_url
     end
+=======
+
+    @why_decline = @order_detail.why_decline
+>>>>>>> 36a5d7ef6566084c9263d06aa0bacae5b6b757c3
   end
 
   #收货
@@ -202,6 +216,9 @@ class OrderDetailsController < ApplicationController
   end
 
   private
+    def logging
+      order_detail_log = OrderDetailLog.create!(user: current_user, operation: params[:action], order_detail: @order_detail, desc: @why_decline)
+    end
     # Use callbacks to share common setup or constraints between actions.
     # def set_order_detail
     #   @order_detail = OrderDetail.find(params[:id])

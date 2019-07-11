@@ -1,6 +1,9 @@
 class OrdersController < ApplicationController
   load_and_authorize_resource
 
+  after_action :logging, only: [:to_check]
+  # before_filter :logging
+
   # GET /orders
   # GET /orders.json
   def index
@@ -114,6 +117,12 @@ class OrdersController < ApplicationController
   end
 
   private
+    def logging
+      @order.order_details.each do |order_detail|
+        order_detail_log = OrderDetailLog.create!(user: current_user, operation: params[:action], order_detail: order_detail)
+      end
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     # def set_order
     #   @order = Order.find(params[:id])

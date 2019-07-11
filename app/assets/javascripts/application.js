@@ -20,7 +20,7 @@
 //= require twitter/bootstrap
 //= require turbolinks
 //= require_tree .
-var ready;
+// var ready;
 
 function ajaxsuppliers() {
 	$('#supplier_name').bind('railsAutocomplete.select', function(event, data){
@@ -30,5 +30,10 @@ function ajaxsuppliers() {
   });
 }
 
-$(document).ready(ready);
-$(document).on('page:load', ready);
+// $(document).ready(ready);
+// $(document).on('page:load', ready);
+
+//For WiceGrid 3.6 not work on turbolink 5.0
+// $(document).on('turbolinks:load', function(){
+//     initWiceGrid(); 
+// });

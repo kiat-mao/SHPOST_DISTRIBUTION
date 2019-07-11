@@ -11,7 +11,7 @@
       <%= link_to t('.import', :default => t("helpers.links.import")),
                   commodity_import_commodities_path,
                   :class => 'btn btn-primary' %>
-      <button class="btn btn-primary wg-external-csv-export-button" data-grid-name="commodities" >导出</button>
+      <a class="btn btn-primary wg-external-csv-export-button" data-grid-name="commodities" >导出</a>
   </div>
   <%= render partial: 'commodities_grid' %>
 

@@ -3,6 +3,8 @@ class OrderDetail < ActiveRecord::Base
   belongs_to :at_unit, class_name: "Unit"
   belongs_to :commodity
 
+  has_many :order_detail_logs
+
   before_create :generate_no
 
 
