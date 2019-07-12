@@ -22,12 +22,17 @@ class SuppliersController < ApplicationController
 
   def contracts_upload
     # @supplier = Supplier.find_by(id: params[:format])
-    # @supplier.contracts = params[:contracts]
-    s = Supplier.new(params[:supplier])
-    s.save!
+    # @supplier.contracts = @supplier.contracts.insert("params[:contracts]")
+    # @supplier.save
+    # x = @supplier.contracts
+    # @supplier.contracts = x.concat(params[:contracts])
+    # s = Supplier.new(params[:supplier])
+    
   end
   def contracts_show
   end
+
+  
 
   def create
     respond_to do |format|

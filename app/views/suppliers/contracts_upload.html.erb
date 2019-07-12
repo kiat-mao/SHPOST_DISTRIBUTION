@@ -4,8 +4,11 @@
   </font>
   <%= form_for @supplier, :html => { :class => 'form-horizontal' } do |f| %>
   <div class="controls">
+    <!-- <% @supplier.contracts.each do |x| %> -->
+    <!-- <%= hidden_field :supplier, :contracts, multiple: true, value: x.identifier %> -->
+    <!-- <% end %> -->
     <%= f.file_field :contracts, multiple: true%>
-    <%= f.hidden_field :contracts_cache %>
+    
     <%= f.submit "确认上传", :class => 'btn btn-primary'%>
   </div>
   <%end%>

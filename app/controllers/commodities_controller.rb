@@ -25,7 +25,7 @@ class CommoditiesController < ApplicationController
   def cover_upload
     # @operation = "commodity_upload"
     # @commodity = Commodity.find_by(id: params[:format])
-    @commodity.cover = params[:cover]
+    # @commodity.cover = params[:cover]
     # redirect_to commodity_upload_commodities_path(commodity) , :notice => '设置成功'
   end
 
