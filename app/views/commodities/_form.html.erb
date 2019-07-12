@@ -45,6 +45,27 @@
       <%= f.text_area :desc, :class => 'text_field' %>
     </div>
   </div>
+  <div class="control-group">
+    <%= image_tag(@commodity.cover_url) if @commodity.cover? %>
+  </div>
+  <div class="control-group">
+
+    <%= f.label :上传图片, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.file_field :cover, :class => 'text_field' %>
+      <%= f.hidden_field :cover_cache %>
+    </div>
+  </div>
+  
+  
+  <!-- <div class="control-group">
+    <%= f.label :is_on_sell, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.select(:is_on_sell, Commodity::IS_ON_SELL.invert) %>
+    </div>
+  </div> -->
+  
+
   
   <%= f.submit nil, :class => 'btn btn-primary' %>
   <%= link_to t('.cancel', :default => t("helpers.links.cancel")),

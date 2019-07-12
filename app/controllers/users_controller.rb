@@ -79,6 +79,20 @@ class UsersController < ApplicationController
     end
   end
 
+  def lock
+    User.transaction do
+      @user.lock_access!
+      @user.update(locked_at: '3019-01-01')
+    end
+      redirect_to users_url
+  end
+
+  def unlock
+    @user.unlock_access!
+   
+    redirect_to users_url
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     # def set_user

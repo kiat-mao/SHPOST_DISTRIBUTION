@@ -48,4 +48,9 @@ class User < ActiveRecord::Base
     end
   end
 
+  def is_unlocked?
+    locked_at.blank?  ? true : false
+  end
+
+ 
 end
