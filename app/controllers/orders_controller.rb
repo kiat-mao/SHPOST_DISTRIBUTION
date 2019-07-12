@@ -51,7 +51,15 @@ class OrdersController < ApplicationController
     redirect_to fresh_orders_url
   end
 
-
+  # 查看
+  def look
+    if current_user.unit.unit_type.eql?"branch"
+      @orders = initialize_grid(@orders.accessible_by(current_ability).where(is_fresh: false))
+    else
+      @orders = initialize_grid(@orders.where(is_fresh: false))
+    end    
+    render "index"
+  end
 
   # GET /orders/1
   # GET /orders/1.json

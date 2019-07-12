@@ -162,6 +162,7 @@ zh-CN:
       place: 下单
       recheck_decline: 驳回
       confirm: 收货
+      read_log: 查看日志
     titles:
       edit: 编辑%{model}
       new: 新增%{model}
@@ -224,6 +225,17 @@ zh-CN:
       long: ! '%Y年%b%d日 %H:%M'
       short: ! '%b%d日 %H:%M'
     pm: 下午
+
+  order_detail_log:
+    create: 创建
+    update: 修改
+    to_check: 提交（审核)
+    to_recheck: 通过（审核）
+    check_decline: 驳回（审核）
+    place: 下单
+    recheck_decline: 驳回（复核）
+    confirm: 确定收货
+    cancel: 取消
 
   wice_grid:
     show_filter_tooltip: 显示过滤
@@ -490,6 +502,13 @@ zh-CN:
           need_count: false
           needrole:
             can: :declined
+            role: :Order
+        look_order:
+          name: "查看订单"
+          link: "/orders/look"
+          need_count: false
+          needrole:
+            can: :read
             role: :Order
     import:
       name: "文件管理"

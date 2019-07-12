@@ -20,7 +20,11 @@
   <div class="control-group">
     <%= f.label :supplier_id, :class => 'control-label' %>
     <div class="controls">
+      <% if @commodity.supplier_id.blank? %>
       <%= supplier_select_autocom("commodity",@commodity.id) %>
+      <% else %>
+      <%= @commodity.supplier.name %>
+      <% end %>
     </div>
   </div>
   <div class="control-group">

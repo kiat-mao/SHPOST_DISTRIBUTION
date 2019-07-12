@@ -30,7 +30,6 @@ class OrderDetail < ActiveRecord::Base
     waiting?
   end
 
-
   private
   def generate_no
     count = (OrderDetail.where(order: self.order).count + 1).to_s.rjust(3, '0')
