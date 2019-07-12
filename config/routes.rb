@@ -69,6 +69,8 @@ ShpostDistribution::Application.routes.draw do
     member do
       get 'to_reset_pwd'
       patch 'reset_pwd'
+      post 'lock' => 'users#lock'
+      post 'unlock' => 'users#unlock'
     end
     resources :roles, :controller => 'user_roles'
   end
