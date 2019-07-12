@@ -1,10 +1,16 @@
 <%- model_class = Order -%>
+<%= hidden_field_tag('why_decline') %>
 <%= grid(@orders, :show_filters => :always) do |g|
   g.after_row do |order, number_of_columns|
     # content_tag(:div, class: 'extra-row') do
         buffer = ""
         i = 1
-        order.order_details.each do |order_detail|
+        if params[:action].eql?"fresh"
+          order_details = order.order_details.where(status: "waiting")
+        else
+          order_details = order.order_details.where(status: params[:action])
+        end
+        order_details.each do |order_detail|
           buffer += content_tag(:tr, :bgcolor=>"#ACD6FF") do
             content_tag(:td) do
               content_tag(:div) do
@@ -24,61 +30,73 @@
             content_tag(:td) do
               content_tag(:div) do
                          # without buffer only the last tag will appear
-                content_tag(:b,"商品")+
+                content_tag(:b,"商品") +
                 content_tag(:p,order_detail.commodity.name)
               end
             end +
             content_tag(:td) do
               content_tag(:div) do
                          # without buffer only the last tag will appear
-                content_tag(:b,"供应商")+
+                content_tag(:b,"供应商") +
                 content_tag(:p,order_detail.commodity.supplier.name)
               end
             end +
             content_tag(:td) do
               content_tag(:div) do
                          # without buffer only the last tag will appear
-                content_tag(:b,"数量")+
+                content_tag(:b,"数量") +
                 content_tag(:p,order_detail.amount)
               end
             end +
             content_tag(:td) do
               content_tag(:div) do
                          # without buffer only the last tag will appear
-                content_tag(:b,"销售单价")+
+                content_tag(:b,"销售单价") +
                 content_tag(:p,number_with_precision(order_detail.price, precision: 2))
               end
             end +
             content_tag(:td) do
               content_tag(:div) do
                          # without buffer only the last tag will appear
-                content_tag(:b,"状态")+
+                content_tag(:b,"状态") +
                 content_tag(:p,order_detail.status_name)
               end
             end +
             content_tag(:td) do
               content_tag(:div) do
                          # without buffer only the last tag will appear
-                content_tag(:b,"目前单位")+
-                content_tag(:p,order_detail.at_unit.name)
+                content_tag(:b,"目前单位") +
+                content_tag(:p,order_detail.at_unit.blank? ? "" : order_detail.at_unit.name)
               end
             end +
             content_tag(:td) do
               content_tag(:div) do
                          # without buffer only the last tag will appear
-                content_tag(:b,"创建时间")+
+                content_tag(:b,"创建时间") +
                 content_tag(:p,order_detail.created_at.localtime.strftime('%Y-%m-%d').to_s)
               end
             end +
             content_tag(:td) do
               content_tag(:div) do
                          # without buffer only the last tag will appear
-                content_tag(:b,"操作")+
+                content_tag(:b,"操作") +
                 content_tag(:p,(link_to t('.edit', :default => t("helpers.links.edit")),
-                      edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if can? :update, order_detail)) +
+                      edit_order_detail_path(order_detail,"from_order"), :class => 'btn btn-xs btn-primary' if ((can? :update, order_detail) && (order_detail.waiting? || order_detail.pending?)))) +
                 content_tag(:p,(link_to t('.destroy', :default => t("helpers.links.destroy")),
                       order_detail_path(order_detail),
-                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order_detail))
+                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if ((can? :destroy, order_detail) && order_detail.waiting?))) +
+                content_tag(:p,(link_to t('.to_recheck', :default => t("helpers.links.to_recheck")),
+                      to_recheck_order_detail_path(order_detail,"from_order"), :method => :post, :onclick => "if(!confirm('确定通过吗？')){return false;}", :class => 'btn btn-xs btn-primary' if ((can? :to_recheck, order_detail) && ((order_detail.checking?) || (order_detail.declined?))))) +
+                content_tag(:p,(link_to t('.check_decline', :default => t("helpers.links.check_decline")),
+                      check_decline_order_detail_path(order_detail,"from_order"), :method => :post, :onclick => "if(!confirm('确定驳回吗？')){return false;}else{var reson=prompt('驳回理由');$('#why_decline').val(reson);alert(reson);alert($('#why_decline').val());}", :class => 'btn btn-xs btn-primary' if ((can? :check_decline, order_detail) && ((order_detail.checking?) || (order_detail.declined?))))) +
+                content_tag(:p,(link_to t('.place', :default => t("helpers.links.place")),
+                      place_order_detail_path(order_detail,"from_order"), :method => :post, :onclick => "if(!confirm('确定下单吗？')){return false;}", :class => 'btn btn-xs btn-primary' if ((can? :place, order_detail)&&order_detail.rechecking?))) +
+                content_tag(:p,(link_to t('.recheck_decline', :default => t("helpers.links.recheck_decline")),
+                      recheck_decline_order_detail_path(order_detail,"from_order"), :method => :post, :onclick => "if(!confirm('确定驳回吗？')){return false;}else{var reson=prompt('驳回理由');$('#why_decline').val(reson);}", :class => 'btn btn-xs btn-primary' if ((can? :recheck_decline, order_detail)&&order_detail.rechecking?))) +
+                content_tag(:p,(link_to t('.confirm', :default => t("helpers.links.confirm")),
+                      confirm_order_detail_path(order_detail,"from_order"), :method => :post, :onclick => "if(!confirm('确定收货吗？')){return false;}", :class => 'btn btn-xs btn-primary' if ((can? :confirm, order_detail)&&order_detail.receiving?))) +
+                content_tag(:p,(link_to t('.cancel', :default => t("helpers.links.cancel")),
+                      cancel_order_detail_path(order_detail,"from_order"), :method => :post, :onclick => "if(!confirm('确定取消吗？')){return false;}", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && order_detail.pending?)))
               end
             end
           end
@@ -88,6 +106,7 @@
       # end
   end
 
+    
 
     g.column name: model_class.human_attribute_name(:no), attribute: 'no'
 
@@ -116,12 +135,14 @@
     g.column name: "操作" do |order|
       ActiveSupport::SafeBuffer.new << 
       (link_to t('.edit', :default => t("helpers.links.edit")),
-                      edit_order_path(order), :class => 'btn btn-xs btn-primary' if can? :update, order) << ' ' <<
+                      edit_order_path(order), :class => 'btn btn-xs btn-primary' if (can? :update, order) && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))) << ' ' <<
       (link_to t('.destroy', :default => t("helpers.links.destroy")),
                       order_path(order),
-                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, order) << ' ' <<
+                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if (can? :destroy, order) && (params[:action].eql?"fresh")) << ' ' <<
       (link_to t('新建子订单'),
-              commodity_choose_order_path(order), :class => 'btn btn-xs btn-primary' if can? :create, OrderDetail) 
+              commodity_choose_order_path(order), :class => 'btn btn-xs btn-primary' if (can? :create, OrderDetail) && (params[:action].eql?"fresh")) << ' ' <<
+      (link_to t('.to_check', :default => t("helpers.links.to_check")),
+              to_check_order_path(order), :onclick => "if(!confirm('确定送审吗？')){return false;}", :class => 'btn btn-xs btn-primary' if (can? :to_check, order) && ((params[:action].eql?"fresh") || (params[:action].eql?"pending")))
     end
   end 
 %>

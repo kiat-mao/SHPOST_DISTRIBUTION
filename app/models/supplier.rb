@@ -30,4 +30,12 @@ class Supplier < ActiveRecord::Base
 			return false
 		end
 	end
+
+	def self.not_valid
+		Supplier.all.each do |s|
+			if s.valid_before < Time.now
+				s.update! is_valid: false
+			end
+		end
+	end
 end

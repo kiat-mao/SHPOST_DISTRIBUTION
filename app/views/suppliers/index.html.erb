@@ -11,11 +11,11 @@
       <%= link_to t('.import', :default => t("helpers.links.import")),
                   supplier_import_suppliers_path,
                   :class => 'btn btn-primary' %>
-      <button class="btn btn-primary wg-external-csv-export-button" data-grid-name="suppliers" >导出</button>
+      <a class="btn btn-primary wg-external-csv-export-button" data-grid-name="suppliers" >导出</a>
   </div>
   <%= render partial: 'suppliers_grid' %>
 
-<%end %>
+  <%end %>
 </div>
 
 

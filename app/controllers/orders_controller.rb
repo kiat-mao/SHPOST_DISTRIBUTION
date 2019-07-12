@@ -1,6 +1,9 @@
 class OrdersController < ApplicationController
   load_and_authorize_resource
 
+  after_action :logging, only: [:to_check]
+  # before_filter :logging
+
   # GET /orders
   # GET /orders.json
   def index
@@ -8,39 +11,44 @@ class OrdersController < ApplicationController
 
   #新建订单
   def fresh
-    @type = "fresh"
-    @orders = initialize_grid(@orders.fresh)
+    @orders = initialize_grid(@orders.accessible_by(current_ability).fresh)
     render "index"
   end
 
   #审核被驳回订单
   def pending
-    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:pending]])
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [OrderDetail.statuses[:pending]])
+    render "index"
   end
 
   #待审核订单
   def checking
-    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:checking]])
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [OrderDetail.statuses[:checking]])
+    render "index"
   end
 
   #复核被驳回订单
   def declined
-    @orders = initialize_grid(@orders.by_status [ OrderDetail.statuses[:declined]])
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [ OrderDetail.statuses[:declined]])
+    render "index"
   end
 
   #待复核订单
   def rechecking
-    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:rechecking]])
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [OrderDetail.statuses[:rechecking]])
+    render "index"
   end
 
   #待收货订单
   def receiving
-    @orders = initialize_grid(@orders.by_status [OrderDetail.statuses[:receiving]])
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status [OrderDetail.statuses[:receiving]])
+    render "index"
   end
 
   #提交（审核）
   def to_check
-    @order.checking! 
+    @order.checking!
+    redirect_to fresh_orders_url
   end
 
 
@@ -109,6 +117,12 @@ class OrdersController < ApplicationController
   end
 
   private
+    def logging
+      @order.order_details.each do |order_detail|
+        order_detail_log = OrderDetailLog.create!(user: current_user, operation: params[:action], order_detail: order_detail)
+      end
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     # def set_order
     #   @order = Order.find(params[:id])
