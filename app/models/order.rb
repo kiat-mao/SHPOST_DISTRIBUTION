@@ -16,7 +16,6 @@ class Order < ActiveRecord::Base
 
 
   def checking!
-    # @order.at_unit
     Order.transaction do
       begin
         self.is_fresh = false
@@ -26,7 +25,7 @@ class Order < ActiveRecord::Base
           x.checking!
         end
       rescue Exception => e
-        raise ActiveRecord::Rollback
+        raise e
       end
     end
   end
