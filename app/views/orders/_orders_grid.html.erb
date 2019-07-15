@@ -77,24 +77,24 @@
                 if !params[:action].eql?"look"
                   content_tag(:b,"操作") +
                   content_tag(:p,(link_to t('.edit', :default => t("helpers.links.edit")),
-                        edit_order_detail_path(order_detail)+"?from_order=true", :class => 'btn btn-xs btn-primary' if ((can? :update, order_detail) && (order_detail.waiting? || order_detail.pending?)))) +
+                        edit_order_detail_path(order_detail)+"?from_order=true", :class => 'btn btn-xs btn-primary' if ((can? :update, order_detail) && (order_detail.waiting? || order_detail.pending?) && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))))) +
                   content_tag(:p,(link_to t('.destroy', :default => t("helpers.links.destroy")),
                         order_detail_path(order_detail),
                          :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if ((can? :destroy, order_detail) && order_detail.waiting?))) +
                   content_tag(:p,(link_to t('.to_recheck', :default => t("helpers.links.to_recheck")),
-                        to_recheck_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_to_recheck", :class => 'btn btn-xs btn-primary' if ((can? :to_recheck, order_detail) && ((order_detail.checking?) || (order_detail.declined?))))) +
+                        to_recheck_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_to_recheck", :class => 'btn btn-xs btn-primary' if ((can? :to_recheck, order_detail) && ((order_detail.checking?) || (order_detail.declined?)) && (params[:action].eql?"checking")))) +
                   content_tag(:p,(link_to t('.check_decline', :default => t("helpers.links.check_decline")),
-                        check_decline_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_check_decline", :class => 'btn btn-xs btn-primary' if ((can? :check_decline, order_detail) && ((order_detail.checking?) || (order_detail.declined?))))) +
+                        check_decline_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_check_decline", :class => 'btn btn-xs btn-primary' if ((can? :check_decline, order_detail) && ((order_detail.checking?) || (order_detail.declined?)) && (params[:action].eql?"checking")))) +
                   content_tag(:p,(link_to t('.place', :default => t("helpers.links.place")),
-                        place_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_place", :class => 'btn btn-xs btn-primary' if ((can? :place, order_detail)&&order_detail.rechecking?))) +
+                        place_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_place", :class => 'btn btn-xs btn-primary' if ((can? :place, order_detail) && order_detail.rechecking? && (params[:action].eql?"rechecking")))) +
                   content_tag(:p,(link_to t('.recheck_decline', :default => t("helpers.links.recheck_decline")),
-                        recheck_decline_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_recheck_decline", :class => 'btn btn-xs btn-primary' if ((can? :recheck_decline, order_detail)&&order_detail.rechecking?))) +
+                        recheck_decline_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_recheck_decline", :class => 'btn btn-xs btn-primary' if ((can? :recheck_decline, order_detail) && order_detail.rechecking? && (params[:action].eql?"rechecking")))) +
                   content_tag(:p,(link_to t('.confirm', :default => t("helpers.links.confirm")),
-                        confirm_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_confirm", :class => 'btn btn-xs btn-primary' if ((can? :confirm, order_detail)&&order_detail.receiving?))) +
+                        confirm_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_confirm", :class => 'btn btn-xs btn-primary' if ((can? :confirm, order_detail)&&order_detail.receiving?) && (params[:action].eql?"receiving"))) +
                   content_tag(:p,(link_to t('.cancel', :default => t("helpers.links.cancel")),
-                        cancel_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && order_detail.pending?))) +
+                        cancel_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && order_detail.pending? && (params[:action].eql?"pending")))) +
                   content_tag(:p,(link_to t('.to_check', :default => t("helpers.links.to_check")),
-                        to_check_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_to_check", :class => 'btn btn-xs btn-primary' if ((can? :to_check, order_detail) && order_detail.pending?))) +
+                        to_check_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_to_check", :class => 'btn btn-xs btn-primary' if ((can? :to_check, order_detail) && order_detail.pending? && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))))) +
                   content_tag(:p,(link_to t('.read_log', :default => t("helpers.links.read_log")),
                         read_log_order_detail_path(order_detail)+"?from_order=true", :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?))))
                 end

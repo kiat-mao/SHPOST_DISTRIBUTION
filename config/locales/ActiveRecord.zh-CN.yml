@@ -494,14 +494,14 @@ zh-CN:
             can: :receiving
             role: :Order
         pending_order:
-          name: "待处理订单"
+          name: "被驳回订单"
           link: "/orders/pending"
           need_count: false
           needrole:
             can: :pending
             role: :Order
         declined_order:
-          name: "待处理订单"
+          name: "被驳回订单"
           link: "/orders/declined"
           need_count: false
           needrole:
