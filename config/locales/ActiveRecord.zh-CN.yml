@@ -333,6 +333,7 @@ zh-CN:
         role: "角色"
         role_name: "角色"
         unit_id: "所属单位"
+        status: "状态"
       unit:
         "no": "编号"
         name: "单位名称"
