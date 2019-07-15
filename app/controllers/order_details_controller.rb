@@ -2,8 +2,8 @@ class OrderDetailsController < ApplicationController
   load_and_authorize_resource :order, only: [:index, :new, :create]
   load_and_authorize_resource :order_detail, through: :order, only: [:index, :new, :create]
   load_and_authorize_resource
-  after_action :logging, only: [:create, :to_check, :to_recheck, :check_decline, :place, :recheck_decline, :confirm, :cancel]
-  after_action :logging,  only: [:update], unless: -> {@order_detail.try :waiting?}
+  after_action :logging, :if => proc {|c| c.action_name.in? ["create", "to_check", "to_recheck", "check_decline", "place", "recheck_decline", "confirm", "cancel"] || (c.action_name.eql?("update") && !@order_detail.try(:waiting?))}
+  # after_action :logging_update,  only: [:update], if: -> {!@order_detail.try :waiting?}
 
   # GET /order_details
   # GET /order_details.json
