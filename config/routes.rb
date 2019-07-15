@@ -144,35 +144,39 @@ ShpostDistribution::Application.routes.draw do
       get 'declined'
       get 'rechecking'
       get 'receiving'
+      get 'look'
     end
-    resources :order_details do
-      collection do
-        get 'pending'
-        get 'checking'
-        get 'declined'
-        get 'rechecking'
-        get 'receiving'
-      end
-    end
+
+    resources :order_details, ony: [:index, :new, :create]
+    # resources :order_details do
+    #   collection do
+    #     get 'pending'
+    #     get 'checking'
+    #     get 'declined'
+    #     get 'rechecking'
+    #     get 'receiving'
+    #   end
+    # end
 
     member do
       get 'commodity_choose'
       get 'to_check'
     end
-    resources :order_details
   end
 
-  get 'order_details' => 'order_details#index'
 
   resources :order_details do
     collection do
-      get 'checking' => 'order_details#checking'
-      get 'rechecking' => 'order_details#rechecking'
-      get 'receiving' => 'order_details#receiving'
-      get 'pending' => 'order_details#pending'
-      get 'declined' => 'order_details#declined'
+      # get 'order_details' => 'order_details#index'
+      get 'pending'
+      get 'checking'
+      get 'declined'
+      get 'rechecking'
+      get 'receiving'
+      get 'look'
     end
     member do
+      # get 'edit'
       post 'to_check'
       post 'to_recheck'
       post 'check_decline'
@@ -180,6 +184,7 @@ ShpostDistribution::Application.routes.draw do
       post 'recheck_decline'
       post 'confirm'
       post 'cancel'
+      get 'read_log'
     end
   end
   

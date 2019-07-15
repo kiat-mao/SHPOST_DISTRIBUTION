@@ -1,7 +1,7 @@
 class OrderDetailsController < ApplicationController
-  load_and_authorize_resource :order
-  load_and_authorize_resource :order_detail, through: :order
-  
+  load_and_authorize_resource :order, only: [:index, :new, :create]
+  load_and_authorize_resource :order_detail, through: :order, only: [:index, :new, :create]
+  load_and_authorize_resource
   after_action :logging, only: [:create, :to_check, :to_recheck, :check_decline, :place, :recheck_decline, :confirm, :cancel]
   after_action :logging,  only: [:update], unless: -> {@order_detail.try :waiting?}
 
@@ -46,6 +46,18 @@ class OrderDetailsController < ApplicationController
     render "index"
   end
 
+  #查看子订单
+  def look
+    @status = "look"
+    if current_user.unit.unit_type.eql?"branch"
+      @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where("order_details.status != 'waiting'").order("orders.no, order_details.no"))
+    else
+      @order_details = initialize_grid(@order_details.joins(:order).where("order_details.status != 'waiting'").order("orders.no, order_details.no"))
+    end   
+
+    render "index"
+  end
+
   # GET /order_details/1
   # GET /order_details/1.json
   def show
@@ -61,7 +73,7 @@ class OrderDetailsController < ApplicationController
   def edit
     @order = @order_detail.order
     @commodity_id = @order_detail.commodity_id
-    @from_order = params[:format]
+    @from_order = params[:from_order]
   end
 
   # POST /order_details
@@ -95,7 +107,7 @@ class OrderDetailsController < ApplicationController
           format.html { redirect_to fresh_orders_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
           format.json { head :no_content }
         else
-          if params[:from_order].eql?"from_order"
+          if params[:from_order].eql?"true"
             format.html { redirect_to pending_orders_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
             format.json { head :no_content }
           else
@@ -122,14 +134,20 @@ class OrderDetailsController < ApplicationController
 
   #提交（审核）
   def to_check
+    status = @order_detail.status
     @order_detail.checking!
+    if params[:from_order].eql?"true"
+      redirect_to pending_orders_url
+    else
+      redirect_to pending_order_details_url
+    end
   end
 
   #通过（审核）
   def to_recheck
     status = @order_detail.status
     @order_detail.rechecking!
-    if params[:format].eql?"from_order"
+    if params[:from_order].eql?"true"
       if status.eql?"declined"
         redirect_to declined_orders_url
       else
@@ -146,12 +164,11 @@ class OrderDetailsController < ApplicationController
 
   #驳回（审核）
   def check_decline
-    # binding.pry
     status = @order_detail.status
     @order_detail.update why_decline: params[:why_decline]    
     @order_detail.pending!
-<<<<<<< HEAD
-    if params[:format].eql?"from_order"
+
+    if params[:from_order].eql?"true"
       if status.eql?"declined"
         redirect_to declined_orders_url
       else
@@ -164,16 +181,16 @@ class OrderDetailsController < ApplicationController
         redirect_to checking_order_details_url
       end
     end
-=======
+
 
     @why_decline = @order_detail.why_decline
->>>>>>> 36a5d7ef6566084c9263d06aa0bacae5b6b757c3
+
   end
 
   #下单
   def place
     @order_detail.receiving!
-    if params[:format].eql?"from_order"
+    if params[:from_order].eql?"true"
       redirect_to rechecking_orders_url
     else
       redirect_to rechecking_order_details_url
@@ -183,22 +200,21 @@ class OrderDetailsController < ApplicationController
   #驳回（复核）
   def recheck_decline
     @order_detail.declined!
-<<<<<<< HEAD
-    if params[:format].eql?"from_order"
+
+    if params[:from_order].eql?"true"
       redirect_to rechecking_orders_url
     else
       redirect_to rechecking_order_details_url
     end
-=======
 
     @why_decline = @order_detail.why_decline
->>>>>>> 36a5d7ef6566084c9263d06aa0bacae5b6b757c3
+
   end
 
   #收货
   def confirm
     @order_detail.closed!
-    if params[:format].eql?"from_order"
+    if params[:from_order].eql?"true"
       redirect_to receiving_orders_url
     else
       redirect_to receiving_order_details_url
@@ -208,11 +224,15 @@ class OrderDetailsController < ApplicationController
   #取消
   def cancel
     @order_detail.canceled!
-    if params[:format].eql?"from_order"
+    if params[:from_order].eql?"true"
       redirect_to receiving_orders_url
     else
       redirect_to receiving_order_details_url
     end
+  end
+
+  def read_log
+    @order_detail_logs = @order_detail.order_detail_logs
   end
 
   private
