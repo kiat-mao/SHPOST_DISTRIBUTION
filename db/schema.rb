@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190710064241) do
+ActiveRecord::Schema.define(version: 20190715074543) do
 
   create_table "commodities", force: :cascade do |t|
     t.string   "cno",                                                null: false
@@ -161,6 +161,7 @@ ActiveRecord::Schema.define(version: 20190710064241) do
     t.integer  "failed_attempts",        default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "status"
   end
 
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

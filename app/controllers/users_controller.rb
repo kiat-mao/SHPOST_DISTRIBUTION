@@ -80,16 +80,12 @@ class UsersController < ApplicationController
   end
 
   def lock
-    User.transaction do
-      @user.lock_access!
-      @user.update(locked_at: '3019-01-01')
-    end
-      redirect_to users_url
+    @user.lock
+    redirect_to users_url
   end
 
   def unlock
-    @user.unlock_access!
-   
+    @user.unlock  
     redirect_to users_url
   end
 
