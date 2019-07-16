@@ -7,7 +7,6 @@ class OrderDetail < ActiveRecord::Base
 
   before_create :generate_no
 
-
   validates :amount, :price, :order, :commodity, presence: {:message => "不能为空"}
 
   validates :amount, numericality: {:greater_than => 0 }
@@ -28,6 +27,40 @@ class OrderDetail < ActiveRecord::Base
 
   def can_destroy?
     waiting?
+  end
+
+  def has_checked?
+    order_detail_logs.exists?(operation: ['to_recheck', 'check_decline'])
+  end
+
+  def has_rechecked?
+    order_detail_logs.exists?(operation: ['place', 'recheck_decline'])
+  end
+
+
+  def checking!
+    self.at_unit = Unit::DELIVERY
+    super
+  end
+
+  def rechecking!
+    self.at_unit = Unit::POSTBUY
+    super
+  end
+
+  def pending!
+    self.at_unit = self.order.unit
+    super
+  end
+
+  def receiving!
+    self.at_unit = self.order.unit
+    super
+  end
+
+  def declined!
+    self.at_unit = Unit::DELIVERY
+    super
   end
 
   private
