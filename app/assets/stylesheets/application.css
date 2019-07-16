@@ -144,7 +144,7 @@ background-color: #0099CC;
     display: table-cell;
     width: 61px;
     /*background-image: url('<%=asset_path("left_logo.png")%>');*/
-    background-image: url('left_logo.png');
+    background-image: url('left_logo.jpg');
     background-size: contain;
     background-position: top center;
     background-repeat: no-repeat;
@@ -163,7 +163,7 @@ background-color: #0099CC;
     height: 59px;
     float: left;
     /*background-image: url('<%=asset_path("logo.png")%>');*/
-    background-image: url('logo.png');
+    background-image: url('logo.jpg');
     background-size: contain;
     background-position: left center;
     background-repeat: no-repeat;

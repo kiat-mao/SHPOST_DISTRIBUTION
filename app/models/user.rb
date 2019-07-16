@@ -15,6 +15,11 @@ class User < ActiveRecord::Base
   validate :password_complexity
 
   ROLE = { superadmin: '超级管理员', unitadmin: '系统管理员', user: '用户' }
+  STATUS_NAME = { locked: '已停用', unlocked: '已启用'}
+
+  def status_name
+    status.blank? ? "" : User::STATUS_NAME["#{status}".to_sym]
+  end
 
   def rolename
     User::ROLE[role.to_sym]
@@ -51,6 +56,28 @@ class User < ActiveRecord::Base
   def is_unlocked?
     locked_at.blank?  ? true : false
   end
+  
+  def lock
+    User.transaction do
+      begin
+        self.lock_access!
+        self.update(locked_at: '3019-01-01')
+        self.update(status: 'locked')
+      rescue Exception => e
+        raise e
+      end
+    end
+  end
 
+  def unlock
+    User.transaction do
+      begin
+        self.unlock_access!
+        self.update(status: 'unlocked')
+      rescue Exception => e
+        raise e
+      end
+    end  
+  end
  
 end

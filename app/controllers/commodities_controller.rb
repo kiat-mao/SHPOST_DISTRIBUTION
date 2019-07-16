@@ -135,13 +135,13 @@ class CommoditiesController < ApplicationController
                       txt = "缺少供应商"
                       sheet_back << (rowarr << txt << is_red)
                     else
-                      if Supplier.find_by(name: supplier).blank?
+                      if Supplier.find_by(sno: supplier).blank?
                         is_error = true
                         is_red = "yes"
                         txt = "供应商不存在"
                         sheet_back << (rowarr << txt << is_red)
                       else
-                        supplier_id = Supplier.find_by(name: supplier).id
+                        supplier_id = Supplier.find_by(sno: supplier).id
                         if cost_price.blank?
                           is_error = true
                           is_red = "yes"
@@ -154,7 +154,7 @@ class CommoditiesController < ApplicationController
                             txt = "缺少最低销售价"
                             sheet_back << (rowarr << txt << is_red)
                           else
-                            if !Commodity.find_by(cno: cno).blank?
+                            if !Commodity.find_by(dms_no: dms_no).blank?
                               is_red = "no"
                               txt = "商品已存在"
                               sheet_back << (rowarr << txt << is_red)

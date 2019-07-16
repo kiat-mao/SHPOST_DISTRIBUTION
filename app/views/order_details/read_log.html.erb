@@ -2,9 +2,9 @@
   <h1>查看子订单日志</h1>
 </div>
 <div>
-	<table height='450'>
+	<table>
 		<% @order_detail_logs.each do |x| %>
-		<tr valign="top"><td><font size="4"><%= x.single_log_info %></td></tr>
+		<tr valign="top" height="45"><td><font size="4"><%= x.single_log_info %></td></tr>
 		<% end %>
 	</table>
 </div>

@@ -9,9 +9,9 @@ class OrderDetail < ActiveRecord::Base
 
   validates :amount, :price, :order, :commodity, presence: {:message => "不能为空"}
 
-  validates :amount, numericality: {:greater_than => 0 }
+  validates :amount, numericality: {only_integer: true, :greater_than => 0 }
 
-  validates :price, numericality: { only_integer: true, :greater_than => 0 }
+  validates :price, numericality: {:greater_than => 0 }
 
   enum status: { waiting: 'waiting', checking: 'checking', rechecking: 'rechecking', receiving: 'receiving', closed: 'closed', canceled: 'canceled' , pending: 'pending', declined: 'declined'}
 
