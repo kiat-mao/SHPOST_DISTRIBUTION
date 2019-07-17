@@ -39,7 +39,7 @@ module ShpostDistribution
 
     config.action_dispatch.cookies_serializer = :hybrid
 
-    config.web_console.whitelisted_ips  = '192.168.180.2'
+    # config.web_console.whitelisted_ips  = '192.168.180.2'
     end
   end
 end
