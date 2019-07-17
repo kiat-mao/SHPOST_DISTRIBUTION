@@ -89,7 +89,7 @@ class CommoditiesController < ApplicationController
             end
             instance.default_sheet = instance.sheets.first
             title_row = instance.row(1)
-            cno_index = title_row.index("商品编码").blank? ? 0 : title_row.index("商品编码")
+            # cno_index = title_row.index("商品编码").blank? ? 0 : title_row.index("商品编码")
             dms_no_index = title_row.index("DMS商品编码").blank? ? 1 : title_row.index("DMS商品编码")
             name_index = title_row.index("商品名称").blank? ? 2 : title_row.index("商品名称")
             supplier_index = title_row.index("供应商").blank? ? 3 : title_row.index("供应商")
@@ -101,7 +101,7 @@ class CommoditiesController < ApplicationController
             2.upto(instance.last_row) do |line|
               current_line = line
               rowarr = instance.row(line)
-              cno = rowarr[cno_index].blank? ? "" : rowarr[cno_index].to_s.split('.0')[0]
+              # cno = rowarr[cno_index].blank? ? "" : rowarr[cno_index].to_s.split('.0')[0]
               dms_no = rowarr[dms_no_index].blank? ? "" : rowarr[dms_no_index].to_s.split('.0')[0]
               name = rowarr[name_index].blank? ? "" : rowarr[name_index].to_s.split('.0')[0]
               supplier = rowarr[supplier_index].blank? ? "" : rowarr[supplier_index].to_s.split('.0')[0]
@@ -111,59 +111,52 @@ class CommoditiesController < ApplicationController
               is_on_sell = rowarr[is_on_sell_index].blank? ? "" : rowarr[is_on_sell_index].to_s.split('.0')[0]
               is_on_sell = (is_on_sell.eql?"否") ? false : true
               
-              if cno.blank?
+              if dms_no.blank?
                 is_error = true
                 is_red = "yes"
-                txt = "缺少商品编码"
+                txt = "缺少DMS商品编码"
                 sheet_back << (rowarr << txt << is_red)
               else
-                if dms_no.blank?
+                if name.blank?
                   is_error = true
                   is_red = "yes"
-                  txt = "缺少DMS商品编码"
+                  txt = "缺少商品名称"
                   sheet_back << (rowarr << txt << is_red)
                 else
-                  if name.blank?
+                  if supplier.blank?
                     is_error = true
                     is_red = "yes"
-                    txt = "缺少商品名称"
+                    txt = "缺少供应商"
                     sheet_back << (rowarr << txt << is_red)
                   else
-                    if supplier.blank?
+                    if Supplier.find_by(sno: supplier).blank?
                       is_error = true
                       is_red = "yes"
-                      txt = "缺少供应商"
+                      txt = "供应商不存在"
                       sheet_back << (rowarr << txt << is_red)
                     else
-                      if Supplier.find_by(sno: supplier).blank?
+                      supplier_id = Supplier.find_by(sno: supplier).id
+                      if cost_price.blank?
                         is_error = true
                         is_red = "yes"
-                        txt = "供应商不存在"
+                        txt = "缺少商家结算价"
                         sheet_back << (rowarr << txt << is_red)
                       else
-                        supplier_id = Supplier.find_by(sno: supplier).id
-                        if cost_price.blank?
+                        if sell_price.blank?
                           is_error = true
                           is_red = "yes"
-                          txt = "缺少商家结算价"
+                          txt = "缺少最低销售价"
                           sheet_back << (rowarr << txt << is_red)
                         else
-                          if sell_price.blank?
-                            is_error = true
+                          if !Commodity.find_by(dms_no: dms_no).blank?
                             is_red = "yes"
-                            txt = "缺少最低销售价"
+                            txt = "商品已存在"
                             sheet_back << (rowarr << txt << is_red)
                           else
-                            if !Commodity.find_by(dms_no: dms_no).blank?
-                              is_red = "no"
-                              txt = "商品已存在"
-                              sheet_back << (rowarr << txt << is_red)
-                            else
-                              Commodity.create!(cno: cno, dms_no: dms_no, name: name, supplier_id: supplier_id, cost_price: cost_price, sell_price: sell_price, desc: desc, is_on_sell: is_on_sell)
-                              is_red = "no"
-                              txt = "商品新建成功"
-                              sheet_back << (rowarr << txt << is_red)
-                            end
+                            Commodity.create!(dms_no: dms_no, name: name, supplier_id: supplier_id, cost_price: cost_price, sell_price: sell_price, desc: desc, is_on_sell: is_on_sell)
+                            is_red = "no"
+                            txt = "商品新建成功"
+                            sheet_back << (rowarr << txt << is_red)
                           end
                         end
                       end
@@ -208,7 +201,9 @@ class CommoditiesController < ApplicationController
         sheet1.row(count_row).default_format = red
       end
 
-      count = 0
+      sheet1[count_row,0]=Commodity.find_by(dms_no:obj[1]).cno
+        
+      count = 1
       while count<size-1
         sheet1[count_row,count]=obj[count]
         count += 1

@@ -97,6 +97,12 @@
                         to_check_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_to_check", :class => 'btn btn-xs btn-primary' if ((can? :to_check, order_detail) && order_detail.pending? && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))))) +
                   content_tag(:p,(link_to t('.read_log', :default => t("helpers.links.read_log")),
                         read_log_order_detail_path(order_detail)+"?from_order=true", :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?))))
+                else
+                  content_tag(:b,"操作") +
+                  content_tag(:p,(link_to t('.edit', :default => t("helpers.links.edit")),
+                        edit_order_detail_path(order_detail)+"?from_order=true", :class => 'btn btn-xs btn-primary' if ((can? :update, order_detail) && (current_user.role.eql?"unitadmin")))) + 
+                  content_tag(:p,(link_to t('.cancel', :default => t("helpers.links.cancel")),
+                        cancel_order_detail_path(order_detail)+"?from_order=true", :method => :post, :name => "order_order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && (current_user.role.eql?"unitadmin") && !(order_detail.canceled?))))
                 end
               end
             end
@@ -134,7 +140,7 @@
     g.column  do |order|
       ActiveSupport::SafeBuffer.new << 
       (link_to t('.edit', :default => t("helpers.links.edit")),
-                      edit_order_path(order), :class => 'btn btn-xs btn-primary' if (can? :update, order) && ((params[:action].eql?"fresh") || (params[:action].eql?"pending")) && order.can_update?) << ' ' <<
+                      edit_order_path(order), :class => 'btn btn-xs btn-primary' if (can? :update, order) && ((((params[:action].eql?"fresh") || (params[:action].eql?"pending")) && order.can_update?) || (current_user.role.eql?"unitadmin")   )) << ' ' <<
       (link_to t('.destroy', :default => t("helpers.links.destroy")),
                       order_path(order),
                        :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if (can? :destroy, order) && (params[:action].eql?"fresh")) << ' ' <<

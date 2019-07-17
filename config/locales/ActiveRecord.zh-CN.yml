@@ -396,8 +396,8 @@ zh-CN:
         "no": "订单编码"
         name: "收货人"
         address: "收货地址"
-        phone: "收货人电话"
-        tel: "收货人手机"
+        phone: "收货人手机"
+        tel: "收货人电话"
         desc: "备注"
         user_id: "创建人"
         unit_id: "创建单位"
@@ -515,6 +515,15 @@ zh-CN:
           needrole:
             can: :read
             role: :Order
+    report:
+      name: "报表管理"
+      needrole:
+      submenu:
+        order_report:
+          name: "订单管理报表"
+          link: "/shpost_distribution/reports/order_report"
+          need_count: false
+          needrole:
     import:
       name: "文件管理"
       needrole:

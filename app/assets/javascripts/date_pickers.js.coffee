@@ -12,5 +12,13 @@ ready = ->
     changeMonth:true,
     changeYear:true
   });
+  $('#create_at_start_create_at_start').datepicker({
+    changeMonth:true,
+    changeYear:true
+  });
+  $('#create_at_end_create_at_end').datepicker({
+    changeMonth:true,
+    changeYear:true
+  });
 $(document).ready(ready)
 $(document).on('page:load', ready)

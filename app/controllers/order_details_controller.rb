@@ -108,11 +108,21 @@ class OrderDetailsController < ApplicationController
           format.json { head :no_content }
         else
           if params[:from_order].eql?"true"
-            format.html { redirect_to pending_orders_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
-            format.json { head :no_content }
+            if current_user.role.eql?"unitadmin"
+              format.html { redirect_to look_orders_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
+              format.json { head :no_content }
+            else
+              format.html { redirect_to pending_orders_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
+              format.json { head :no_content }
+            end
           else
-            format.html { redirect_to pending_order_details_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
-            format.json { head :no_content }
+            if current_user.role.eql?"unitadmin"
+              format.html { redirect_to look_order_details_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
+              format.json { head :no_content }
+            else
+              format.html { redirect_to pending_order_details_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
+              format.json { head :no_content }
+            end
           end
         end
       else
@@ -225,9 +235,17 @@ class OrderDetailsController < ApplicationController
   def cancel
     @order_detail.canceled!
     if params[:from_order].eql?"true"
-      redirect_to receiving_orders_url
+      if current_user.role.eql?"unitadmin"
+        redirect_to look_orders_url
+      else
+        redirect_to receiving_orders_url
+      end
     else
-      redirect_to receiving_order_details_url
+      if current_user.role.eql?"unitadmin"
+        redirect_to look_order_details_url
+      else
+        redirect_to receiving_order_details_url
+      end
     end
   end
 
