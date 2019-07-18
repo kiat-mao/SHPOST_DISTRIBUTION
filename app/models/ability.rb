@@ -52,6 +52,8 @@ class Ability
         can :manage, ImportFile
         can :manage, Supplier
         can :manage, Commodity
+        can [:read, :update, :look], Order
+        can [:read, :update, :cancel, :edit, :look, :read_log], OrderDetail
     elsif user.user?
         can :update, User, id: user.id
         can :read, UserLog, user: {id: user.id}

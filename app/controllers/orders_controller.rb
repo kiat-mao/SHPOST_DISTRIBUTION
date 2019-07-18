@@ -100,8 +100,18 @@ class OrdersController < ApplicationController
   def update
     respond_to do |format|
       if @order.update!(order_params)
-        format.html { redirect_to @order, notice: I18n.t('controller.create_success_notice', model: '订单')}
-        format.json { head :no_content }
+        if current_user.role.eql?"unitadmin"
+          format.html { redirect_to look_orders_url, notice: I18n.t('controller.update_success_notice', model: '订单')}
+          format.json { head :no_content }
+        else
+          if @order.is_fresh
+            format.html { redirect_to fresh_orders_url, notice: I18n.t('controller.update_success_notice', model: '订单')}
+            format.json { head :no_content }
+          else
+            format.html { redirect_to pending_orders_url, notice: I18n.t('controller.update_success_notice', model: '订单')}
+            format.json { head :no_content }
+          end
+        end
       else
         format.html { render action: 'edit' }
         format.json { render json: @order.errors, status: :unprocessable_entity }

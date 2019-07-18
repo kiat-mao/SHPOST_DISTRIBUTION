@@ -1,0 +1,38 @@
+<center>
+<br><br>
+<font face="微软雅黑" color='#006030' size=6>订单管理报表</font>   
+
+<br><br><br>
+ 
+
+<%= form_tag("/shpost_distribution/reports/order_report",format: "xls", method: "post") do -%>
+    <div><%= label_tag(:create_at_start, "下单时间起始:") %><%= text_field("create_at_start","create_at_start") %></div>
+    <br/>
+    <div><%= label_tag(:create_at_end, "下单时间结束:") %><%= text_field("create_at_end","create_at_end") %></div>
+    <br/>
+    <div><%= label_tag(:supplier, "供应商:") %><%= select_tag("supplier", options_for_select(Supplier.all.map{|u| [u.name,u.id]}.insert(0,"全部")), id: "supplier") %></div>
+    <br/>
+    <div><%= label_tag(:commodity_name, "商品名称:") %><%= text_field("commodity_name","commodity_name") %></div>
+    <br/>
+    <div><%= label_tag(:status, "子订单状态:") %><%= select_tag(:status, options_for_select(OrderDetail::STATUS_NAME.invert.to_a.insert(0,"全部"))) %></div>
+    <br/>
+    <div><%= label_tag(:order_no, "主订单编号:") %><%= text_field("order_no","order_no") %></div>
+    <br/>
+    <div><%= label_tag(:price_start, "价格起始:") %><%= text_field("price_start","price_start") %></div>
+    <br/>
+    <div><%= label_tag(:price_end, "价格结束:") %><%= text_field("price_end","price_end") %></div>
+    <br/>
+    <div><%= label_tag(:at_unit, "目前流转单位:") %><%= select_tag("at_unit", options_for_select(@at_units.map{|u| [u.name,u.id]}.insert(0,"全部")), id: "at_unit") %></div>
+    <br/>
+    <div><%= label_tag(:create_unit_name, "创建单位:") %><%= text_field("create_unit_name","create_unit_name") %></div>
+    <br/>
+    <div><%= label_tag(:order_user_name, "收货人姓名:") %><%= text_field("order_user_name","order_user_name") %></div>
+    <br/>
+    <div><%= label_tag(:phone, "收货人手机号码:") %><%= text_field("phone","phone") %></div>
+    <br/>
+    <%= submit_tag "报表导出",:class => 'btn btn-primary' %>
+       
+<% end -%>
+
+
+</center>

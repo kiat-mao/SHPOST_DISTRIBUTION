@@ -187,5 +187,7 @@ ShpostDistribution::Application.routes.draw do
       get 'read_log'
     end
   end
+
+  match "/shpost_distribution/reports/order_report" => "reports#order_report", via: [:get, :post]
   
 end
