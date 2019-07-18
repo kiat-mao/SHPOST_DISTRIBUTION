@@ -4,11 +4,11 @@
   </font>
   <%= form_for @commodity, :html => { :class => 'form-horizontal' } do |f| %>
   <div class="controls">
-    <!-- <%= f.check_box :remove_cover %> -->
+    
     <%= image_tag(@commodity.cover_url) if @commodity.cover? %>
     <%= f.file_field :cover, :class => 'text_field' %>
     <%= f.hidden_field :cover_cache %>
-
+   
     <%= f.submit "确认上传", :class => 'btn btn-primary'%>
   </div>
   <%end%>

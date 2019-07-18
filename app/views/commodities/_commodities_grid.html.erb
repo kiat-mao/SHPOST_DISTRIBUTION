@@ -23,9 +23,9 @@
     g.column name: model_class.human_attribute_name(:is_on_sell), attribute: 'is_on_sell', filter_type: :boolean do |commodity|
         commodity.is_on_sell_name
     end
-    g.column name: model_class.human_attribute_name(:cover), attribute: 'cover' do |commodity|
-       image_tag(commodity.cover_url, height: '150', width: '150')
-    end
+    # g.column name: model_class.human_attribute_name(:cover), attribute: 'cover' do |commodity|
+    #    image_tag(commodity.cover_url, height: '150', width: '150')
+    # end
     # height: '50', width: '50'
 
     g.column in_csv: false do |commodity|
@@ -33,7 +33,9 @@
       (link_to t('.edit', :default => t("helpers.links.edit")),
                       edit_commodity_path(commodity), :class => 'btn btn-xs btn-primary' if can? :update, commodity) << ' ' <<
       (link_to t('.cover_upload', :default => t("helpers.links.cover_upload")),
-                      cover_upload_commodity_path(commodity), :class => 'btn btn-xs btn-primary'if can? :cover_upload, commodity ) << ' ' <<
+                      cover_upload_commodity_path(commodity), :method => :post, :class => 'btn btn-xs btn-primary'if can? :cover_upload, commodity ) << ' ' <<
+      (link_to t('.cover_show', :default => t("helpers.links.cover_show")),
+                      cover_show_commodity_path(commodity), :class => 'btn btn-xs btn-primary'if can? :cover_upload, commodity ) << ' ' <<
       (link_to t('.destroy', :default => t("helpers.links.destroy")),
                       commodity_path(commodity),
                        :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, commodity) << ' ' <<

@@ -125,6 +125,7 @@ ShpostDistribution::Application.routes.draw do
     member do
       get 'cover_upload'
       post 'cover_upload' => 'commodities#cover_upload'
+      get 'cover_show'
       get 'set_on_sell'
     end
   end

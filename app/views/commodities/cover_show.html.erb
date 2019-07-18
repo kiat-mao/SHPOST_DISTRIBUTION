@@ -1,0 +1,10 @@
+<%- model_class = Commodity -%>
+<div class="page-header">
+  <h1 face="微软雅黑" color='#D9B300' size=3>商品图片
+  </h1>
+</div>
+<dl class="dl-horizontal">
+ <%= form_for @commodity, html: { multipart: true } do |f| %>
+ <p><%= image_tag(@commodity.cover.url) %></p>
+ <%end%>
+</dl>
