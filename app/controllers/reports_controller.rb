@@ -116,20 +116,20 @@ class ReportsController < ApplicationController
 	    	sheet1.column(i).width = 25
 	    end
 	    sheet1.column(5).width = 50
-	    6.upto(8) do |i|
+	    6.upto(9) do |i|
 	    	sheet1.column(i).width = 15
 	    end
-	    sheet1.column(9).width = 20
-	    10.upto(13) do |i|
+	    sheet1.column(10).width = 20
+	    11.upto(14) do |i|
 	    	sheet1.column(i).width = 15
 	    end
-	    sheet1.column(14).width = 35
-	    sheet1.column(15).width = 25
-	    sheet1.column(17).width = 35
-	    18.upto(21) do |i|
+	    sheet1.column(15).width = 35
+	    sheet1.column(16).width = 25
+	    sheet1.column(18).width = 35
+	    19.upto(22) do |i|
 	    	sheet1.column(i).width = 15
 	    end
-	    sheet1.column(22).width = 20
+	    sheet1.column(23).width = 20
 
 	    # 设置行高
 		sheet1.row(0).height = 40
@@ -142,7 +142,7 @@ class ReportsController < ApplicationController
 	    # 表头
 	    # sheet1.merge_cells(start_row, start_col, end_row, end_col)	    
 	    sheet1.row(0).default_format = title 
-	    sheet1.merge_cells(0, 0, 0, 23)
+	    sheet1.merge_cells(0, 0, 0, 24)
   		sheet1[0,0] = "           订单管理报表"
 
   		sheet1.row(1).default_format = filter
@@ -165,16 +165,16 @@ class ReportsController < ApplicationController
   		sheet1.row(2).set_format(9,red)
   		
   		sheet1[3,0] = "子订单信息"
-    	sheet1.merge_cells(3, 0, 3, 14)	
+    	sheet1.merge_cells(3, 0, 3, 15)	
     	
   		sheet1[3,15] = "主订单信息区"
-  		sheet1.merge_cells(3, 15, 3, 23)
-  		0.upto(23) do |i|
+  		sheet1.merge_cells(3, 16, 3, 24)
+  		0.upto(24) do |i|
   			sheet1.row(3).set_format(i, GreyFormat1.new(:grey, :black))
   		end	
    		
-  		sheet1.row(4).concat %w{序号 子订单编号 商品编码 DMS商品编码 供应商 商品名称 数量 销售单价 订单状态 目前流转单位 下单时间 结单时间 是否审核过 是否复核过 最后一次驳回理由 主订单编号 收货人 收货地址 收货人电话 收货人手机 创建时间 创建人 创建单位 备注}
-  		0.upto(23) do |i|
+  		sheet1.row(4).concat %w{序号 子订单编号 商品编码 DMS商品编码 供应商 商品名称 数量 销售单价 商家结算价 订单状态 目前流转单位 下单时间 结单时间 是否审核过 是否复核过 最后一次驳回理由 主订单编号 收货人 收货地址 收货人电话 收货人手机 创建时间 创建人 创建单位 备注}
+  		0.upto(24) do |i|
   			sheet1.row(4).set_format(i, GreyFormat2.new(:grey, :black))
   		end
 
@@ -190,24 +190,25 @@ class ReportsController < ApplicationController
   			sheet1[count_row,5] = x.commodity.name
   			sheet1[count_row,6] = x.amount
   			sheet1[count_row,7] = x.price
-  			sheet1[count_row,8] = x.status_name
-  			sheet1[count_row,9] = x.at_unit.name
-  			sheet1[count_row,10] = x.created_at.strftime("%Y%m%d")
-  			sheet1[count_row,11] = x.closed_at.blank? ? "" : x.closed_at.strftime("%Y%m%d")
-  			sheet1[count_row,12] = x.has_checked? ? "是" : "否"
-  			sheet1[count_row,13] = x.has_rechecked? ? "是" : "否"
-  			sheet1[count_row,14] = x.why_decline.blank? ? "" : x.why_decline
-  			sheet1[count_row,15] = x.order.no
-  			sheet1[count_row,16] = x.order.name
-  			sheet1[count_row,17] = x.order.address
-  			sheet1[count_row,18] = x.order.tel
-  			sheet1[count_row,19] = x.order.phone
-  			sheet1[count_row,20] = x.order.created_at
-  			sheet1[count_row,21] = x.order.user.name
-  			sheet1[count_row,22] = x.order.unit.name
-  			sheet1[count_row,23] = x.order.desc
+  			sheet1[count_row,8] = x.cost_price
+  			sheet1[count_row,9] = x.status_name
+  			sheet1[count_row,10] = x.at_unit.name
+  			sheet1[count_row,11] = x.created_at.strftime("%Y%m%d")
+  			sheet1[count_row,12] = x.closed_at.blank? ? "" : x.closed_at.strftime("%Y%m%d")
+  			sheet1[count_row,13] = x.has_checked? ? "是" : "否"
+  			sheet1[count_row,14] = x.has_rechecked? ? "是" : "否"
+  			sheet1[count_row,15] = x.why_decline.blank? ? "" : x.why_decline
+  			sheet1[count_row,16] = x.order.no
+  			sheet1[count_row,17] = x.order.name
+  			sheet1[count_row,18] = x.order.address
+  			sheet1[count_row,19] = x.order.tel
+  			sheet1[count_row,20] = x.order.phone
+  			sheet1[count_row,21] = x.order.created_at.strftime("%Y%m%d")
+  			sheet1[count_row,22] = x.order.user.name
+  			sheet1[count_row,23] = x.order.unit.name
+  			sheet1[count_row,24] = x.order.desc
 
-  			0.upto(23) do |x|
+  			0.upto(24) do |x|
 	  			sheet1.row(count_row).set_format(x, body)
 	  		end	
 	  		sheet1.row(count_row).height = 30
@@ -219,15 +220,16 @@ class ReportsController < ApplicationController
   		sheet1[count_row,0] = "合计"
   		sheet1[count_row,1] = "订单总数：#{objs.count}"
   		sheet1[count_row,6] = "商品总数：#{objs.sum(:amount)}"
-  		sheet1[count_row,7] = "总金额：#{objs.sum(:price)}"
-  		0.upto(23) do |x|
+  		sheet1[count_row,7] = "销售总额：#{objs.sum(:price)}"
+  		sheet1[count_row,8] = "结算总额：#{objs.sum(:cost_price)}"
+  		0.upto(24) do |x|
 	  		sheet1.row(count_row).set_format(x, bold)
 	  	end
 	  	sheet1.row(count_row).height = 25
 
   		count_row += 1
 		sheet1.row(count_row).default_format = filter
-		sheet1.merge_cells(count_row, 0, 0, 23)
+		sheet1.merge_cells(count_row, 0, 0, 24)
   		sheet1[count_row,0] = "打印机构：#{current_user.unit.name}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
   		sheet1.row(count_row).height = 30
 
