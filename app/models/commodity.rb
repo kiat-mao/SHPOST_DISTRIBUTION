@@ -34,6 +34,14 @@ class Commodity < ActiveRecord::Base
 		end
 	end
 
+	def can_cover_upload?
+		if Unit.unit_type = 'postbuy'
+			return true
+		else
+			return false
+		end
+	end
+
 	private
 	def generate_no
     count = (Commodity.where(supplier: self.supplier).count + 1).to_s.rjust(5, '0')

@@ -31,6 +31,14 @@ class Supplier < ActiveRecord::Base
 		end
 	end
 
+	def can_contracts_upload
+		if Unit.unit_type = 'delivery'
+			return true
+		else
+			return false
+		end
+	end
+
 	def self.not_valid
 		Supplier.all.each do |s|
 			if s.valid_before < Time.now
