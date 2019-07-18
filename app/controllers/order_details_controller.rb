@@ -82,9 +82,11 @@ class OrderDetailsController < ApplicationController
     @order = Order.find(params[:order_id].to_i)
     @order_detail.order = @order
     
-    @order_detail.commodity = Commodity.find(params[:commodity_id].to_i)
+    commodity = Commodity.find(params[:commodity_id].to_i)
+    @order_detail.commodity = commodity
     @order_detail.at_unit = current_user.unit
     @order_detail.status = "waiting"
+    @order_detail.cost_price = commodity.cost_price
 
     respond_to do |format|
       if @order_detail.save!

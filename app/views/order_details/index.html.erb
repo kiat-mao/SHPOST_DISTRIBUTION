@@ -93,7 +93,9 @@
         ActiveSupport::SafeBuffer.new << 
           (link_to t('.edit', :default => t("helpers.links.edit")), edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if (can? :update, order_detail) && (current_user.role.eql?"unitadmin")) << ' ' <<
           (link_to t('.cancel', :default => t("helpers.links.cancel")),
-                        cancel_order_detail_path(order_detail), :method => :post, :name => "order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && (current_user.role.eql?"unitadmin") && !(order_detail.canceled?)))
+                        cancel_order_detail_path(order_detail), :method => :post, :name => "order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && (current_user.role.eql?"unitadmin") && !(order_detail.canceled?))) << ' ' <<
+          (link_to t('.read_log', :default => t("helpers.links.read_log")),
+                        read_log_order_detail_path(order_detail), :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?)))
       end
     end
   end 
