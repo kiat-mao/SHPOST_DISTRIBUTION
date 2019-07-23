@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190718070133) do
+ActiveRecord::Schema.define(version: 20190723023217) do
 
   create_table "commodities", force: :cascade do |t|
     t.string   "cno",                                                null: false
@@ -56,7 +56,6 @@ ActiveRecord::Schema.define(version: 20190718070133) do
     t.integer  "amount"
     t.decimal  "price",        precision: 10, scale: 2, null: false
     t.string   "status"
-    t.text     "desc"
     t.string   "why_decline"
     t.datetime "closed_at"
     t.integer  "order_id"
@@ -65,6 +64,7 @@ ActiveRecord::Schema.define(version: 20190718070133) do
     t.datetime "created_at",                            null: false
     t.datetime "updated_at",                            null: false
     t.decimal  "cost_price",   precision: 10, scale: 2
+    t.string   "desc"
   end
 
   add_index "order_details", ["at_unit_id"], name: "index_order_details_on_at_unit_id"
@@ -75,12 +75,12 @@ ActiveRecord::Schema.define(version: 20190718070133) do
     t.string   "address"
     t.string   "phone"
     t.string   "tel"
-    t.text     "desc"
     t.integer  "user_id"
     t.integer  "unit_id"
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
     t.boolean  "is_fresh",   default: true
+    t.string   "desc"
   end
 
   add_index "orders", ["unit_id"], name: "index_orders_on_unit_id"
