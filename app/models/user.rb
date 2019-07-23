@@ -37,6 +37,10 @@ class User < ActiveRecord::Base
     (role.eql? 'user') ? true : false
   end
 
+  def branch?
+    self.unit.unit_type.eql? "branch"
+  end
+
   def email_required?
     false
   end

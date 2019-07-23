@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190715074543) do
+ActiveRecord::Schema.define(version: 20190718070133) do
 
   create_table "commodities", force: :cascade do |t|
     t.string   "cno",                                                null: false
@@ -64,6 +64,7 @@ ActiveRecord::Schema.define(version: 20190715074543) do
     t.integer  "at_unit_id"
     t.datetime "created_at",                            null: false
     t.datetime "updated_at",                            null: false
+    t.decimal  "cost_price",   precision: 10, scale: 2
   end
 
   add_index "order_details", ["at_unit_id"], name: "index_order_details_on_at_unit_id"
