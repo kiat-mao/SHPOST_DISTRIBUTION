@@ -2,9 +2,11 @@ class ReportsController < ApplicationController
 	
 	def order_report
 		filters = {}
-		if current_user.unit.unit_type.eql?"branch"
+		if current_user.role.eql?"unitadmin"
+			@at_units = Unit.all
+		elsif current_user.unit.unit_type.eql?"branch"
 			@at_units = Unit.where("unit_type=? or unit_type=? or id=?", "delivery", "postbuy", current_user.unit.id)
-		else
+		else 
 			@at_units = Unit.all
 		end
 	    unless request.get?
@@ -157,7 +159,11 @@ class ReportsController < ApplicationController
   		sheet1.row(1).set_format(12,red)
   		
   		sheet1.row(2).default_format = filter
-  		sheet1[2,0] = "  单位名称：#{current_user.unit.name}"
+  		if current_user.unitadmin?
+  			sheet1[2,0] = "  单位名称：#{current_user.rolename}"
+  		else
+  		    sheet1[2,0] = "  单位名称：#{current_user.unit.name}"
+  	    end
   		sheet1[2,3] = "主订单编号：#{filters['order_no']}"
   		sheet1[2,5] = "价格区间：#{filters['price_start']} - #{filters['price_end']}"
   		sheet1[2,6] = "目前流转单位：#{filters['at_unit']}"
@@ -230,7 +236,11 @@ class ReportsController < ApplicationController
   		count_row += 1
 		sheet1.row(count_row).default_format = filter
 		sheet1.merge_cells(count_row, 0, 0, 24)
-  		sheet1[count_row,0] = "打印机构：#{current_user.unit.name}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+		if current_user.unitadmin?
+			sheet1[count_row,0] = "打印机构：#{current_user.rolename}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+  		else
+  		    sheet1[count_row,0] = "打印机构：#{current_user.unit.name}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+  		end
   		sheet1.row(count_row).height = 30
 
   		book.write xls_report  

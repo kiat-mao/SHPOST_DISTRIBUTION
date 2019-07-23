@@ -49,7 +49,7 @@ class OrderDetailsController < ApplicationController
   #查看子订单
   def look
     @status = "look"
-    if current_user.unit.unit_type.eql?"branch"
+    if ! current_user.unitadmin? && current_user.branch?
       @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where("order_details.status != 'waiting'").order("orders.no, order_details.no"))
     else
       @order_details = initialize_grid(@order_details.joins(:order).where("order_details.status != 'waiting'").order("orders.no, order_details.no"))
