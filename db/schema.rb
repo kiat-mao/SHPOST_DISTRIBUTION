@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190723023217) do
+ActiveRecord::Schema.define(version: 20190723033130) do
 
   create_table "commodities", force: :cascade do |t|
     t.string   "cno",                                                null: false
@@ -20,11 +20,11 @@ ActiveRecord::Schema.define(version: 20190723023217) do
     t.integer  "supplier_id",                                        null: false
     t.decimal  "cost_price",  precision: 5, scale: 2,                null: false
     t.decimal  "sell_price",  precision: 5, scale: 2,                null: false
-    t.text     "desc"
     t.boolean  "is_on_sell",                          default: true, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "cover"
+    t.string   "desc"
   end
 
   create_table "import_files", force: :cascade do |t|
