@@ -3,7 +3,7 @@ source 'https://rubygems.com/'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'bundler', '~> 1.17', '>= 1.17.3'
 
-gem 'rails', '4.2.0'
+gem 'rails', '~> 4.2.0'
 
 gem 'rails-i18n', '~> 4.0.0' # For 4.0.x
 
@@ -106,7 +106,8 @@ gem 'jquery_datepicker'
 
 gem 'ruby-oci8'
 
-gem "activerecord-oracle_enhanced-adapter"
+# gem "activerecord-oracle_enhanced-adapter"
+gem 'activerecord-oracle_enhanced-adapter', '~> 1.6.0'
 
 # gem 'resque-scheduler'
 gem 'whenever'
