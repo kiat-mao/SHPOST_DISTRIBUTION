@@ -199,10 +199,10 @@ class CommoditiesController < ApplicationController
     obj.each do |obj|
       if obj.last.eql?"yes"
         sheet1.row(count_row).default_format = red
+      else
+        sheet1[count_row,0]=Commodity.find_by(dms_no:obj[1]).try(:cno)
       end
-
-      sheet1[count_row,0]=Commodity.find_by(dms_no:obj[1]).cno
-        
+       
       count = 1
       while count<size-1
         sheet1[count_row,count]=obj[count]
