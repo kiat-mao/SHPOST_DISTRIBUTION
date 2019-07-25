@@ -65,6 +65,17 @@ class OrderDetail < ActiveRecord::Base
     super
   end
 
+  def closed!
+    self.closed_at = Time.now
+    self.at_unit = self.order.unit
+    super
+  end
+
+  def canceled!
+    self.at_unit = self.order.unit
+    super
+  end
+
   private
   def generate_no
     count = (OrderDetail.where(order: self.order).count + 1).to_s.rjust(3, '0')
