@@ -238,8 +238,13 @@ class ReportsController < ApplicationController
 		sheet1.row(count_row).default_format = filter
 		sheet1.merge_cells(count_row, 0, 0, 24)
 
-  		sheet1[count_row,0] = "打印机构：#{current_user.unit.try :name}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
-  		sheet1.row(count_row).height = 30
+		if current_user.unitadmin? || current_user.superadmin?
+			sheet1[count_row,0] = "打印机构：#{current_user.rolename}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+  		else
+  		    sheet1[count_row,0] = "打印机构：#{current_user.unit.name}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+
+  		end
+		sheet1.row(count_row).height = 30
 
   		book.write xls_report  
     	xls_report.string
@@ -366,12 +371,6 @@ class ReportsController < ApplicationController
   		sheet1.row(3).concat %w{序号 供应商名称 商品编码 DMS商品编码 商品名称 销售数量 销售价(元) 商家结算价(元) 销售金额(元) 销售成本(元) 销售收入(元)}
   		0.upto(10) do |i|
   			sheet1.row(3).set_format(i, GreyFormat2.new(:grey, :black))
-
-		if current_user.unitadmin? || current_user.superadmin?
-			sheet1[count_row,0] = "打印机构：#{current_user.rolename}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
-  		else
-  		    sheet1[count_row,0] = "打印机构：#{current_user.unit.name}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
-
   		end
 
   		# 表格内容
@@ -504,7 +503,12 @@ class ReportsController < ApplicationController
   		count_row += 1
 		sheet1.row(count_row).default_format = filter
 		sheet1.merge_cells(count_row, 0, 0, 10)
-  		sheet1[count_row,0] = "打印机构：#{current_user.unit.try :name}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+  		if current_user.unitadmin? || current_user.superadmin?
+			sheet1[count_row,0] = "打印机构：#{current_user.rolename}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+  		else
+  		    sheet1[count_row,0] = "打印机构：#{current_user.unit.name}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+
+  		end
   		sheet1.row(count_row).height = 30
 
   		book.write xls_report  
@@ -517,4 +521,4 @@ class ReportsController < ApplicationController
 	    date = Date.civil(time.split(/-|\//)[0].to_i,time.split(/-|\//)[1].to_i,time.split(/-|\//)[2].to_i)
 	    return date
 	  end
- end
+end
