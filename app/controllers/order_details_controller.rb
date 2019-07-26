@@ -148,30 +148,14 @@ class OrderDetailsController < ApplicationController
   def to_check
     status = @order_detail.status
     @order_detail.checking!
-    if params[:from_order].eql?"true"
-      redirect_to pending_orders_url
-    else
-      redirect_to pending_order_details_url
-    end
+    redirect_to request.referer
   end
 
   #通过（审核）
   def to_recheck
     status = @order_detail.status
     @order_detail.rechecking!
-    if params[:from_order].eql?"true"
-      if status.eql?"declined"
-        redirect_to declined_orders_url
-      else
-        redirect_to checking_orders_url
-      end
-    else
-      if status.eql?"declined"
-        redirect_to declined_order_details_url
-      else
-        redirect_to checking_order_details_url
-      end
-    end
+    redirect_to request.referer   
   end
 
   #驳回（审核）
@@ -179,76 +163,33 @@ class OrderDetailsController < ApplicationController
     status = @order_detail.status
     @order_detail.update why_decline: params[:why_decline]    
     @order_detail.pending!
-
-    if params[:from_order].eql?"true"
-      if status.eql?"declined"
-        redirect_to declined_orders_url
-      else
-        redirect_to checking_orders_url
-      end
-    else
-      if status.eql?"declined"
-        redirect_to declined_order_details_url
-      else
-        redirect_to checking_order_details_url
-      end
-    end
-
-
     @why_decline = @order_detail.why_decline
-
+    redirect_to request.referer
   end
 
   #下单
   def place
     @order_detail.receiving!
-    if params[:from_order].eql?"true"
-      redirect_to rechecking_orders_url
-    else
-      redirect_to rechecking_order_details_url
-    end
+    redirect_to request.referer
   end
 
   #驳回（复核）
   def recheck_decline
     @order_detail.declined!
-
-    if params[:from_order].eql?"true"
-      redirect_to rechecking_orders_url
-    else
-      redirect_to rechecking_order_details_url
-    end
-
     @why_decline = @order_detail.why_decline
-
+    redirect_to request.referer
   end
 
   #收货
   def confirm
     @order_detail.closed!
-    if params[:from_order].eql?"true"
-      redirect_to receiving_orders_url
-    else
-      redirect_to receiving_order_details_url
-    end
+    redirect_to request.referer
   end
 
   #取消
   def cancel
     @order_detail.canceled!
-    if params[:from_order].eql?"true"
-      if current_user.role.eql?"unitadmin"
-        redirect_to look_orders_url
-      else
-        redirect_to receiving_orders_url
-      end
-    else
-      if current_user.role.eql?"unitadmin"
-        redirect_to look_order_details_url
-      else
-        redirect_to receiving_order_details_url
-      end
-    end
+    redirect_to request.referer
   end
 
   def read_log

@@ -47,7 +47,7 @@ $(document).on "page:change", ->
   $ "a[name='order_order_detail_check_decline']"
   .click (e) ->
     if confirm "确定驳回吗？" 
-    then this.href = "#{ this.href }&why_decline=#{ prompt('驳回理由') }" 
+    then this.href = "#{ this.href }?why_decline=#{ prompt('驳回理由') }" 
     else false
 
   $ "a[name='order_order_detail_place']"
@@ -58,7 +58,7 @@ $(document).on "page:change", ->
   $ "a[name='order_order_detail_recheck_decline']"
   .click (e) ->
     if confirm "确定驳回吗？" 
-    then this.href = "#{ this.href }&why_decline=#{ prompt('驳回理由') }" 
+    then this.href = "#{ this.href }?why_decline=#{ prompt('驳回理由') }" 
     else false
 
   $ "a[name='order_order_detail_confirm']"

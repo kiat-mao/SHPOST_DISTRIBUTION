@@ -17,7 +17,7 @@ class ReportsController < ApplicationController
 	      end
 
 	      if !params[:create_at_end].blank? && !params[:create_at_end][:create_at_end].blank?
-	      	selectorder_details=selectorder_details.where("orders.created_at <= ?", to_date(params[:create_at_end][:create_at_end]))
+	      	selectorder_details=selectorder_details.where("orders.created_at <= ?", to_date(params[:create_at_end][:create_at_end])+1.day)
 	      	filters["create_at_end"] = params[:create_at_end][:create_at_end]
 	      end
 
@@ -269,7 +269,7 @@ class ReportsController < ApplicationController
 	      end
 
 	      if !params[:close_at_end].blank? && !params[:close_at_end][:close_at_end].blank?
-	      	selectorder_details=selectorder_details.where("order_details.closed_at <= ?", to_date(params[:close_at_end][:close_at_end]))
+	      	selectorder_details=selectorder_details.where("order_details.closed_at <= ?", to_date(params[:close_at_end][:close_at_end])+1.day)
 	      	filters["close_at_end"] = params[:close_at_end][:close_at_end]
 	      end
 
