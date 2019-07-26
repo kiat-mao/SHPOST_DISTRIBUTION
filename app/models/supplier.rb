@@ -39,6 +39,8 @@ class Supplier < ActiveRecord::Base
 		end
 	end
 
+	
+
 	def self.not_valid
 		Supplier.all.each do |s|
 			if s.valid_before < Time.now

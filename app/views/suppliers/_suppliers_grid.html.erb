@@ -26,7 +26,7 @@
       (link_to t('.contracts_upload', :default => t("helpers.links.contracts_upload")),
                       contracts_upload_supplier_path(supplier), :class => 'btn btn-xs btn-primary' if can? :contracts_upload, supplier) << ' ' <<
       (link_to t('.contracts_show', :default => t("helpers.links.contracts_show")),
-                      contracts_show_supplier_path(supplier), :class => 'btn btn-xs btn-primary' if can? :contracts_upload, supplier ) << ' ' <<
+                      contracts_show_supplier_path(supplier), :class => 'btn btn-xs btn-primary' , target: '_blank' if !supplier.contracts.blank?) << ' ' <<
       (link_to t('.destroy', :default => t("helpers.links.destroy")),
                       supplier_path(supplier),
                        :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, supplier) << ' ' <<

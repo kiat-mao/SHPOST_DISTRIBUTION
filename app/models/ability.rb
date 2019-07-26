@@ -70,16 +70,20 @@ class Ability
             # can :manage, OrderDetail
             can :read, Commodity
             can :read, Supplier
+            can :cover_show, Commodity
+            can :contracts_show, Supplier
         end
         if user.unit.eql? Unit::DELIVERY
             can :manage, Supplier
             can [:read, :checking, :declined, :look], Order
             can [:read, :checking, :to_recheck, :check_decline, :declined, :look, :read_log], OrderDetail
             can :read, Commodity
+            can :cover_show, Commodity
         end
         if user.unit.eql? Unit::POSTBUY
             can :manage, Commodity
             can :read, Supplier
+            can :contracts_show, Supplier
             can [:read, :rechecking, :look], Order
             can [:read, :rechecking, :place, :recheck_decline, :look, :read_log], OrderDetail
         end
