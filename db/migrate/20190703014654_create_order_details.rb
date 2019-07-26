@@ -16,7 +16,7 @@ class CreateOrderDetails < ActiveRecord::Migration
       
       t.references :order
       t.references :commodity
-      t.references :at_unit, foreign_key: {to_table: :user}, index: true
+      t.integer :at_unit, index: true
 
       t.timestamps null: false
     end

@@ -2,7 +2,8 @@ class ReportsController < ApplicationController
 	
 	def order_report
 		filters = {}
-		if (!current_user.unit.blank?) && (current_user.unit.unit_type.eql?"branch")
+
+		if ! current_user.unitadmin? && ! current_user.superadmin? && current_user.branch?
 			@at_units = Unit.where("unit_type=? or unit_type=? or id=?", "delivery", "postbuy", current_user.unit.id)
 		else
 			@at_units = Unit.all
@@ -157,7 +158,13 @@ class ReportsController < ApplicationController
   		sheet1.row(1).set_format(12,red)
   		
   		sheet1.row(2).default_format = filter
-  		sheet1[2,0] = "  单位名称：#{current_user.unit.try :name}"
+
+  		if current_user.unitadmin? || current_user.superadmin?
+  			sheet1[2,0] = "  单位名称：#{current_user.rolename}"
+  		else
+  		    sheet1[2,0] = "  单位名称：#{current_user.unit.name}"
+  	    end
+
   		sheet1[2,3] = "主订单编号：#{filters['order_no']}"
   		sheet1[2,5] = "价格区间：#{filters['price_start']} - #{filters['price_end']}"
   		sheet1[2,6] = "目前流转单位：#{filters['at_unit']}"
@@ -230,6 +237,7 @@ class ReportsController < ApplicationController
   		count_row += 1
 		sheet1.row(count_row).default_format = filter
 		sheet1.merge_cells(count_row, 0, 0, 24)
+
   		sheet1[count_row,0] = "打印机构：#{current_user.unit.try :name}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
   		sheet1.row(count_row).height = 30
 
@@ -358,6 +366,12 @@ class ReportsController < ApplicationController
   		sheet1.row(3).concat %w{序号 供应商名称 商品编码 DMS商品编码 商品名称 销售数量 销售价(元) 商家结算价(元) 销售金额(元) 销售成本(元) 销售收入(元)}
   		0.upto(10) do |i|
   			sheet1.row(3).set_format(i, GreyFormat2.new(:grey, :black))
+
+		if current_user.unitadmin? || current_user.superadmin?
+			sheet1[count_row,0] = "打印机构：#{current_user.rolename}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+  		else
+  		    sheet1[count_row,0] = "打印机构：#{current_user.unit.name}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+
   		end
 
   		# 表格内容
