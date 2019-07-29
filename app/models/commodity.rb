@@ -46,7 +46,14 @@ class Commodity < ActiveRecord::Base
 
 	private
 	def generate_no
-    count = (Commodity.where(supplier: self.supplier).count + 1).to_s.rjust(5, '0')
-    self.cno = "#{self.supplier.sno}-#{count}"
+
+		rows = Commodity.where(supplier: self.supplier).count
+    if rows.zero?
+      count = 1
+    else 
+      count = (Commodity.where(supplier: self.supplier).last.cno.last(5).to_i + 1)
+    end
+
+    self.cno = "#{self.supplier.sno}-#{count.to_s.rjust(5, '0')}"
   end
 end

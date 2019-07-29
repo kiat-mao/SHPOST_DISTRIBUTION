@@ -107,7 +107,14 @@ class OrderDetail < ActiveRecord::Base
 
   private
   def generate_no
-    count = (OrderDetail.where(order: self.order).count + 1).to_s.rjust(3, '0')
-    self.no = "#{self.order.no}-#{count}"
+    # count = (OrderDetail.where(order: self.order).count + 1).to_s.rjust(3, '0')
+    rows = OrderDetail.where(order: self.order).count
+    if rows.zero?
+      count = 1
+    else 
+      count = (OrderDetail.where(order: self.order).last.cno.last(3).to_i + 1)
+    end
+
+    self.no = "#{self.order.no}-#{count.to_s.rjust(3, '0')}"
   end
 end
