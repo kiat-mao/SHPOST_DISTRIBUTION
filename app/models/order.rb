@@ -119,6 +119,7 @@ class Order < ActiveRecord::Base
       count = 1
     else 
       count = (Order.where(unit: self.unit).where(created_at: [today .. (today + 1.day)]).last.no.last(3).to_i + 1)
+      count = rows + 1 if count < rows + 1
     end
     self.no = "#{self.unit.short_name}#{today.strftime('%Y%m%d')}#{count.to_s.rjust(3, '0') }"
   end

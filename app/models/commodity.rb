@@ -52,6 +52,7 @@ class Commodity < ActiveRecord::Base
       count = 1
     else 
       count = (Commodity.where(supplier: self.supplier).last.cno.last(5).to_i + 1)
+      count = rows + 1 if count < rows + 1
     end
 
     self.cno = "#{self.supplier.sno}-#{count.to_s.rjust(5, '0')}"
