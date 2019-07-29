@@ -531,6 +531,13 @@ zh-CN:
           needrole:
             can: "report"
             role: "SupplierReport"
+        commodity_report:
+          name: "商品管理报表"
+          link: "/shpost_distribution/reports/commodity_report"
+          need_count: false
+          needrole:
+            can: "report"
+            role: "CommodityReport"
     import:
       name: "文件管理"
       needrole:

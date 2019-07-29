@@ -23,6 +23,7 @@ class Ability
         can :manage, Order
         can :manage, OrderDetail
         can "report", "SupplierReport"
+        can "report", "CommodityReport"
     elsif user.unitadmin?
     #can :manage, :all
         
@@ -55,6 +56,7 @@ class Ability
         can [:read, :update, :look], Order
         can [:read, :update, :cancel, :edit, :look, :read_log], OrderDetail
         can "report", "SupplierReport"
+        can "report", "CommodityReport"
     elsif user.user?
         can :update, User, id: user.id
         can :read, UserLog, user: {id: user.id}
@@ -89,6 +91,7 @@ class Ability
             can [:read, :rechecking, :look], Order
             can [:read, :rechecking, :place, :recheck_decline, :look, :read_log], OrderDetail
             can "report", "SupplierReport"
+            can "report", "CommodityReport"
         end
     else
         cannot :manage, :all

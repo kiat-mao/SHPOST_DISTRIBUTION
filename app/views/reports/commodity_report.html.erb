@@ -1,0 +1,27 @@
+
+<br><br>
+<font face="微软雅黑" color='#006030' size=6>商品管理报表</font>   
+
+<br><br><br>
+ 
+
+<%= form_tag("/shpost_distribution/reports/commodity_report",format: "xls", method: "post") do -%>
+<table>
+    <tr style="line-height: 40px;height: 40px;">
+    	<td><%= label_tag(:create_at_start, "创建时间起始:") %></td>
+        <td><%= text_field("create_at_start","create_at_start") %></td>
+        <td><%= label_tag(:create_at_end, "创建时间结束:") %></td>
+        <td><%= text_field("create_at_end","create_at_end") %></td>
+        <td><%= label_tag(:supplier, "供应商:") %></td>
+        <td><%= select_tag("supplier", options_for_select(Supplier.all.map{|u| [u.name,u.id]}.insert(0,"全部")), id: "supplier") %></td>
+    </tr>
+    <tr style="line-height: 40px;height: 40px;">
+        <td><%= label_tag(:commodity_name, "商品名称:") %></td>
+        <td><%= text_field("commodity_name","commodity_name") %></td>   
+        <td><%= label_tag(:is_on_sell, "是否上架:") %></td>
+    	<td><%= select_tag(:is_on_sell, options_for_select(Commodity::IS_ON_SELL.invert.to_a.insert(0,"全部"))) %></td>
+    </tr>
+</table>
+    <%= submit_tag "报表导出",:class => 'btn btn-primary' %>
+       
+<% end -%>

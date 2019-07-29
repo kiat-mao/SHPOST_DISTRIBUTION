@@ -12,68 +12,68 @@ class ReportsController < ApplicationController
 	      selectorder_details = OrderDetail.accessible_by(current_ability).joins(:order).joins(:order=>[:unit]).joins(:commodity).joins(:commodity=>[:supplier])
 
 	      if !params[:create_at_start].blank? && !params[:create_at_start][:create_at_start].blank?
-	      	selectorder_details=selectorder_details.where("orders.created_at >= ?", to_date(params[:create_at_start][:create_at_start]))
+	      	selectorder_details = selectorder_details.where("orders.created_at >= ?", to_date(params[:create_at_start][:create_at_start]))
 	      	filters["create_at_start"] = params[:create_at_start][:create_at_start]
 	      end
 
 	      if !params[:create_at_end].blank? && !params[:create_at_end][:create_at_end].blank?
-	      	selectorder_details=selectorder_details.where("orders.created_at <= ?", to_date(params[:create_at_end][:create_at_end])+1.day)
+	      	selectorder_details = selectorder_details.where("orders.created_at <= ?", to_date(params[:create_at_end][:create_at_end])+1.day)
 	      	filters["create_at_end"] = params[:create_at_end][:create_at_end]
 	      end
 
 	      if !params[:supplier].blank? && !(params[:supplier].eql?"全部")
-	      	selectorder_details=selectorder_details.where("suppliers.id = ?", params[:supplier].to_i)
+	      	selectorder_details = selectorder_details.where("suppliers.id = ?", params[:supplier].to_i)
 	      	filters["supplier"] = Supplier.find(params[:supplier].to_i).name
 	      else
 	      	filters["supplier"] = "全部"
 	      end
 
 	      if !params[:commodity_name].blank? && !params[:commodity_name][:commodity_name].blank?
-	      	selectorder_details=selectorder_details.where("commodities.name like ?", "%#{params[:commodity_name][:commodity_name]}%")
+	      	selectorder_details = selectorder_details.where("commodities.name like ?", "%#{params[:commodity_name][:commodity_name]}%")
 	      	filters["commodity_name"] = params[:commodity_name][:commodity_name]
 	      end
 
 	      if !params[:status].blank? && !(params[:status].eql?"全部")
-	      	selectorder_details=selectorder_details.where("order_details.status = ?", params[:status])
+	      	selectorder_details = selectorder_details.where("order_details.status = ?", params[:status])
 	      	filters["status"] = params[:status]
 	      else
 	      	filters["status"] = "全部"
 	      end
 
 	      if !params[:order_no].blank? && !params[:order_no][:order_no].blank?
-	      	selectorder_details=selectorder_details.where("orders.no = ?", params[:order_no][:order_no])
+	      	selectorder_details = selectorder_details.where("orders.no = ?", params[:order_no][:order_no])
 	      	filters["order_no"] = params[:order_no][:order_no]
 	      end
 
 	      if !params[:price_start].blank? && !params[:price_start][:price_start].blank?
-	      	selectorder_details=selectorder_details.where("order_details.price >= ?", params[:price_start][:price_start].to_f)
+	      	selectorder_details = selectorder_details.where("order_details.price >= ?", params[:price_start][:price_start].to_f)
 	      	filters["price_start"] = params[:price_start][:price_start]
 	      end
 
 	      if !params[:price_end].blank? && !params[:price_end][:price_end].blank?
-	      	selectorder_details=selectorder_details.where("order_details.price <= ?", params[:price_end][:price_end].to_f)
+	      	selectorder_details = selectorder_details.where("order_details.price <= ?", params[:price_end][:price_end].to_f)
 	      	filters["price_end"] = params[:price_end][:price_end]
 	      end
 
 	      if !params[:at_unit].blank? && !(params[:at_unit].eql?"全部")
-	      	selectorder_details=selectorder_details.where("order_details.at_unit_id = ?", params[:at_unit].to_i)
+	      	selectorder_details = selectorder_details.where("order_details.at_unit_id = ?", params[:at_unit].to_i)
 	      	filters["at_unit"] = Unit.find(params[:at_unit].to_i).name
 	      else
 	      	filters["at_unit"] = "全部"
 	      end
 
 	      if !params[:create_unit_name].blank? && !params[:create_unit_name][:create_unit_name].blank?
-	      	selectorder_details=selectorder_details.where("units.name like ?", "%#{params[:create_unit_name][:create_unit_name]}%")
+	      	selectorder_details = selectorder_details.where("units.name like ?", "%#{params[:create_unit_name][:create_unit_name]}%")
 	      	filters["create_unit_name"] = params[:create_unit_name][:create_unit_name]
 	      end
 
 	      if !params[:order_user_name].blank? && !params[:order_user_name][:order_user_name].blank?
-	      	selectorder_details=selectorder_details.where("orders.name like ?", "%#{params[:order_user_name][:order_user_name]}%")
+	      	selectorder_details = selectorder_details.where("orders.name like ?", "%#{params[:order_user_name][:order_user_name]}%")
 	      	filters["order_user_name"] = params[:order_user_name][:order_user_name]
 	      end
 
 	      if !params[:phone].blank? && !params[:phone][:phone].blank?
-	      	selectorder_details=selectorder_details.where("orders.phone = ? or orders.tel = ?", params[:phone][:phone], params[:phone][:phone])
+	      	selectorder_details = selectorder_details.where("orders.phone = ? or orders.tel = ?", params[:phone][:phone], params[:phone][:phone])
 	      	filters["phone"] = params[:phone][:phone]
 	      end
 
@@ -264,22 +264,22 @@ class ReportsController < ApplicationController
 	      selectorder_details = OrderDetail.accessible_by(current_ability).joins(:order).joins(:order=>[:unit]).joins(:commodity).joins(:commodity=>[:supplier]).where("order_details.status = ?", "closed")
 
 	      if !params[:close_at_start].blank? && !params[:close_at_start][:close_at_start].blank?
-	      	selectorder_details=selectorder_details.where("order_details.closed_at >= ?", to_date(params[:close_at_start][:close_at_start]))
+	      	selectorder_details = selectorder_details.where("order_details.closed_at >= ?", to_date(params[:close_at_start][:close_at_start]))
 	      	filters["close_at_start"] = params[:close_at_start][:close_at_start]
 	      end
 
 	      if !params[:close_at_end].blank? && !params[:close_at_end][:close_at_end].blank?
-	      	selectorder_details=selectorder_details.where("order_details.closed_at <= ?", to_date(params[:close_at_end][:close_at_end])+1.day)
+	      	selectorder_details = selectorder_details.where("order_details.closed_at <= ?", to_date(params[:close_at_end][:close_at_end])+1.day)
 	      	filters["close_at_end"] = params[:close_at_end][:close_at_end]
 	      end
 
 	      if !params[:commodity_name].blank? && !params[:commodity_name][:commodity_name].blank?
-	      	selectorder_details=selectorder_details.where("commodities.name like ?", "%#{params[:commodity_name][:commodity_name]}%")
+	      	selectorder_details = selectorder_details.where("commodities.name like ?", "%#{params[:commodity_name][:commodity_name]}%")
 	      	filters["commodity_name"] = params[:commodity_name][:commodity_name]
 	      end
 
 	      if !params[:price_start].blank? && !params[:price_start][:price_start].blank?
-	      	selectorder_details=selectorder_details.where("order_details.price >= ?", params[:price_start][:price_start].to_f)
+	      	selectorder_details = selectorder_details.where("order_details.price >= ?", params[:price_start][:price_start].to_f)
 	      	filters["price_start"] = params[:price_start][:price_start]
 	      end
 
@@ -289,7 +289,7 @@ class ReportsController < ApplicationController
 	      end
 
 	      if !params[:supplier].blank? && !(params[:supplier].eql?"全部")
-	      	selectorder_details=selectorder_details.where("suppliers.id = ?", params[:supplier].to_i)
+	      	selectorder_details = selectorder_details.where("suppliers.id = ?", params[:supplier].to_i)
 	      	filters["supplier"] = Supplier.find(params[:supplier].to_i).name
 	      else
 	      	filters["supplier"] = "全部"
@@ -302,7 +302,7 @@ class ReportsController < ApplicationController
           end	   
 
           if !units.blank?  
-          	selectorder_details=selectorder_details.where("orders.unit_id in (?)", units)
+          	selectorder_details = selectorder_details.where("orders.unit_id in (?)", units)
           	filters["units"] = units.map{|u| Unit.find(u).name}.compact.join(",")
           else
           	filters["units"] = "全部"
@@ -514,6 +514,159 @@ class ReportsController < ApplicationController
   		book.write xls_report  
     	xls_report.string
 	end
+
+	def commodity_report
+		authorize! "report", "CommodityReport"
+
+		filters = {}
+
+		unless request.get?
+	      select_commodities = Commodity.all.order(:supplier_id, :cno)
+
+	      if !params[:create_at_start].blank? && !params[:create_at_start][:create_at_start].blank?
+	      	select_commodities = select_commodities.where("created_at >= ?", to_date(params[:create_at_start][:create_at_start]))
+	      	filters["create_at_start"] = params[:create_at_start][:create_at_start]
+	      end
+
+	      if !params[:create_at_end].blank? && !params[:create_at_end][:create_at_end].blank?
+	      	select_commodities = select_commodities.where("created_at <= ?", to_date(params[:create_at_end][:create_at_end])+1.day)
+	      	filters["create_at_end"] = params[:create_at_end][:create_at_end]
+	      end
+
+	      if !params[:supplier].blank? && !(params[:supplier].eql?"全部")
+	      	select_commodities = select_commodities.where("supplier_id = ?", params[:supplier].to_i)
+	      	filters["supplier"] = Supplier.find(params[:supplier].to_i).name
+	      else
+	      	filters["supplier"] = "全部"
+	      end
+
+	      if !params[:commodity_name].blank? && !params[:commodity_name][:commodity_name].blank?
+	      	select_commodities = select_commodities.where("name like ?", "%#{params[:commodity_name][:commodity_name]}%")
+	      	filters["commodity_name"] = params[:commodity_name][:commodity_name]
+	      end
+
+	      if !params[:is_on_sell].blank? && !(params[:is_on_sell].eql?"全部")
+	      	select_commodities = select_commodities.where("is_on_sell = ?", (params[:is_on_sell].eql?"true"))
+	      	filters["is_on_sell"] = Commodity::IS_ON_SELL[params[:is_on_sell].to_sym]
+	      else
+	      	filters["is_on_sell"] = "全部"
+	      end
+
+	      if select_commodities.blank?
+	        flash[:alert] = "无数据"
+	        redirect_to :action => 'commodity_report'
+	      else
+	      	send_data(commodity_report_xls_content_for(select_commodities,filters),:type => "text/excel;charset=utf-8; header=present",:filename => "商品管理报表_#{Time.now.strftime("%Y%m%d")}.xls")  
+	      end
+   		end
+   	end
+
+   	def commodity_report_xls_content_for(objs,filters) 
+	    xls_report = StringIO.new  
+	    book = Spreadsheet::Workbook.new  
+	    sheet1 = book.create_worksheet :name => "商品管理报表"  
+	    
+	    title = Spreadsheet::Format.new :weight => :bold, :size => 18
+	    filter = Spreadsheet::Format.new :size => 12
+	    red_filter = Spreadsheet::Format.new :color => :red, :size => 12
+	    red_body = Spreadsheet::Format.new :color => :red, :size => 10, :align => :center, :border => :thin
+	    bold = Spreadsheet::Format.new :weight => :bold, :size => 10, :border => :thin
+	    body = Spreadsheet::Format.new :size => 10, :border => :thin, :align => :center
+
+	    # 设置列宽
+	    1.upto(3) do |i|
+	    	sheet1.column(i).width = 30
+	    end
+	    sheet1.column(4).width = 50
+	    5.upto(9) do |i|
+	    	sheet1.column(i).width = 25
+	    end
+	    sheet1.column(10).width = 50
+	    
+	    # 设置行高
+		sheet1.row(0).height = 40
+		1.upto(2) do |i|
+	    	sheet1.row(i).height = 30
+	    end
+	    sheet1.row(3).height = 25
+	    
+	    # 表头
+	    # sheet1.merge_cells(start_row, start_col, end_row, end_col)	    
+	    sheet1.row(0).default_format = title 
+	    sheet1.merge_cells(0, 0, 0, 10)
+  		sheet1[0,0] = "            商品管理报表表"
+
+  		sheet1.row(1).default_format = filter
+  		sheet1.merge_cells(1, 0, 1, 2)
+  		sheet1[1,0] = "  创建时间：#{filters['create_at_start']}至#{filters['create_at_end']}"
+  		sheet1[1,3] = "供应商：#{filters['supplier']}" 		
+  		sheet1[1,5] = "商品名称：#{filters['commodity_name']}"
+  		sheet1.row(1).set_format(5,red_filter)
+  		sheet1.row(2).default_format = filter
+  		if current_user.unitadmin? || current_user.superadmin?
+  			sheet1[2,0] = "  单位名称：#{current_user.rolename}"
+  		else
+  		    sheet1[2,0] = "  单位名称：#{current_user.unit.name}"
+  	    end
+  		sheet1[2,5] = "是否上架：#{filters['is_on_sell']}"
+  		
+  		sheet1.row(3).concat %w{序号 供应商 商品编码 DMS商品编码 商品名称 商家结算价 最低销售价 是否上架 上架时间 下架时间 商品详情}
+  		0.upto(10) do |i|
+  			sheet1.row(3).set_format(i, GreyFormat2.new(:grey, :black))
+  		end
+
+  		# 表格内容
+  		count_row = 4
+  		i=1
+
+  		objs.each do |x|
+  			sheet1[count_row,0] = i
+  			sheet1[count_row,1] = x.supplier.try :name
+  			sheet1[count_row,2] = x.cno
+  			sheet1[count_row,3] = x.dms_no
+  			sheet1[count_row,4] = x.name
+  			sheet1[count_row,5] = x.cost_price
+  			sheet1[count_row,6] = x.sell_price
+  			sheet1[count_row,7] = x.is_on_sell_name
+  			sheet1[count_row,8] = x.created_at.strftime("%Y%m%d")
+  			sheet1[count_row,9] = x.is_on_sell ? "" : x.updated_at.strftime("%Y%m%d")
+  			sheet1[count_row,10] = x.desc
+  			
+  			0.upto(10) do |x|
+	  			sheet1.row(count_row).set_format(x, body)
+	  		end	
+	  		sheet1.row(count_row).set_format(7,red_body)
+	  		sheet1.row(count_row).height = 30
+
+  			count_row += 1
+  			i += 1
+  		end
+
+  		sheet1[count_row,1] = "合计"
+  		sheet1[count_row,2] = "商品总数：#{objs.count}"
+  		0.upto(10) do |x|
+	  		sheet1.row(count_row).set_format(x, bold)
+	  	end
+	  	sheet1.row(count_row).height = 25
+
+  		count_row += 1
+		sheet1.row(count_row).default_format = filter
+		sheet1.merge_cells(count_row, 0, 0, 10)
+
+		if current_user.unitadmin? || current_user.superadmin?
+			sheet1[count_row,0] = "打印机构：#{current_user.rolename}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+  		else
+  		    sheet1[count_row,0] = "打印机构：#{current_user.unit.name}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+
+  		end
+		sheet1.row(count_row).height = 30
+
+  		book.write xls_report  
+    	xls_report.string
+	end
+
+
+
 
 
    	private
