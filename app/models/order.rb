@@ -18,26 +18,13 @@ class Order < ActiveRecord::Base
   def checking!
     Order.transaction do
       begin
+        order_details =  []
         self.is_fresh = false
         self.save!
         self.order_details.each do |x|
-          x.at_unit = Unit::DELIVERY
-          x.checking!
+          order_details << x if x.checking!
         end
-      rescue Exception => e
-        raise e
-      end
-    end
-  end
-
-  def checking!
-    Order.transaction do
-      begin
-        self.is_fresh = false
-        self.save!
-        self.order_details.each do |x|
-          x.checking!
-        end
+        order_details
       rescue Exception => e
         raise e
       end
@@ -47,9 +34,11 @@ class Order < ActiveRecord::Base
   def rechecking!
     Order.transaction do
       begin
+        order_details =  []
         self.order_details.each do |x|
-          x.rechecking!
+         order_details << x if x.rechecking!
         end
+        order_details
       rescue Exception => e
         raise e
       end
@@ -59,9 +48,11 @@ class Order < ActiveRecord::Base
   def pending! why_decline = nil
     Order.transaction do
       begin
+        order_details =  []
         self.order_details.each do |x|
-          x.pending! why_decline
+          order_details << x if x.pending! why_decline
         end
+        order_details
       rescue Exception => e
         raise e
       end
@@ -71,9 +62,11 @@ class Order < ActiveRecord::Base
   def receiving!
     Order.transaction do
       begin
+        order_details =  []
         self.order_details.each do |x|
-          x.receiving!
+          order_details << x if x.receiving!
         end
+        order_details
       rescue Exception => e
         raise e
       end
@@ -83,9 +76,11 @@ class Order < ActiveRecord::Base
   def declined! why_decline = nil
     Order.transaction do
       begin
+        order_details =  []
         self.order_details.each do |x|
-          x.declined! why_decline
+          order_details << x if x.declined! why_decline
         end
+        order_details
       rescue Exception => e
         raise e
       end
@@ -95,9 +90,11 @@ class Order < ActiveRecord::Base
   def closed!
     Order.transaction do
       begin
+        order_details =  []
         self.order_details.each do |x|
-          x.closed!
+          order_details << x if x.closed!
         end
+        order_details
       rescue Exception => e
         raise e
       end

@@ -40,13 +40,15 @@ class OrderDetail < ActiveRecord::Base
   end
 
   def waiting!
-
+    false
   end
 
   def checking!
     if self.waiting? || self.pending?
       self.at_unit = Unit::DELIVERY
       super
+    else
+      false
     end
   end
 
@@ -54,6 +56,8 @@ class OrderDetail < ActiveRecord::Base
     if self.checking? || self.declined?
       self.at_unit = Unit::POSTBUY
       super
+    else
+      false
     end
   end
 
@@ -62,6 +66,8 @@ class OrderDetail < ActiveRecord::Base
       self.why_decline = why_decline
       self.at_unit = self.order.unit
       super()
+    else
+      false
     end
   end
 
@@ -69,6 +75,8 @@ class OrderDetail < ActiveRecord::Base
     if self.rechecking?
       self.at_unit = self.order.unit
       super
+    else
+      false
     end
   end
 
@@ -77,6 +85,8 @@ class OrderDetail < ActiveRecord::Base
       self.why_decline = why_decline
       self.at_unit = Unit::DELIVERY
       super()
+    else
+      false
     end
   end
 
@@ -85,6 +95,8 @@ class OrderDetail < ActiveRecord::Base
       self.closed_at = Time.now
       self.at_unit = self.order.unit
       super
+    else
+      false
     end
   end
 

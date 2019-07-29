@@ -47,39 +47,39 @@ class OrdersController < ApplicationController
 
   #提交（审核）
   def to_check
-    @order.checking!
+    @order_details = @order.checking!
     redirect_to fresh_orders_url
   end
 
   #通过（审核）
   def to_recheck
-    @order.rechecking!
+    @order_details = @order.rechecking!
     redirect_to request.referer   
   end
 
   #驳回（审核）
   def check_decline
     @why_decline = params[:why_decline]    
-    @order.pending! @why_decline
+    @order_details = @order.pending! @why_decline
     redirect_to request.referer
   end
 
   #下单
   def place
-    @order.receiving!
+    @order_details = @order.receiving!
     redirect_to request.referer
   end
 
   #驳回（复核）
   def recheck_decline
     @why_decline = params[:why_decline] 
-    @order.declined! @why_decline
+    @order_details = @order.declined! @why_decline
     redirect_to request.referer
   end
 
   #收货
   def confirm
-    @order.closed!
+    @order_details = @order.closed!
     redirect_to request.referer
   end
 
@@ -168,7 +168,8 @@ class OrdersController < ApplicationController
 
   private
     def logging
-      @order.order_details.each do |order_detail|
+      @order_details.each do |order_detail|
+        # binding.pry
         order_detail_log = OrderDetailLog.create!(user: current_user, operation: params[:action], order_detail: order_detail, desc: @why_decline)
       end
     end
