@@ -66,7 +66,7 @@ class Ability
         can [:read, :download], ImportFile
 
         if user.unit.unit_type.eql?"branch"
-            can [:read, :fresh, :create, :to_check, :update, :destroy, :new, :commodity_choose, :receiving, :pending], Order, user_id: user.id
+            can [:read, :fresh, :create, :to_check, :update, :destroy, :new, :commodity_choose, :receiving, :pending, :confirm], Order, user_id: user.id
             can [:read, :look], Order, unit_id: user.unit_id
             can [:read, :look, :read_log], OrderDetail, order: {unit_id: user.unit_id}
             can [:read, :update, :destroy, :new, :create, :receiving, :confirm, :pending, :cancel, :edit, :to_check], OrderDetail, order: {user_id: user.id}
@@ -78,7 +78,7 @@ class Ability
         end
         if user.unit.eql? Unit::DELIVERY
             can :manage, Supplier
-            can [:read, :checking, :declined, :look], Order
+            can [:read, :checking, :declined, :look, :to_recheck, :check_decline], Order
             can [:read, :checking, :to_recheck, :check_decline, :declined, :look, :read_log], OrderDetail
             can :read, Commodity
             can :cover_show, Commodity
@@ -88,7 +88,7 @@ class Ability
             can :manage, Commodity
             can :read, Supplier
             can :contracts_show, Supplier
-            can [:read, :rechecking, :look], Order
+            can [:read, :rechecking, :look, :place, :recheck_decline], Order
             can [:read, :rechecking, :place, :recheck_decline, :look, :read_log], OrderDetail
             can "report", "SupplierReport"
             can "report", "CommodityReport"

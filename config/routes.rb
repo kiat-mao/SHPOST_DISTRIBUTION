@@ -162,6 +162,11 @@ ShpostDistribution::Application.routes.draw do
     member do
       get 'commodity_choose'
       get 'to_check'
+      post 'to_recheck'
+      post 'check_decline'
+      post 'place'
+      post 'recheck_decline'
+      post 'confirm'
     end
   end
 

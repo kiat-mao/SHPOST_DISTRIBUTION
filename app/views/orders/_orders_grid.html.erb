@@ -5,7 +5,12 @@
     # content_tag(:div, class: 'extra-row') do
         buffer = ""
         i = 1
-        order.order_details.each do |order_detail|
+        if (!current_user.unit.blank?) && ((current_user.unit.eql? Unit::DELIVERY) || (current_user.unit.eql? Unit::POSTBUY)) && (!params[:action].eql?"look")
+          order_details = order.order_details.where("status != ?", "canceled")
+        else
+          order_details = order.order_details
+        end
+        order_details.each do |order_detail|
           buffer += content_tag(:tr) do
             content_tag(:td) do
               content_tag(:div) do
@@ -149,7 +154,19 @@
       (link_to t('新建子订单'),
               commodity_choose_order_path(order), :class => 'btn btn-xs btn-primary' if (can? :create, OrderDetail) && (params[:action].eql?"fresh")) << ' ' <<
       (link_to t('.to_check', :default => t("helpers.links.to_check")),
-              to_check_order_path(order), :onclick => "if(!confirm('确定送审吗？')){return false;}", :class => 'btn btn-xs btn-primary' if (can? :to_check, order) && (params[:action].eql?"fresh"))
+              to_check_order_path(order), :onclick => "if(!confirm('确定送审吗？')){return false;}", :class => 'btn btn-xs btn-primary' if (can? :to_check, order) && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))) << ' ' <<
+      (link_to t('.to_recheck', :default => t("helpers.links.to_recheck")),
+              to_recheck_order_path(order), :method => :post, :name => "order_to_recheck", :class => 'btn btn-xs btn-primary' if (can? :to_recheck, order) && ((params[:action].eql?"checking") || (params[:action].eql?"declined"))) << ' ' <<
+      (link_to t('.check_decline', :default => t("helpers.links.check_decline")),
+              check_decline_order_path(order), :method => :post, :name => "order_check_decline", :class => 'btn btn-xs btn-primary' if (can? :check_decline, order) && ((params[:action].eql?"checking") || (params[:action].eql?"declined"))) << ' ' <<
+      (link_to t('.place', :default => t("helpers.links.place")),
+              place_order_path(order), :method => :post, :name => "order_place", :class => 'btn btn-xs btn-primary' if (can? :place, order) && (params[:action].eql?"rechecking")) << ' ' <<
+      (link_to t('.recheck_decline', :default => t("helpers.links.recheck_decline")),
+              recheck_decline_order_path(order), :method => :post, :name => "order_recheck_decline", :class => 'btn btn-xs btn-primary' if (can? :recheck_decline, order) && (params[:action].eql?"rechecking")) << ' ' <<
+      (link_to t('.confirm', :default => t("helpers.links.confirm")),
+              confirm_order_path(order), :method => :post, :name => "order_confirm", :class => 'btn btn-xs btn-primary' if (can? :confirm, order) && (params[:action].eql?"receiving"))
+
+
     end
   end 
 %>

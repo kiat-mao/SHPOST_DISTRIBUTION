@@ -2,7 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 $(document).on "page:change", ->
-  $ "a[name='order_detail_check_decline'], a[name='order_detail_recheck_decline'], a[name='order_order_detail_recheck_decline'], a[name='order_order_detail_check_decline']"
+  $ "a[name='order_detail_check_decline'], a[name='order_detail_recheck_decline'], a[name='order_order_detail_recheck_decline'], a[name='order_order_detail_check_decline'], a[name='order_check_decline'], a[name='order_recheck_decline']"
   .click (e) ->
     if confirm "确定驳回吗？"
       why_decline = prompt('驳回理由')
@@ -11,17 +11,17 @@ $(document).on "page:change", ->
       else false
     else false
 
-  $ "a[name='order_detail_to_recheck'], a[name='order_order_detail_to_recheck']"
+  $ "a[name='order_detail_to_recheck'], a[name='order_order_detail_to_recheck'], a[name='order_to_recheck']"
   .click (e) ->
     if not confirm "确定通过吗？" 
     then false
 
-  $ "a[name='order_detail_place'], a[name='order_order_detail_place']"
+  $ "a[name='order_detail_place'], a[name='order_order_detail_place'], a[name='order_place']"
   .click (e) ->
     if not confirm "确定下单吗？" 
     then false
 
-  $ "a[name='order_detail_confirm'], a[name='order_order_detail_confirm']"
+  $ "a[name='order_detail_confirm'], a[name='order_order_detail_confirm'], a[name='order_confirm']"
   .click (e) ->
     if not confirm "确定收货吗？" 
     then false
