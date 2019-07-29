@@ -30,6 +30,80 @@ class Order < ActiveRecord::Base
     end
   end
 
+  def checking!
+    Order.transaction do
+      begin
+        self.is_fresh = false
+        self.save!
+        self.order_details.each do |x|
+          x.checking!
+        end
+      rescue Exception => e
+        raise e
+      end
+    end
+  end
+
+  def rechecking!
+    Order.transaction do
+      begin
+        self.order_details.each do |x|
+          x.rechecking!
+        end
+      rescue Exception => e
+        raise e
+      end
+    end
+  end
+
+  def pending! why_decline = nil
+    Order.transaction do
+      begin
+        self.order_details.each do |x|
+          x.pending! why_decline
+        end
+      rescue Exception => e
+        raise e
+      end
+    end
+  end
+
+  def receiving!
+    Order.transaction do
+      begin
+        self.order_details.each do |x|
+          x.receiving!
+        end
+      rescue Exception => e
+        raise e
+      end
+    end
+  end
+
+  def declined! why_decline = nil
+    Order.transaction do
+      begin
+        self.order_details.each do |x|
+          x.declined! why_decline
+        end
+      rescue Exception => e
+        raise e
+      end
+    end
+  end
+
+  def closed!
+    Order.transaction do
+      begin
+        self.order_details.each do |x|
+          x.closed!
+        end
+      rescue Exception => e
+        raise e
+      end
+    end
+  end
+
   def can_update?
     ! order_details.where.not(status: [OrderDetail.statuses[:waiting], OrderDetail.statuses[:pending], OrderDetail.statuses[:canceled]]).exists?
   end

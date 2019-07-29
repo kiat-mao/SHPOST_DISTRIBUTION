@@ -146,24 +146,20 @@ class OrderDetailsController < ApplicationController
 
   #提交（审核）
   def to_check
-    status = @order_detail.status
     @order_detail.checking!
     redirect_to request.referer
   end
 
   #通过（审核）
   def to_recheck
-    status = @order_detail.status
     @order_detail.rechecking!
     redirect_to request.referer   
   end
 
   #驳回（审核）
   def check_decline
-    status = @order_detail.status
-    @order_detail.update why_decline: params[:why_decline]    
-    @order_detail.pending!
-    @why_decline = @order_detail.why_decline
+    @why_decline = params[:why_decline]    
+    @order_detail.pending! @why_decline
     redirect_to request.referer
   end
 
@@ -175,8 +171,8 @@ class OrderDetailsController < ApplicationController
 
   #驳回（复核）
   def recheck_decline
-    @order_detail.declined!
-    @why_decline = @order_detail.why_decline
+    @why_decline = params[:why_decline] 
+    @order_detail.declined! @why_decline
     redirect_to request.referer
   end
 

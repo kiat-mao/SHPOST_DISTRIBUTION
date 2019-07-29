@@ -39,36 +39,53 @@ class OrderDetail < ActiveRecord::Base
     order_detail_logs.exists?(operation: ['place', 'recheck_decline'])
   end
 
+  def waiting!
+
+  end
 
   def checking!
-    self.at_unit = Unit::DELIVERY
-    super
+    if self.waiting? || self.pending?
+      self.at_unit = Unit::DELIVERY
+      super
+    end
   end
 
   def rechecking!
-    self.at_unit = Unit::POSTBUY
-    super
+    if self.checking? || self.declined?
+      self.at_unit = Unit::POSTBUY
+      super
+    end
   end
 
-  def pending!
-    self.at_unit = self.order.unit
-    super
+  def pending! why_decline = nil
+    if self.checking? || self.declined?
+      self.why_decline = why_decline
+      self.at_unit = self.order.unit
+      super()
+    end
   end
 
   def receiving!
-    self.at_unit = self.order.unit
-    super
+    if self.rechecking?
+      self.at_unit = self.order.unit
+      super
+    end
   end
 
-  def declined!
-    self.at_unit = Unit::DELIVERY
-    super
+  def declined! why_decline = nil
+    if self.rechecking?
+      self.why_decline = why_decline
+      self.at_unit = Unit::DELIVERY
+      super()
+    end
   end
 
   def closed!
-    self.closed_at = Time.now
-    self.at_unit = self.order.unit
-    super
+    if self.receiving?
+      self.closed_at = Time.now
+      self.at_unit = self.order.unit
+      super
+    end
   end
 
   def canceled!

@@ -1,7 +1,7 @@
 class OrdersController < ApplicationController
   load_and_authorize_resource
 
-  after_action :logging, only: [:to_check]
+  after_action :logging, only: [:to_check, :to_recheck, :check_decline, :place, :recheck_decline, :confirm]
   # before_filter :logging
 
   # GET /orders
@@ -49,6 +49,38 @@ class OrdersController < ApplicationController
   def to_check
     @order.checking!
     redirect_to fresh_orders_url
+  end
+
+  #通过（审核）
+  def to_recheck
+    @order.rechecking!
+    redirect_to request.referer   
+  end
+
+  #驳回（审核）
+  def check_decline
+    @why_decline = params[:why_decline]    
+    @order.pending! @why_decline
+    redirect_to request.referer
+  end
+
+  #下单
+  def place
+    @order.receiving!
+    redirect_to request.referer
+  end
+
+  #驳回（复核）
+  def recheck_decline
+    @why_decline = params[:why_decline] 
+    @order.declined! @why_decline
+    redirect_to request.referer
+  end
+
+  #收货
+  def confirm
+    @order.closed!
+    redirect_to request.referer
   end
 
   # 查看
@@ -137,7 +169,7 @@ class OrdersController < ApplicationController
   private
     def logging
       @order.order_details.each do |order_detail|
-        order_detail_log = OrderDetailLog.create!(user: current_user, operation: params[:action], order_detail: order_detail)
+        order_detail_log = OrderDetailLog.create!(user: current_user, operation: params[:action], order_detail: order_detail, desc: @why_decline)
       end
     end
 
