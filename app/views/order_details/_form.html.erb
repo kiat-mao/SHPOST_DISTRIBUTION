@@ -1,4 +1,5 @@
 <%= form_for @order_detail, :html => { :class => 'form-horizontal' } do |f| %>
+  <%= f.error_messages %>
   <div class="control-group">
     <%= f.label :amount, :class => 'control-label' %>
     <div class="controls">
@@ -11,12 +12,19 @@
       <%= f.text_field :price, :class => 'text_field' %>
     </div>
   </div>
-  <%= hidden_field_tag('commodity_id', @commodity_id) %> 
+  <% if @order_detail.new_record?%>
+  <%= hidden_field_tag('commodity_id', @commodity.id) %> 
   <%= hidden_field_tag('order_id', @order.id) %> 
-  <%= hidden_field_tag('from_order', @from_order) %> 
+  <% end %>
+
+  <%= hidden_field_tag('from_order', @from_order) %>
+
   <%= f.submit nil, :class => 'btn btn-primary' %>
-  <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
-            commodity_choose_order_path(@order), :class => 'btn btn-default' %>
+  <% if @order_detail.new_record?%>
+  <%= link_to t('.cancel', :default => t("helpers.links.cancel")), commodity_choose_order_path(@order), :class => 'btn btn-default' %>
+  <% else %>
+  <%= link_to t('.cancel', :default => t("helpers.links.cancel")), request.referer, :class => 'btn btn-default' %>
+  <% end %>
 
 <% end %>
 

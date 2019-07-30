@@ -112,7 +112,7 @@ class OrderDetail < ActiveRecord::Base
     if rows.zero?
       count = 1
     else 
-      count = (OrderDetail.where(order: self.order).last.cno.last(3).to_i + 1)
+      count = (OrderDetail.where(order: self.order).last.no.last(3).to_i + 1)
       count = rows + 1 if count < rows + 1
     end
 

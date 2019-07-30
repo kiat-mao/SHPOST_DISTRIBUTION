@@ -1,6 +1,7 @@
 class OrderDetailsController < ApplicationController
-  load_and_authorize_resource :order, only: [:index, :new, :create]
-  load_and_authorize_resource :order_detail, through: :order, only: [:index, :new, :create]
+  load_and_authorize_resource :order, only: [:new, :create]
+  load_and_authorize_resource :order_detail, through: :order, only: [:new, :create]
+  load_resource :commodity, only: [:new, :create]
   load_and_authorize_resource
   after_action :logging, :if => proc {|c| c.action_name.in? ["create", "to_check", "to_recheck", "check_decline", "place", "recheck_decline", "confirm", "cancel"] || (c.action_name.eql?("update") && !@order_detail.try(:waiting?))}
   # after_action :logging_update,  only: [:update], if: -> {!@order_detail.try :waiting?}
@@ -65,31 +66,32 @@ class OrderDetailsController < ApplicationController
 
   # GET /order_details/new
   def new
-    @order = Order.find(params[:order_id].to_i)
-    @commodity_id = params[:commodity_id].to_i
+    # @order = Order.find params[:order_id].to_i
+    # @commodity = Commodity.find params[:commodity_id].to_i
   end
 
   # GET /order_details/1/edit
   def edit
-    @order = @order_detail.order
-    @commodity_id = @order_detail.commodity_id
+    # binding.pry
+    # @order = @order_detail.order
+    # @commodity = @order_detail.commodity
     @from_order = params[:from_order]
   end
 
   # POST /order_details
   # POST /order_details.json
   def create
-    @order = Order.find(params[:order_id].to_i)
-    @order_detail.order = @order
+    # @order = Order.find(params[:order_id].to_i)
+    # @order_detail.order = @order
     
-    commodity = Commodity.find(params[:commodity_id].to_i)
-    @order_detail.commodity = commodity
+    # @commodity = Commodity.find(params[:commodity_id].to_i)
+    @order_detail.commodity = @commodity
     @order_detail.at_unit = current_user.unit
     @order_detail.status = "waiting"
-    @order_detail.cost_price = commodity.cost_price
+    @order_detail.cost_price = @commodity.cost_price
 
     respond_to do |format|
-      if @order_detail.save!
+      if @order_detail.save
         format.html { redirect_to commodity_choose_order_path(@order), notice: I18n.t('controller.create_success_notice', model: '子订单') }
         format.json { render action: 'show', status: :created, location: @order_detail }
       else
@@ -102,9 +104,10 @@ class OrderDetailsController < ApplicationController
   # PATCH/PUT /order_details/1
   # PATCH/PUT /order_details/1.json
   def update
-    @order = @order_detail.order
+    # @order = @order_detail.order
+    # @commodity = @order_detail.commodity
     respond_to do |format|
-      if @order_detail.update!(order_detail_params)
+      if @order_detail.update(order_detail_params)
         if @order_detail.waiting?
           format.html { redirect_to fresh_orders_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
           format.json { head :no_content }
