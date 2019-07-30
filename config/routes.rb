@@ -197,5 +197,6 @@ ShpostDistribution::Application.routes.draw do
   match "/shpost_distribution/reports/order_report" => "reports#order_report", via: [:get, :post]
   match "/shpost_distribution/reports/supplier_report" => "reports#supplier_report", via: [:get, :post]
   match "/shpost_distribution/reports/commodity_report" => "reports#commodity_report", via: [:get, :post]
+  match "/shpost_distribution/reports/unit_report" => "reports#unit_report", via: [:get, :post]
 
 end

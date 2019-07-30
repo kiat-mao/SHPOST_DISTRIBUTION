@@ -365,7 +365,7 @@ class ReportsController < ApplicationController
   		sheet1[2,0] = "供应商：#{filters['supplier']}"
   		sheet1[2,4] = "机构名称：#{filters['units']}"
   		sheet1.row(2).set_format(4,red_filter)
-  		sheet1[2,5] = "价格区间：#{filters['price_start']} - #{filters['price_end']}"
+  		sheet1[2,5] = "销售价格区间：#{filters['price_start']} - #{filters['price_end']}"
   		sheet1.row(2).set_format(5,red_filter)
   		
   		sheet1.row(3).concat %w{序号 供应商名称 商品编码 DMS商品编码 商品名称 销售数量 销售价(元) 商家结算价(元) 销售金额(元) 销售成本(元) 销售收入(元)}
@@ -429,6 +429,12 @@ class ReportsController < ApplicationController
   				start_row = count_row
   				i += 1
   				last_sno = key[0]
+  				xj_amount = 0
+		  		xj_sell_price = 0
+		  		xj_cost_price = 0
+		  		xj_detail_price = 0
+		  		xj_detail_cost_price = 0
+		  		xj_income = 0
   			end
 
   			sheet1[count_row,2] = key[1]
@@ -665,8 +671,286 @@ class ReportsController < ApplicationController
     	xls_report.string
 	end
 
+	def unit_report
+		authorize! "report", "UnitReport"
 
+		filters = {}
+		units = []
+		counts = {}
+		amounts = {}
+		prices = {}
+		cost_prices = {}
 
+		unless request.get?
+	      selectorder_details = OrderDetail.accessible_by(current_ability).joins(:order).joins(:order=>[:unit]).joins(:commodity).joins(:commodity=>[:supplier]).where("order_details.status = ?", "closed")
+
+	      if !params[:close_at_start].blank? && !params[:close_at_start][:close_at_start].blank?
+	      	selectorder_details = selectorder_details.where("order_details.closed_at >= ?", to_date(params[:close_at_start][:close_at_start]))
+	      	filters["close_at_start"] = params[:close_at_start][:close_at_start]
+	      end
+
+	      if !params[:close_at_end].blank? && !params[:close_at_end][:close_at_end].blank?
+	      	selectorder_details = selectorder_details.where("order_details.closed_at <= ?", to_date(params[:close_at_end][:close_at_end])+1.day)
+	      	filters["close_at_end"] = params[:close_at_end][:close_at_end]
+	      end
+
+	      if !params[:commodity_name].blank? && !params[:commodity_name][:commodity_name].blank?
+	      	selectorder_details = selectorder_details.where("commodities.name like ?", "%#{params[:commodity_name][:commodity_name]}%")
+	      	filters["commodity_name"] = params[:commodity_name][:commodity_name]
+	      end
+
+	      if !params[:price_start].blank? && !params[:price_start][:price_start].blank?
+	      	selectorder_details = selectorder_details.where("order_details.price >= ?", params[:price_start][:price_start].to_f)
+	      	filters["price_start"] = params[:price_start][:price_start]
+	      end
+
+	      if !params[:price_end].blank? && !params[:price_end][:price_end].blank?
+	      	selectorder_details=selectorder_details.where("order_details.price <= ?", params[:price_end][:price_end].to_f)
+	      	filters["price_end"] = params[:price_end][:price_end]
+	      end
+
+	      if !params[:supplier].blank? && !(params[:supplier].eql?"全部")
+	      	selectorder_details = selectorder_details.where("suppliers.id = ?", params[:supplier].to_i)
+	      	filters["supplier"] = Supplier.find(params[:supplier].to_i).name
+	      else
+	      	filters["supplier"] = "全部"
+	      end
+
+	      if (current_user.unit.blank?) || (current_user.unit.eql? Unit::DELIVERY) || (current_user.unit.eql? Unit::POSTBUY)
+		      params[:checkbox].each do |x|
+	            if (!x[1].blank?) && (x[1].eql?"1") 
+	              units << x[0].to_i
+	            end
+	          end	   
+
+	          if !units.blank?  
+	          	selectorder_details = selectorder_details.where("orders.unit_id in (?)", units)
+	          	filters["units"] = units.map{|u| Unit.find(u).name}.compact.join(",")
+	          else
+	          	filters["units"] = "全部"
+	          end 
+	      else
+	      	selectorder_details = selectorder_details.where("orders.unit_id = ?", current_user.unit.id)
+	      	filters["units"] = current_user.unit.name
+	      end
+
+	      if selectorder_details.blank?
+	        flash[:alert] = "无数据"
+	        redirect_to :action => 'unit_report'
+	      else
+	      	counts = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").count
+	      	amounts = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").sum("order_details.amount")
+	      	prices = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").sum("order_details.price * order_details.amount")
+	      	cost_prices = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").sum("order_details.cost_price * order_details.amount")
+	      	
+	        send_data(unit_report_xls_content_for(selectorder_details,filters,counts,amounts,prices,cost_prices),:type => "text/excel;charset=utf-8; header=present",:filename => "机构销售结算报表_#{Time.now.strftime("%Y%m%d")}.xls")  
+	      end
+   		end
+   	end
+
+   	def unit_report_xls_content_for(objs,filters,counts,amounts,prices,cost_prices) 
+	    xls_report = StringIO.new  
+	    book = Spreadsheet::Workbook.new  
+	    sheet1 = book.create_worksheet :name => "机构销售结算报表"  
+	    
+	    title = Spreadsheet::Format.new :weight => :bold, :size => 18
+	    filter = Spreadsheet::Format.new :size => 12
+	    red_filter = Spreadsheet::Format.new :color => :red, :size => 12
+	    red_body = Spreadsheet::Format.new :color => :red, :size => 10, :weight => :bold, :align => :center, :border => :thin
+	    bold = Spreadsheet::Format.new :weight => :bold, :size => 10, :border => :thin
+	    body = Spreadsheet::Format.new :size => 10, :border => :thin, :align => :center
+
+	    # 设置列宽
+	    sheet1.column(1).width = 40
+	    2.upto(3) do |i|
+	    	sheet1.column(i).width = 25
+	    end
+	    4.upto(5) do |i|
+	    	sheet1.column(i).width = 50
+	    end
+	    6.upto(11) do |i|
+	    	sheet1.column(i).width = 25
+	    end
+	    
+	    # 设置行高
+		sheet1.row(0).height = 40
+		1.upto(2) do |i|
+	    	sheet1.row(i).height = 30
+	    end
+	    sheet1.row(3).height = 25
+	    
+	    # 表头
+	    # sheet1.merge_cells(start_row, start_col, end_row, end_col)	    
+	    sheet1.row(0).default_format = title 
+	    sheet1.merge_cells(0, 0, 0, 11)
+  		sheet1[0,0] = "            机构销售结算报表"
+
+  		sheet1.row(1).default_format = filter  		
+  		sheet1.merge_cells(1, 0, 1, 2)
+  		sheet1[1,0] = "  结单时间：#{filters['close_at_start']}至#{filters['close_at_end']}"
+  		sheet1.row(1).set_format(0,red_filter)
+  		sheet1[1,3] = "商品名称：#{filters['commodity_name']}"
+  		sheet1.row(2).default_format = filter
+  		sheet1[2,0] = "  机构名称：#{filters['units']}" 		
+  		sheet1[2,3] = "供应商：#{filters['supplier']}"
+  		sheet1[2,5] = "销售价格区间：#{filters['price_start']} - #{filters['price_end']}"
+  		sheet1.row(2).set_format(5,red_filter)
+  		
+  		sheet1.row(3).concat %w{序号 机构名称 商品编码 DMS商品编码 供应商 商品名称 销售数量 销售价(元) 商家结算价(元) 销售金额(元) 销售成本(元) 销售收入(元)}
+  		0.upto(11) do |i|
+  			sheet1.row(3).set_format(i, GreyFormat2.new(:grey, :black))
+  		end
+
+  		# 表格内容
+  		count_row = 4
+  		i=1
+  		xj_amount = 0
+  		xj_sell_price = 0
+  		xj_cost_price = 0
+  		xj_detail_price = 0
+  		xj_detail_cost_price = 0
+  		xj_income = 0
+  		hj_amount = 0
+  		hj_sell_price = 0
+  		hj_cost_price = 0
+  		hj_detail_price = 0
+  		hj_detail_cost_price = 0
+  		hj_income = 0
+  		
+  		last_uid = counts.first[0][0]
+  		start_row = 4
+
+  		counts.each do |key,value|
+  			commodity = Commodity.find_by(cno: key[1])
+  			
+  			if !key[0].eql?last_uid
+  				sheet1[start_row,0] = i
+	  			sheet1.merge_cells(start_row, 0, count_row, 0)
+	  			sheet1[start_row,1] = Unit.find(last_uid).try :name
+	  			sheet1.merge_cells(start_row, 1, count_row, 1)
+  			
+  				sheet1[count_row,2] = "小计"
+  				sheet1[count_row,3] = "---"
+  				sheet1[count_row,4] = "---"
+  				sheet1[count_row,5] = "---"
+  				sheet1[count_row,6] = xj_amount
+  				hj_amount += xj_amount
+  				sheet1[count_row,7] = xj_sell_price
+  				hj_sell_price += xj_sell_price
+  				sheet1[count_row,8] = xj_cost_price
+  				hj_cost_price += xj_cost_price
+  				sheet1[count_row,9] = xj_detail_price
+  				hj_detail_price += xj_detail_price
+  				sheet1[count_row,10] = xj_detail_cost_price
+  				hj_detail_cost_price += xj_detail_cost_price
+  				sheet1[count_row,11] = xj_income
+  				hj_income += xj_income
+
+  				0.upto(1) do |x|
+		  			sheet1.row(count_row).set_format(x, body)
+		  		end	
+
+  				2.upto(11) do |x|
+		  			sheet1.row(count_row).set_format(x, red_body)
+		  		end	
+  				
+  				count_row += 1
+  				start_row = count_row
+  				i += 1
+  				last_uid = key[0]
+  				xj_amount = 0
+		  		xj_sell_price = 0
+		  		xj_cost_price = 0
+		  		xj_detail_price = 0
+		  		xj_detail_cost_price = 0
+		  		xj_income = 0
+  			end
+
+  			sheet1[count_row,2] = key[1]
+  			sheet1[count_row,3] = commodity.dms_no
+  			sheet1[count_row,4] = commodity.supplier.try :name
+  			sheet1[count_row,5] = commodity.name
+  			sheet1[count_row,6] = amounts[key]
+  			xj_amount += amounts[key]
+  			sheet1[count_row,7] = commodity.sell_price
+  			xj_sell_price += commodity.sell_price
+  			sheet1[count_row,8] = commodity.cost_price
+  			xj_cost_price += commodity.cost_price
+  			sheet1[count_row,9] = prices[key]
+  			xj_detail_price += prices[key]
+  			sheet1[count_row,10] = cost_prices[key]
+  			xj_detail_cost_price += cost_prices[key]
+  			income = prices[key] - cost_prices[key]
+  			sheet1[count_row,11] = income
+  			xj_income += income
+
+  			0.upto(11) do |x|
+	  			sheet1.row(count_row).set_format(x, body)
+	  		end	
+	  		sheet1.row(count_row).height = 30
+
+  			count_row += 1
+  		end
+
+  		sheet1[start_row,0] = i
+	  	sheet1.merge_cells(start_row, 0, count_row, 0)
+	  	sheet1[start_row,1] = Unit.find(last_uid).try :name
+	  	sheet1.merge_cells(start_row, 1, count_row, 1)
+  			
+  		sheet1[count_row,2] = "小计"
+  		sheet1[count_row,3] = "---"
+  		sheet1[count_row,4] = "---"
+  		sheet1[count_row,5] = "---"
+  		sheet1[count_row,6] = xj_amount
+  		hj_amount += xj_amount
+  		sheet1[count_row,7] = xj_sell_price
+  		hj_sell_price += xj_sell_price
+  		sheet1[count_row,8] = xj_cost_price
+  		hj_cost_price += xj_cost_price
+  		sheet1[count_row,9] = xj_detail_price
+  		hj_detail_price += xj_detail_price
+  		sheet1[count_row,10] = xj_detail_cost_price
+  		hj_detail_cost_price += xj_detail_cost_price
+  		sheet1[count_row,11] = xj_income
+  		hj_income += xj_income
+
+  		0.upto(1) do |x|
+		  	sheet1.row(count_row).set_format(x, body)
+		end	
+
+  		2.upto(11) do |x|
+		  	sheet1.row(count_row).set_format(x, red_body)
+		end	
+  				
+  		count_row += 1 		
+  			
+  		sheet1[count_row,0] = "合计"
+  		sheet1.merge_cells(count_row, 0, count_row, 5)
+  		sheet1[count_row,6] = hj_amount
+  		sheet1[count_row,7] = hj_sell_price
+  		sheet1[count_row,8] = hj_cost_price
+  		sheet1[count_row,9] = hj_detail_price
+  		sheet1[count_row,10] = hj_detail_cost_price
+  		sheet1[count_row,11] = hj_income
+
+  		0.upto(11) do |x|
+	  		sheet1.row(count_row).set_format(x, red_body)
+	  	end	
+
+  		count_row += 1
+		sheet1.row(count_row).default_format = filter
+		sheet1.merge_cells(count_row, 0, 0, 11)
+  		if current_user.unitadmin? || current_user.superadmin?
+			sheet1[count_row,0] = "打印机构：#{current_user.rolename}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+  		else
+  		    sheet1[count_row,0] = "打印机构：#{current_user.unit.name}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"
+
+  		end
+  		sheet1.row(count_row).height = 30
+
+  		book.write xls_report  
+    	xls_report.string
+	end
 
 
    	private

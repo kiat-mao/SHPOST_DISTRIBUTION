@@ -538,6 +538,13 @@ zh-CN:
           needrole:
             can: "report"
             role: "CommodityReport"
+        unit_report:
+          name: "机构销售结算报表"
+          link: "/shpost_distribution/reports/unit_report"
+          need_count: false
+          needrole:
+            can: "report"
+            role: "UnitReport"
     import:
       name: "文件管理"
       needrole:
