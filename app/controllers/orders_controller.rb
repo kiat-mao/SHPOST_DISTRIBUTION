@@ -48,7 +48,7 @@ class OrdersController < ApplicationController
   #提交（审核）
   def to_check
     @order_details = @order.checking!
-    redirect_to fresh_orders_url
+    redirect_to request.referer
   end
 
   #通过（审核）
