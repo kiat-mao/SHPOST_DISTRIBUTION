@@ -12,15 +12,14 @@
       <%= f.text_field :price, :class => 'text_field' %>
     </div>
   </div>
-  <% if @order_detail.new_record?%>
-  <%= hidden_field_tag('commodity_id', @commodity.id) %> 
-  <%= hidden_field_tag('order_id', @order.id) %> 
-  <% end %>
 
   <%= hidden_field_tag('from_order', @from_order) %>
 
   <%= f.submit nil, :class => 'btn btn-primary' %>
   <% if @order_detail.new_record?%>
+  <%= hidden_field_tag('commodity_id', @commodity.id) %> 
+  <%= hidden_field_tag('order_id', @order.id) %> 
+  
   <%= link_to t('.cancel', :default => t("helpers.links.cancel")), commodity_choose_order_path(@order), :class => 'btn btn-default' %>
   <% else %>
   <%= link_to t('.cancel', :default => t("helpers.links.cancel")), request.referer, :class => 'btn btn-default' %>
