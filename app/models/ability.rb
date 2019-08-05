@@ -25,6 +25,7 @@ class Ability
         can "report", "SupplierReport"
         can "report", "CommodityReport"
         can "report", "UnitReport"
+        can :manage, OrderDetailLog
     elsif user.unitadmin?
     #can :manage, :all
         
@@ -55,10 +56,11 @@ class Ability
         can :manage, Supplier
         can :manage, Commodity
         can [:read, :update, :look], Order
-        can [:read, :update, :cancel, :edit, :look, :read_log], OrderDetail
+        can [:read, :update, :cancel, :edit, :look], OrderDetail
         can "report", "SupplierReport"
         can "report", "CommodityReport"
         can "report", "UnitReport"
+        can :manage, OrderDetailLog
     elsif user.user?
         can :update, User, id: user.id
         can :read, UserLog, user: {id: user.id}
@@ -67,12 +69,13 @@ class Ability
         can [:read, :up_download_export], UpDownload
         can [:read, :download], ImportFile
 
-        if user.unit.unit_type.eql?"branch"
+        if user.unit.unit_type.eql? "branch"
             can [:read, :fresh, :create, :to_check, :update, :destroy, :new, :commodity_choose, :receiving, :pending, :confirm], Order, user_id: user.id
             can [:read, :look], Order, unit_id: user.unit_id
-            can [:read, :look, :read_log], OrderDetail, order: {unit_id: user.unit_id}
+            can [:read, :look], OrderDetail, order: {unit_id: user.unit_id}
             can [:read, :update, :destroy, :new, :create, :receiving, :confirm, :pending, :cancel, :edit, :to_check], OrderDetail, order: {user_id: user.id}
             # can :manage, OrderDetail
+            can :manage, OrderDetailLog
             can :read, Commodity
             can :read, Supplier
             can :cover_show, Commodity
@@ -82,21 +85,23 @@ class Ability
         if user.unit.eql? Unit::DELIVERY
             can :manage, Supplier
             can [:read, :checking, :declined, :look, :to_recheck, :check_decline], Order
-            can [:read, :checking, :to_recheck, :check_decline, :declined, :look, :read_log], OrderDetail
+            can [:read, :checking, :to_recheck, :check_decline, :declined, :look], OrderDetail
             can :read, Commodity
             can :cover_show, Commodity
             can "report", "SupplierReport"
             can "report", "UnitReport"
+            can :manage, OrderDetailLog
         end
         if user.unit.eql? Unit::POSTBUY
             can :manage, Commodity
             can :read, Supplier
             can :contracts_show, Supplier
             can [:read, :rechecking, :look, :place, :recheck_decline], Order
-            can [:read, :rechecking, :place, :recheck_decline, :look, :read_log], OrderDetail
+            can [:read, :rechecking, :place, :recheck_decline, :look], OrderDetail
             can "report", "SupplierReport"
             can "report", "CommodityReport"
             can "report", "UnitReport"
+            can :manage, OrderDetailLog
         end
     else
         cannot :manage, :all

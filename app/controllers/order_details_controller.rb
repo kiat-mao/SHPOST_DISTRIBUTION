@@ -61,6 +61,7 @@ class OrderDetailsController < ApplicationController
   # GET /order_details/1
   # GET /order_details/1.json
   def show
+    binding.pry
   end
 
   # GET /order_details/new
@@ -73,7 +74,7 @@ class OrderDetailsController < ApplicationController
   def edit
     @order = @order_detail.order
     @commodity_id = @order_detail.commodity_id
-    @from_order = params[:from_order]
+    @source = request.referer
   end
 
   # POST /order_details
@@ -105,28 +106,8 @@ class OrderDetailsController < ApplicationController
     @order = @order_detail.order
     respond_to do |format|
       if @order_detail.update!(order_detail_params)
-        if @order_detail.waiting?
-          format.html { redirect_to fresh_orders_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
-          format.json { head :no_content }
-        else
-          if params[:from_order].eql?"true"
-            if current_user.role.eql?"unitadmin"
-              format.html { redirect_to look_orders_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
-              format.json { head :no_content }
-            else
-              format.html { redirect_to pending_orders_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
-              format.json { head :no_content }
-            end
-          else
-            if current_user.role.eql?"unitadmin"
-              format.html { redirect_to look_order_details_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
-              format.json { head :no_content }
-            else
-              format.html { redirect_to pending_order_details_url, notice: I18n.t('controller.update_success_notice', model: '子订单') }
-              format.json { head :no_content }
-            end
-          end
-        end
+        format.html { redirect_to params[:source], notice: I18n.t('controller.update_success_notice', model: '子订单') }
+        format.json { head :no_content }
       else
         format.html { render action: 'edit' }
         format.json { render json: @order_detail.errors, status: :unprocessable_entity }
@@ -188,9 +169,7 @@ class OrderDetailsController < ApplicationController
     redirect_to request.referer
   end
 
-  def read_log
-    @order_detail_logs = @order_detail.order_detail_logs
-  end
+  
 
   private
     def logging

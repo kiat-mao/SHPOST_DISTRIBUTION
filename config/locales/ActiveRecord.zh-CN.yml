@@ -166,7 +166,6 @@ zh-CN:
       place: 下单
       recheck_decline: 驳回
       confirm: 收货
-      read_log: 查看日志
     titles:
       edit: 编辑%{model}
       new: 新增%{model}

@@ -1,5 +1,5 @@
 ShpostDistribution::Application.routes.draw do
-  resources :order_detail_logs
+  # resources :order_detail_logs
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -172,6 +172,7 @@ ShpostDistribution::Application.routes.draw do
 
 
   resources :order_details do
+    resources :order_detail_logs, only: [:index]
     collection do
       # get 'order_details' => 'order_details#index'
       get 'pending'
@@ -180,6 +181,7 @@ ShpostDistribution::Application.routes.draw do
       get 'rechecking'
       get 'receiving'
       get 'look'
+      get 'readlog'
     end
     member do
       # get 'edit'
@@ -190,7 +192,6 @@ ShpostDistribution::Application.routes.draw do
       post 'recheck_decline'
       post 'confirm'
       post 'cancel'
-      get 'read_log'
     end
   end
 

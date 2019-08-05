@@ -1,5 +1,7 @@
 <%- model_class = Order -%>
 <%= hidden_field_tag('why_decline') %>
+<% od = nil %>
+
 <%= grid(@orders, :show_filters => :always) do |g|
   g.after_row do |order, number_of_columns|
     # content_tag(:div, class: 'extra-row') do
@@ -11,6 +13,7 @@
           order_details = order.order_details
         end
         order_details.each do |order_detail|
+          od = order_detail
           buffer += content_tag(:tr) do
             content_tag(:td) do
               content_tag(:div) do
@@ -24,7 +27,7 @@
               content_tag(:div) do
                        # without buffer only the last tag will appear
                 content_tag(:b,"子订单编码") +
-                content_tag(:p,order_detail.try(:no))
+                content_tag(:p,order_detail.try(:no), :name => "od_no")
               end
             end +
             content_tag(:td) do
@@ -100,16 +103,18 @@
                         cancel_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && order_detail.pending? && (params[:action].eql?"pending")))) +
                   content_tag(:p,(link_to t('.to_check', :default => t("helpers.links.to_check")),
                         to_check_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_to_check", :class => 'btn btn-xs btn-primary' if ((can? :to_check, order_detail) && order_detail.pending? && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))))) +
-                  content_tag(:p,(link_to t('.read_log', :default => t("helpers.links.read_log")),
-                        read_log_order_detail_path(order_detail), :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?))))
+                  content_tag( :p, (link_to "查看日志",  order_detail_order_detail_logs_path(order_detail), remote: true, class: 'btn btn-xs btn-primary', data: {type: 'script'})) if ((can? :read, OrderDetailLog) && !(order_detail.waiting?))
+                  # content_tag(:p,(link_to t('.read_log', :default => t("helpers.links.read_log")),
+                  #       read_log_order_detail_path(order_detail), :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?))))
                 else
                   content_tag(:b,"操作") +
                   content_tag(:p,(link_to t('.edit', :default => t("helpers.links.edit")),
                         edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if ((can? :update, order_detail) && (current_user.role.eql?"unitadmin")))) + 
                   content_tag(:p,(link_to t('.cancel', :default => t("helpers.links.cancel")),
                         cancel_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && (current_user.role.eql?"unitadmin") && !(order_detail.canceled?)))) +
-                  content_tag(:p,(link_to t('.read_log', :default => t("helpers.links.read_log")),
-                        read_log_order_detail_path(order_detail), :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?))))
+                  content_tag( :p, (link_to "查看日志",  order_detail_order_detail_logs_path(order_detail), remote: true, class: 'btn btn-xs btn-primary', data: {type: 'script'})) if ((can? :read, OrderDetailLog) && !(order_detail.waiting?))
+                  # content_tag(:p,(link_to t('.read_log', :default => t("helpers.links.read_log")),
+                  #       read_log_order_detail_path(order_detail), :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?))))
                 end
               end
             end
@@ -170,3 +175,25 @@
     end
   end 
 %>
+
+
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">查看子订单日志</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <table id="order_detail_logs">
+          
+          </table> 
+        </form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -85,8 +85,7 @@
                         cancel_order_detail_path(order_detail), :method => :post, :name => "order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && order_detail.pending? && (params[:action].eql?"pending"))) << ' ' << 
             (link_to t('.to_check', :default => t("helpers.links.to_check")),
                           to_check_order_detail_path(order_detail), :method => :post, :name => "order_detail_to_check", :class => 'btn btn-xs btn-primary' if ((can? :to_check, order_detail) && order_detail.pending? && ((params[:action].eql?"fresh") || (params[:action].eql?"pending")))) << ' ' << 
-            (link_to t('.read_log', :default => t("helpers.links.read_log")),
-                        read_log_order_detail_path(order_detail), :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?)))
+            (link_to "查看日志",  order_detail_order_detail_logs_path(order_detail), remote: true, class: 'btn btn-xs btn-primary', data: {type: 'script'}) if ((can? :read, OrderDetailLog) && !(order_detail.waiting?))
       end
     else
       g.column do |order_detail|
@@ -94,9 +93,29 @@
           (link_to t('.edit', :default => t("helpers.links.edit")), edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if (can? :update, order_detail) && (current_user.role.eql?"unitadmin")) << ' ' <<
           (link_to t('.cancel', :default => t("helpers.links.cancel")),
                         cancel_order_detail_path(order_detail), :method => :post, :name => "order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && (current_user.role.eql?"unitadmin") && !(order_detail.canceled?))) << ' ' <<
-          (link_to t('.read_log', :default => t("helpers.links.read_log")),
-                        read_log_order_detail_path(order_detail), :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?)))
+          (link_to "查看日志",  order_detail_order_detail_logs_path(order_detail), remote: true, class: 'btn btn-xs btn-primary', data: {type: 'script'}) if ((can? :read, OrderDetailLog) && !(order_detail.waiting?))
       end
     end
   end 
 %>
+
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">查看子订单日志</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <table id="order_detail_logs">
+          
+          </table> 
+        </form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+

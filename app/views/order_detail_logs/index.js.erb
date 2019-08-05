@@ -1,0 +1,3 @@
+// $("#order_detail_logs").remove()
+$("#order_detail_logs").html("<%= escape_javascript(render partial: '/order_detail_logs/order_detail_log.html.erb') %>")
+$('#modal').modal('show');

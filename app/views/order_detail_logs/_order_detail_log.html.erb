@@ -1,0 +1,9 @@
+<% if !@order_detail_logs.blank? %>
+<% @order_detail_logs.each do |x| %>
+<tr valign="top" height="45">
+<td><font size="4">
+  <%= x.single_log_info %>
+</td>
+</tr>
+<% end %>
+<% end %>
