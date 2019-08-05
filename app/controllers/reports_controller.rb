@@ -33,10 +33,13 @@ class ReportsController < ApplicationController
 	      	filters["commodity_name"] = params[:commodity_name][:commodity_name]
 	      end
 
-	      if !params[:status].blank? && !(params[:status].eql?"全部")
+	      if !params[:status].blank? && !(params[:status].eql?"全部") && !(params[:status].eql?"待处理或结单")
 	      	selectorder_details = selectorder_details.where("order_details.status = ?", params[:status])
 	      	filters["status"] = params[:status]
-	      else
+	      elsif params[:status].eql?"待处理或结单"
+	      	selectorder_details = selectorder_details.where("order_details.status = ? or order_details.status = ?", "waiting", "closed")
+	      	filters["status"] = "待处理或结单"
+	      elsif params[:status].eql?"全部"
 	      	filters["status"] = "全部"
 	      end
 
