@@ -148,7 +148,7 @@ ShpostDistribution::Application.routes.draw do
       get 'look'
     end
 
-    resources :order_details, ony: [:index, :new, :create]
+    # resources :order_details, only: [:index, :new, :create]
     # resources :order_details do
     #   collection do
     #     get 'pending'

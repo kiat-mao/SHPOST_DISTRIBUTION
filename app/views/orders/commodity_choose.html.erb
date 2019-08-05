@@ -31,7 +31,7 @@
     g.column in_csv: false do |commodity|
       ActiveSupport::SafeBuffer.new << 
       (link_to t('选择'),
-                      "/orders/#{@order.id}/order_details/new?order_id=#{@order.id}&commodity_id=#{commodity.id}", :class => 'btn btn-xs btn-primary')
+                      "/order_details/new?order_id=#{@order.id}&commodity_id=#{commodity.id}", :class => 'btn btn-xs btn-primary')
     end
   end 
 %>

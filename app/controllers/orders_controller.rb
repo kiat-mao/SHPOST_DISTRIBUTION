@@ -117,7 +117,7 @@ class OrdersController < ApplicationController
       @order.user = current_user
       @order.unit = current_user.unit
 
-      if @order.save!
+      if @order.save
         format.html { redirect_to @order, notice: I18n.t('controller.create_success_notice', model: '订单')}
         format.json { render action: 'show', status: :created, location: @order }
       else
@@ -131,7 +131,7 @@ class OrdersController < ApplicationController
   # PATCH/PUT /orders/1.json
   def update
     respond_to do |format|
-      if @order.update!(order_params)
+      if @order.update(order_params)
         if current_user.role.eql?"unitadmin"
           format.html { redirect_to look_orders_url, notice: I18n.t('controller.update_success_notice', model: '订单')}
           format.json { head :no_content }
