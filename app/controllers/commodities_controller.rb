@@ -94,7 +94,7 @@ class CommoditiesController < ApplicationController
             name_index = title_row.index("商品名称").blank? ? 2 : title_row.index("商品名称")
             supplier_index = title_row.index("供应商").blank? ? 3 : title_row.index("供应商")
             cost_price_index = title_row.index("商家结算价").blank? ? 4 : title_row.index("商家结算价")
-            sell_price_index = title_row.index("最低销售价").blank? ? 5 : title_row.index("最低销售价")
+            sell_price_index = title_row.index("参考销售价").blank? ? 5 : title_row.index("参考销售价")
             desc_index = title_row.index("商品详情").blank? ? 6 : title_row.index("商品详情")
             is_on_sell_index = title_row.index("是否上架").blank? ? 7 : title_row.index("是否上架")
 
@@ -145,7 +145,7 @@ class CommoditiesController < ApplicationController
                         if sell_price.blank?
                           is_error = true
                           is_red = "yes"
-                          txt = "缺少最低销售价"
+                          txt = "缺少参考销售价"
                           sheet_back << (rowarr << txt << is_red)
                         else
                           if !Commodity.find_by(dms_no: dms_no).blank?

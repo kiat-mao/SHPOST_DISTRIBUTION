@@ -54,7 +54,7 @@
             content_tag(:td) do
               content_tag(:div) do
                          # without buffer only the last tag will appear
-                content_tag(:b,"销售单价") +
+                content_tag(:b,"执行销售价") +
                 content_tag(:p,number_with_precision(order_detail.price, precision: 2))
               end
             end +

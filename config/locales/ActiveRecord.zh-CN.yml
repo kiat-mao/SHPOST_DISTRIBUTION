@@ -388,7 +388,7 @@ zh-CN:
         name: "商品名称"
         supplier_id: "供应商"
         cost_price: "商家结算价"
-        sell_price: "最低销售价"
+        sell_price: "参考销售价"
         desc: "商品详情"
         is_on_sell: "是否上架"
         cover: "商品图片"
@@ -405,7 +405,7 @@ zh-CN:
       order_detail:
         "no": "子订单编码"
         amount: "数量"
-        price: "销售单价"
+        price: "执行销售价"
         status: "状态"
         desc: "备注"
         why_decline: "最后一次驳回理由"
