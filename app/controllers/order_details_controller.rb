@@ -1,5 +1,5 @@
 class OrderDetailsController < ApplicationController
-  load_and_authorize_resource :order, only: [:new, :create]
+  load_and_authorize_resource :order, only: [:new, :create, :edit, :update]
   load_and_authorize_resource :order_detail, through: :order, only: [:new, :create]
   load_resource :commodity, only: [:new, :create]
   load_and_authorize_resource
@@ -109,10 +109,11 @@ class OrderDetailsController < ApplicationController
     # @order = @order_detail.order
     # @commodity = @order_detail.commodity
     respond_to do |format|
-      if @order_detail.update!(order_detail_params)
+      if @order_detail.update(order_detail_params)
         format.html { redirect_to params[:source], notice: I18n.t('controller.update_success_notice', model: '子订单') }
         format.json { head :no_content }
       else
+        @source = params[:source]
         format.html { render action: 'edit' }
         format.json { render json: @order_detail.errors, status: :unprocessable_entity }
       end
