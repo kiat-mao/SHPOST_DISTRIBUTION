@@ -39,6 +39,7 @@ class Ability
 
 
         # can :manage, User, unit_id: user.unit_id
+        can :read, User, role: 'unitadmin'
         can :manage, User, role: 'user'
 
         # can :manage, Role

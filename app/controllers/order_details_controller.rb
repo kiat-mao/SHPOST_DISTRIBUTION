@@ -170,8 +170,16 @@ class OrderDetailsController < ApplicationController
 
   #取消
   def cancel
-    @order_detail.canceled!
-    redirect_to request.referer
+    respond_to do |format|
+      if @order_detail.canceled!
+        format.html { redirect_to request.referer, notice: I18n.t('controller.cancel_success_notice', model: '子订单') }
+        format.json { head :no_content }
+      else
+        @source = params[:source]
+        format.html { render action: request.referer }
+        format.json { render json: @order_detail.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   
