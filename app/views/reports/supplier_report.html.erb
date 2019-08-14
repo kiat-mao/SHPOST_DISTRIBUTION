@@ -16,15 +16,15 @@
         <td><%= text_field("commodity_name","commodity_name") %></td>  
     </tr>
     <tr style="line-height: 40px;height: 40px;">   
-        <td><%= label_tag(:price_start, "销售价格大于:") %></td>
+       <!--  <td><%= label_tag(:price_start, "销售价格大于:") %></td>
         <td><%= text_field("price_start","price_start") %></td>
         <td><%= label_tag(:price_end, "销售价格小于:") %></td>
-        <td><%= text_field("price_end","price_end") %></td>
+        <td><%= text_field("price_end","price_end") %></td> -->
         <td><%= label_tag(:supplier, "供应商:") %></td>
         <td><%= select_tag("supplier", options_for_select(Supplier.all.map{|u| [u.name,u.id]}.insert(0,"全部")), id: "supplier") %></td>
     </tr>
 </table>
-<table>
+<!-- <table>
     <tr style="line-height: 40px;height: 40px;">     
     <td><%= label_tag(:unit_id, "机构名称:") %></td>
     </tr>
@@ -41,7 +41,7 @@
         <% end %>
     <% end %>
         
-</table>
+</table> -->
     <%= submit_tag "报表导出",:class => 'btn btn-primary' %>
        
 <% end -%>
