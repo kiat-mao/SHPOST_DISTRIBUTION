@@ -18,15 +18,15 @@ class UserLogsController < ApplicationController
   # DELETE /user_logs/1
   # DELETE /user_logs/1.json
   def destroy
-    @user_log.orders.each do |o|
-      if o.blank?
-        next
-      else
-        if o.status.eql? "waiting"
-          o.destroy
-        end
-      end
-    end
+    # @user_log.orders.each do |o|
+    #   if o.blank?
+    #     next
+    #   else
+    #     if o.status.eql? "waiting"
+    #       o.destroy
+    #     end
+    #   end
+    # end
     
     @user_log.destroy
     respond_to do |format|
