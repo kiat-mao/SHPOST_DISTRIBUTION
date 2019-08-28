@@ -423,14 +423,14 @@ zh-CN:
       submenu:
         admin:
           name: "用户管理"
-          link: "/users/"
+          link: "/users"
           need_count: false
           needrole:
             can: :read
             role: :User
         unit_admin:
           name: "单位管理"
-          link: "/units/"
+          link: "/units"
           need_count: false
           needrole:
             can: :read
