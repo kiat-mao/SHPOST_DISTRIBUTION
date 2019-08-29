@@ -1,6 +1,19 @@
 class ReportsController < ApplicationController
 
-  def order_report
+  class GreyFormat1 < Spreadsheet::Format
+    def initialize(gb_color, font_color)
+      super :pattern => 1, :pattern_fg_color => gb_color,:color => font_color, :text_wrap => 1, :weight => :bold, :size => 11, :align => :center, :border => :thin
+    end
+  end
+
+  class GreyFormat2 < Spreadsheet::Format
+    def initialize(gb_color, font_color)
+      super :pattern => 1, :pattern_fg_color => gb_color,:color => font_color, :text_wrap => 1, :weight => :bold, :size => 12, :align => :center, :border => :thin
+    end
+  end
+
+
+    def order_report
     filters = {}
 
     if ! current_user.unitadmin? && ! current_user.superadmin? && current_user.branch?
@@ -33,14 +46,11 @@ class ReportsController < ApplicationController
         filters["commodity_name"] = params[:commodity_name][:commodity_name]
       end
 
-      if !params[:status].blank? && !(params[:status].eql?"全部") && !(params[:status].eql?"待处理或结单")
+      filters['status'] = params[:status]
+      if params[:status].eql? "receiving_closed"
+        selectorder_details = selectorder_details.where("order_details.status = ? or order_details.status = ?", OrderDetail::statuses[:receiving], OrderDetail::statuses[:closed])
+      elsif !params[:status].eql? "all"
         selectorder_details = selectorder_details.where("order_details.status = ?", params[:status])
-        filters["status"] = params[:status]
-      elsif params[:status].eql?"待处理或结单"
-        selectorder_details = selectorder_details.where("order_details.status = ? or order_details.status = ?", "waiting", "closed")
-        filters["status"] = "待处理或结单"
-      elsif params[:status].eql?"全部"
-        filters["status"] = "全部"
       end
 
       if !params[:order_no].blank? && !params[:order_no][:order_no].blank?
@@ -84,24 +94,12 @@ class ReportsController < ApplicationController
         flash[:alert] = "无数据"
         redirect_to :action => 'order_report'
       else
-        send_data(order_report_xls_content_for(selectorder_details,filters),:type => "text/excel;charset=utf-8; header=present",:filename => "订单管理报表_#{Time.now.strftime("%Y%m%d")}.xls")  
+        send_data(order_report_xls_content_for(filters, selectorder_details),:type => "text/excel;charset=utf-8; header=present",:filename => "订单管理报表_#{Time.now.strftime("%Y%m%d")}.xls")  
       end
     end
   end
 
-  class GreyFormat1 < Spreadsheet::Format
-    def initialize(gb_color, font_color)
-      super :pattern => 1, :pattern_fg_color => gb_color,:color => font_color, :text_wrap => 1, :weight => :bold, :size => 11, :align => :center, :border => :thin
-    end
-  end
-
-  class GreyFormat2 < Spreadsheet::Format
-    def initialize(gb_color, font_color)
-      super :pattern => 1, :pattern_fg_color => gb_color,:color => font_color, :text_wrap => 1, :weight => :bold, :size => 12, :align => :center, :border => :thin
-    end
-  end
-
-  def order_report_xls_content_for(objs,filters) 
+  def order_report_xls_content_for(filters, reports) 
     xls_report = StringIO.new  
     book = Spreadsheet::Workbook.new  
     sheet1 = book.create_worksheet :name => "订单管理报表"  
@@ -154,7 +152,7 @@ class ReportsController < ApplicationController
     sheet1[1,0] = "  下单时间：#{filters['create_at_start']}至#{filters['create_at_end']}"
     sheet1[1,3] = "供应商：#{filters['supplier']}"
     sheet1[1,5] = "商品名称：#{filters['commodity_name']}"
-    sheet1[1,6] = (filters['status'].eql?"全部") ? "子订单状态：全部" : "子订单状态：#{OrderDetail::STATUS_NAME[filters['status'].to_sym]}"
+    sheet1[1,6] = "子订单状态： #{OrderDetail::STATUS_NAME_REPORT[filters['status'].to_sym]}"
     sheet1[1,9] = "收货人：#{filters['order_user_name']}"
     sheet1.row(1).set_format(9,red)
     sheet1[1,12] = "创建单位：#{filters['create_unit_name']}"
@@ -191,7 +189,7 @@ class ReportsController < ApplicationController
     # 表格内容
     count_row = 5
     i=1
-    objs.each do |x|
+    reports.each do |x|
       sheet1[count_row,0] = i
       sheet1[count_row,1] = x.no
       sheet1[count_row,2] = x.commodity.cno
@@ -199,10 +197,10 @@ class ReportsController < ApplicationController
       sheet1[count_row,4] = x.commodity.supplier.name
       sheet1[count_row,5] = x.commodity.name
       sheet1[count_row,6] = x.amount
-      sheet1[count_row,7] = x.price
-      sheet1[count_row,8] = x.cost_price
+      sheet1[count_row,7] = x.price.to_s(:rounded, precision: 2) 
+      sheet1[count_row,8] = x.cost_price.to_s(:rounded, precision: 2)
       sheet1[count_row,9] = x.status_name
-      sheet1[count_row,10] = x.at_unit.name
+      sheet1[count_row,10] = x.at_unit.try :name
       sheet1[count_row,11] = x.created_at.strftime("%Y%m%d")
       sheet1[count_row,12] = x.closed_at.blank? ? "" : x.closed_at.strftime("%Y%m%d")
       sheet1[count_row,13] = x.has_checked? ? "是" : "否"
@@ -214,8 +212,8 @@ class ReportsController < ApplicationController
       sheet1[count_row,19] = x.order.tel
       sheet1[count_row,20] = x.order.phone
       sheet1[count_row,21] = x.order.created_at.strftime("%Y%m%d")
-      sheet1[count_row,22] = x.order.user.name
-      sheet1[count_row,23] = x.order.unit.name
+      sheet1[count_row,22] = x.order.user.try :name
+      sheet1[count_row,23] = x.order.unit.try :name
       sheet1[count_row,24] = x.order.desc
 
       0.upto(24) do |x|
@@ -228,10 +226,10 @@ class ReportsController < ApplicationController
     end
 
     sheet1[count_row,0] = "合计"
-    sheet1[count_row,1] = "订单总数：#{objs.count}"
-    sheet1[count_row,6] = "商品总数：#{objs.sum(:amount)}"
-    sheet1[count_row,7] = "销售总额：#{objs.sum(:price)}"
-    sheet1[count_row,8] = "结算总额：#{objs.sum(:cost_price)}"
+    sheet1[count_row,1] = "订单总数：#{reports.count}"
+    sheet1[count_row,6] = "商品总数：#{reports.sum(:amount)}"
+    sheet1[count_row,7] = "销售总额：#{reports.sum(:price).to_s(:rounded, precision: 2)}"
+    sheet1[count_row,8] = "结算总额：#{reports.sum(:cost_price).to_s(:rounded, precision: 2)}"
     0.upto(24) do |x|
       sheet1.row(count_row).set_format(x, bold)
     end
@@ -417,11 +415,11 @@ class ReportsController < ApplicationController
         xj_amount += row[2]
         # sheet1[count_row,6] = commodity.sell_price
         # xj_sell_price += commodity.sell_price
-        sheet1[count_row,6] = sprintf("%.2f", row[3] / row[2])
+        sheet1[count_row,6] = (row[3] / row[2]).to_s(:rounded, precision: 2)
         # xj_cost_price += row[1] / row[0]
         # sheet1[count_row,8] = prices[key]
         # xj_detail_price += prices[key]
-        sheet1[count_row,7] =  sprintf("%.2f", row[3])
+        sheet1[count_row,7] =  row[3].to_s(:rounded, precision: 2)
         xj_detail_cost_price += row[3]
         # income = prices[key] - cost_prices[key]
         # sheet1[count_row,10] = income
@@ -452,7 +450,7 @@ class ReportsController < ApplicationController
       # hj_cost_price += xj_cost_price
       # sheet1[count_row,8] = xj_detail_price
       # hj_detail_price += xj_detail_price
-      sheet1[count_row,7] =  sprintf("%.2f", xj_detail_cost_price)
+      sheet1[count_row,7] = xj_detail_cost_price.to_s(:rounded, precision: 2) 
       hj_detail_cost_price += xj_detail_cost_price
       # sheet1[count_row,10] = xj_income
       # hj_income += xj_income
@@ -475,7 +473,7 @@ class ReportsController < ApplicationController
     # sheet1[count_row,6] = hj_sell_price
     sheet1[count_row,6] = "---"
     # sheet1[count_row,8] = hj_detail_price
-    sheet1[count_row,7] =  sprintf("%.2f", hj_detail_cost_price)
+    sheet1[count_row,7] =  hj_detail_cost_price.to_s(:rounded, precision: 2) 
     # sheet1[count_row,10] = hj_income
 
     0.upto(7) do |x|
@@ -540,12 +538,12 @@ class ReportsController < ApplicationController
         flash[:alert] = "无数据"
         redirect_to :action => 'commodity_report'
       else
-        send_data(commodity_report_xls_content_for(select_commodities,filters),:type => "text/excel;charset=utf-8; header=present",:filename => "商品管理报表_#{Time.now.strftime("%Y%m%d")}.xls")  
+        send_data(commodity_report_xls_content_for(filters, select_commodities),:type => "text/excel;charset=utf-8; header=present",:filename => "商品管理报表_#{Time.now.strftime("%Y%m%d")}.xls")  
       end
     end
   end
 
-  def commodity_report_xls_content_for(objs,filters) 
+  def commodity_report_xls_content_for(filters, reports) 
     xls_report = StringIO.new  
     book = Spreadsheet::Workbook.new  
     sheet1 = book.create_worksheet :name => "商品管理报表"  
@@ -603,14 +601,14 @@ class ReportsController < ApplicationController
     count_row = 4
     i=1
 
-    objs.each do |x|
+    reports.each do |x|
       sheet1[count_row,0] = i
       sheet1[count_row,1] = x.supplier.try :name
       sheet1[count_row,2] = x.cno
       sheet1[count_row,3] = x.dms_no
       sheet1[count_row,4] = x.name
-      sheet1[count_row,5] = x.cost_price
-      sheet1[count_row,6] = x.sell_price
+      sheet1[count_row,5] = x.cost_price.to_s(:rounded, precision: 2)
+      sheet1[count_row,6] = x.sell_price.to_s(:rounded, precision: 2)
       sheet1[count_row,7] = x.is_on_sell_name
       sheet1[count_row,8] = x.created_at.strftime("%Y%m%d")
       sheet1[count_row,9] = x.is_on_sell ? "" : x.updated_at.strftime("%Y%m%d")
@@ -627,7 +625,7 @@ class ReportsController < ApplicationController
     end
 
     sheet1[count_row,1] = "合计"
-    sheet1[count_row,2] = "商品总数：#{objs.count}"
+    sheet1[count_row,2] = "商品总数：#{reports.count}"
     0.upto(10) do |x|
       sheet1.row(count_row).set_format(x, bold)
     end
@@ -823,16 +821,16 @@ class ReportsController < ApplicationController
         sheet1[count_row,5] = commodity.name
         sheet1[count_row,6] = row[2]
         xj_amount += row[2]
-        sheet1[count_row,7] =  sprintf("%.2f", row[3] / row[2])
+        sheet1[count_row,7] = (row[3] / row[2]).to_s(:rounded, precision: 2)
         # xj_sell_price += row[3] / row[2]
-        sheet1[count_row,8] =  sprintf("%.2f", row[4] / row[2])
+        sheet1[count_row,8] = (row[4] / row[2]).to_s(:rounded, precision: 2)
         # xj_cost_price += row[4] / row[2]
-        sheet1[count_row,9] =  sprintf("%.2f", row[3])
+        sheet1[count_row,9] =  row[3].to_s(:rounded, precision: 2)
         xj_detail_price += row[3]
-        sheet1[count_row,10] =  sprintf("%.2f", row[4])
+        sheet1[count_row,10] =  row[4].to_s(:rounded, precision: 2)
         xj_detail_cost_price += row[4]
         income = row[3] - row[4]
-        sheet1[count_row,11] =  sprintf("%.2f", income)
+        sheet1[count_row,11] = income.to_s(:rounded, precision: 2)
         xj_income += income
 
         0.upto(11) do |x|
@@ -863,11 +861,11 @@ class ReportsController < ApplicationController
       # hj_sell_price += xj_sell_price
       # sheet1[count_row,8] = xj_cost_price
       # hj_cost_price += xj_cost_price
-      sheet1[count_row,9] =  sprintf("%.2f", xj_detail_price)
+      sheet1[count_row,9] =  xj_detail_price.to_s(:rounded, precision: 2)
       hj_detail_price += xj_detail_price
-      sheet1[count_row,10] =  sprintf("%.2f", xj_detail_cost_price)
+      sheet1[count_row,10] =  xj_detail_cost_price.to_s(:rounded, precision: 2)
       hj_detail_cost_price += xj_detail_cost_price
-      sheet1[count_row,11] =  sprintf("%.2f", xj_income)
+      sheet1[count_row,11] =  xj_income.to_s(:rounded, precision: 2)
       hj_income += xj_income
 
       0.upto(1) do |x|
@@ -888,9 +886,9 @@ class ReportsController < ApplicationController
     sheet1[count_row,8] = "---"
     # sheet1[count_row,7] = hj_sell_price
     # sheet1[count_row,8] = hj_cost_price
-    sheet1[count_row,9] =  sprintf("%.2f", hj_detail_price)
-    sheet1[count_row,10] =  sprintf("%.2f", hj_detail_cost_price)
-    sheet1[count_row,11] =  sprintf("%.2f", hj_income)
+    sheet1[count_row,9] = hj_detail_price.to_s(:rounded, precision: 2)
+    sheet1[count_row,10] = hj_detail_cost_price.to_s(:rounded, precision: 2)
+    sheet1[count_row,11] = hj_income.to_s(:rounded, precision: 2)
 
     0.upto(11) do |x|
       sheet1.row(count_row).set_format(x, red_body)

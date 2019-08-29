@@ -19,7 +19,7 @@
     <td><%= label_tag(:commodity_name, "商品名称:") %></td>
     <td><%= text_field("commodity_name","commodity_name") %></td>   
     <td><%= label_tag(:status, "子订单状态:") %></td>
-    <td><%= select_tag(:status, options_for_select(OrderDetail::STATUS_NAME.invert.to_a.insert(0,"全部").insert(1,"待处理或结单"))) %></td>
+    <td><%= select_tag(:status, options_for_select(OrderDetail::STATUS_NAME_REPORT.invert.to_a)) %></td>
     <td><%= label_tag(:order_no, "主订单编号:") %></td>
     <td><%= text_field("order_no","order_no") %></td>
     </tr>
