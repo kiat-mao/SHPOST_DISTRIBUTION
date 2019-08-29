@@ -146,7 +146,7 @@
     end
 
     g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |order|
-        order.created_at.localtime.to_s(:db)
+      l order.created_at
     end
 
     g.column  do |order|

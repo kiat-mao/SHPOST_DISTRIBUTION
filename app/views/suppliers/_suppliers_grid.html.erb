@@ -6,12 +6,17 @@
     g.column name: model_class.human_attribute_name(:name), attribute: 'name'
 
     g.column name: model_class.human_attribute_name(:valid_before), attribute: 'valid_before' do |supplier|
-        supplier.valid_before.blank? ? "" : supplier.valid_before.localtime.strftime('%Y-%m-%d').to_s
+      l(supplier.valid_before, format: :day) if !supplier.valid_before.blank?
     end
 
     g.column name: model_class.human_attribute_name(:is_valid), attribute: 'is_valid', filter_type: :boolean do |supplier|
         supplier.is_valid_name
     end
+
+    g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |supplier|
+      l supplier.created_at
+    end
+
     # g.column name: model_class.human_attribute_name(:contracts), attribute: 'contracts' do |supplier|
     #   supplier.contracts.each do |t| 
     #    

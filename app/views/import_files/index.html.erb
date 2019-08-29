@@ -27,7 +27,7 @@
     g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'
 
     g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at'do |import_file|
-       import_file.created_at.localtime.to_s(:db)
+      l import_file.created_at
     end
 
     g.column do |import_file|

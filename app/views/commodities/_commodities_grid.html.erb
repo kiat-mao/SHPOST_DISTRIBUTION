@@ -23,6 +23,15 @@
     g.column name: model_class.human_attribute_name(:is_on_sell), attribute: 'is_on_sell', filter_type: :boolean do |commodity|
         commodity.is_on_sell_name
     end
+
+    g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |commodity|
+      l commodity.created_at
+    end
+
+
+     g.column name: model_class.human_attribute_name(:updated_at), attribute: 'updated_at' do |commodity|
+      l commodity.created_at
+    end
     # g.column name: model_class.human_attribute_name(:cover), attribute: 'cover' do |commodity|
     #    image_tag(commodity.cover_url, height: '150', width: '150')
     # end

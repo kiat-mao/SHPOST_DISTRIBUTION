@@ -21,7 +21,14 @@
 
     g.column name: model_class.human_attribute_name(:ver_no), attribute: 'ver_no'
 
-    g.column name: model_class.human_attribute_name(:oper_date), attribute: 'oper_date'
+
+    g.column name: model_class.human_attribute_name(:oper_date), attribute: 'oper_date' do |up_download|
+      l up_download.oper_date
+    end
+
+    g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |up_download|
+      l up_download.created_at
+    end
 
     g.column do |up_download|
       ActiveSupport::SafeBuffer.new << 

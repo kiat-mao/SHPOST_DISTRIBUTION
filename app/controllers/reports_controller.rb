@@ -201,8 +201,8 @@ class ReportsController < ApplicationController
       sheet1[count_row,8] = x.cost_price.to_s(:rounded, precision: 2)
       sheet1[count_row,9] = x.status_name
       sheet1[count_row,10] = x.at_unit.try :name
-      sheet1[count_row,11] = x.created_at.strftime("%Y%m%d")
-      sheet1[count_row,12] = x.closed_at.blank? ? "" : x.closed_at.strftime("%Y%m%d")
+      sheet1[count_row,11] = l x.created_at
+      sheet1[count_row,12] = l x.closed_at if !x.closed_at.blank?
       sheet1[count_row,13] = x.has_checked? ? "是" : "否"
       sheet1[count_row,14] = x.has_rechecked? ? "是" : "否"
       sheet1[count_row,15] = x.why_decline.blank? ? "" : x.why_decline
@@ -211,7 +211,7 @@ class ReportsController < ApplicationController
       sheet1[count_row,18] = x.order.address
       sheet1[count_row,19] = x.order.tel
       sheet1[count_row,20] = x.order.phone
-      sheet1[count_row,21] = x.order.created_at.strftime("%Y%m%d")
+      sheet1[count_row,21] = l x.created_at
       sheet1[count_row,22] = x.order.user.try :name
       sheet1[count_row,23] = x.order.unit.try :name
       sheet1[count_row,24] = x.order.desc
@@ -610,8 +610,8 @@ class ReportsController < ApplicationController
       sheet1[count_row,5] = x.cost_price.to_s(:rounded, precision: 2)
       sheet1[count_row,6] = x.sell_price.to_s(:rounded, precision: 2)
       sheet1[count_row,7] = x.is_on_sell_name
-      sheet1[count_row,8] = x.created_at.strftime("%Y%m%d")
-      sheet1[count_row,9] = x.is_on_sell ? "" : x.updated_at.strftime("%Y%m%d")
+      sheet1[count_row,8] = l x.created_at
+      sheet1[count_row,9] = l x.updated_at if ! x.is_on_sell
       sheet1[count_row,10] = x.desc
       
       0.upto(10) do |x|

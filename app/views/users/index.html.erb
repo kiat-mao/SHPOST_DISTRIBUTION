@@ -10,6 +10,7 @@
   </div>
 </div>
 
+
 <%= grid(@users_grid) do |g|
 
     g.column name: model_class.human_attribute_name(:name), attribute: 'name'
@@ -22,7 +23,7 @@
       user.unit.try :name
     end
 
-    g.column name: model_class.human_attribute_name(:role), attribute: 'role' ,custom_filter: User::ROLE.invert do |user| 
+    g.column name: model_class.human_attribute_name(:role), attribute: 'role' ,custom_filter: User::ROLE.delete_if{|k| k.eql? :superadmin}.invert do |user| 
       user.rolename
     end
 
@@ -30,20 +31,16 @@
       user.status_name
     end
 
+    g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |user|
+      l user.created_at
+    end
+
     g.column do |user|
       ActiveSupport::SafeBuffer.new << 
         (link_to t('.edit', :default => t("helpers.links.edit")), edit_user_path(user), :class => 'btn btn-xs btn-primary' if can? :update, user) << ' ' <<
-# <<<<<<< HEAD
-          
-#           (link_to t('.destroy', :default => t("helpers.links.destroy")), user_path(user), :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => 'Are you sure?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, user)
-# =======
-#           (link_to t('.roles', :default => t("helpers.links.roles")), user_roles_path(user), :class => 'btn btn-xs btn-primary' if can? :role, user) << ' ' << 
           (link_to t('.destroy', :default => t("helpers.links.destroy")), user_path(user), :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => 'Are you sure?')) }, :class => 'btn btn-xs btn-danger' if can? :destroy, user)<< ' ' <<
           (link_to t('.reset_pwd', :default => t("helpers.links.reset_pwd")), to_reset_pwd_user_path(user), :class => 'btn btn-xs btn-primary' if can? :reset_pwd, user)<< ' ' <<
-          # (link_to t(user.unlock? ?  "用户停用" : "用户启用"), lock_user_path(user), :class => 'btn btn-xs btn-primary' )<< ' ' <<
-          # (link_to t(user.lock? ? "用户启用" : "用户停用"), unlock_user_path(user), :class => 'btn btn-xs btn-primary' )
           (link_to t(user.is_unlocked? ? "用户停用" : "用户启用"),  user.is_unlocked? ? lock_user_path(user) :  unlock_user_path(user), :class => 'btn btn-xs btn-primary', :method => :post)
-# >>>>>>> 6f065522060aa7cb76d4895415cea89e13041f32
     end
   end 
 %>

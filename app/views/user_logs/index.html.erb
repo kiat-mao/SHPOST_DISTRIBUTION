@@ -14,7 +14,7 @@
     g.column name: model_class.human_attribute_name(:object_symbol), attribute: 'object_symbol'
 
     g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |user_log|
-        user_log.created_at.localtime.to_s(:db)
+        l user_log.created_at
       end
 
     g.column do |user_log|
