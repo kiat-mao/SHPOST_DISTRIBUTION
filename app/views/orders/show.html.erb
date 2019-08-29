@@ -18,6 +18,8 @@
   <dd><%= @order.user.name %></dd>
   <dt><strong><%= model_class.human_attribute_name(:unit_id) %>:</strong></dt>
   <dd><%= @order.unit.name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:desc) %>:</strong></dt>
+  <dd><%= @order.desc %></dd>
 </dl>
 
 <%= link_to t('.back', :default => t("helpers.links.back")),

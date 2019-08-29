@@ -110,7 +110,7 @@ class OrdersController < ApplicationController
   # POST /orders.json
   def create
     @order.user_id = current_user.id
-    @order.unit_id = current_user.unit.id
+    @order.unit_id = current_user.unit.try :id
 
     respond_to do |format|
       @order.is_fresh = true
@@ -181,6 +181,6 @@ class OrdersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def order_params
-      params.require(:order).permit(:address, :name, :tel, :phone)
+      params.require(:order).permit(:address, :name, :tel, :phone, :desc)
     end
 end

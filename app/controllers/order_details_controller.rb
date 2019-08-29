@@ -54,6 +54,7 @@ class OrderDetailsController < ApplicationController
       @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where("order_details.status != 'waiting'").order("orders.no, order_details.no"))
     else
       @order_details = initialize_grid(@order_details.joins(:order).where("order_details.status != 'waiting'").order("orders.no, order_details.no"))
+
     end   
 
     render "index"

@@ -141,7 +141,7 @@
       order.user.try :name
     end
 
-    g.column name: model_class.human_attribute_name(:unit_id), attribute: 'name', assoc: :unit do |order|
+    g.column name: model_class.human_attribute_name(:unit_id), attribute: 'name', assoc: :unit, custom_filter: :auto do |order|
       order.unit.try :name
     end
 

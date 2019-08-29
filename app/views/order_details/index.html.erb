@@ -66,9 +66,9 @@
       order_detail.order.user.try :name
     end
 
-    g.column name: "最后操作" do |order_detail|
-      order_detail.order_detail_logs.blank? ? "" : order_detail.order_detail_logs.last.single_log_info
-    end
+    # g.column name: "最后操作" do |order_detail|
+    #   order_detail.order_detail_logs.blank? ? "" : order_detail.order_detail_logs.last.single_log_info
+    # end
 
     if !params[:action].eql?"look"
       g.column do |order_detail|
