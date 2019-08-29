@@ -481,6 +481,7 @@ zh-CN:
           needrole:
             can: :checking
             role: :Order
+          selected: "/order_details/checking"
         rechecking_order:
           name: "待复核订单"
           link: "/orders/rechecking"
@@ -488,6 +489,7 @@ zh-CN:
           needrole:
             can: :rechecking
             role: :Order
+          selected: "/order_details/rechecking"
         receiving_order:
           name: "待收货订单"
           link: "/orders/receiving"
@@ -495,6 +497,7 @@ zh-CN:
           needrole:
             can: :receiving
             role: :Order
+          selected: "/order_details/receiving"
         pending_order:
           name: "被驳回订单"
           link: "/orders/pending"
@@ -502,6 +505,7 @@ zh-CN:
           needrole:
             can: :pending
             role: :Order
+          selected: "/order_details/pending"
         declined_order:
           name: "被驳回订单"
           link: "/orders/declined"
@@ -509,6 +513,7 @@ zh-CN:
           needrole:
             can: :declined
             role: :Order
+          selected: "/order_details/declined"
         look_order:
           name: "查看订单"
           link: "/orders/look"
@@ -516,6 +521,7 @@ zh-CN:
           needrole:
             can: :read
             role: :Order
+          selected: "/order_details/look"
     report:
       name: "报表管理"
       needrole:

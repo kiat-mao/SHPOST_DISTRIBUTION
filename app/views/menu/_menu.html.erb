@@ -16,10 +16,13 @@
             <% 
               sm = m[k][:submenu]
               if !sm.blank?
+                #is menu collapse in?
                 in_flag = false
-                sm.values.map{|x| x[:link]}.each do |link|
+                sm.values.each do |v|
+                  link = v[:link]
                   # binding.pry
-                  if request.original_fullpath.include? link
+                  selected = v[:selected]
+                  if request.original_fullpath.include?(link) || (!selected.blank? && request.original_fullpath.include?(selected))
                     in_flag = true
                     break
                   end
@@ -29,10 +32,10 @@
                 <% 
                   sm.keys.each_with_index do |sk,l2| 
                     if sm[sk][:needrole].blank? || can?(sm[sk][:needrole][:can], sm[sk][:needrole][:role].is_a?(Symbol) ? Module.const_get(sm[sk][:needrole][:role]) : sm[sk][:needrole][:role]) 
-                      count=0
+                      count = 0
                       name = sm[sk][:name]
                       if !sm[sk][:need_count].blank? and sm[sk][:need_count]
-                        count=sk.to_s.camelize.constantize.unfinished_count(session[:current_storage])
+                        count = sk.to_s.camelize.constantize.unfinished_count(session[:current_storage])
                         name = sm[sk][:name]+"("+count.to_s+")"
                       end
                 %>
@@ -41,7 +44,7 @@
                           <div class="menu-heading">
                             <a data-toggle="collapse" data-parent="#menu-group-0-<%=l1+1%>" >
                               <a href="<%=sm[sk][:link]%>">
-                                <div class="menu-title <%="selected" if request.original_fullpath.include? sm[sk][:link]%>">
+                                <div class="menu-title <%="selected" if request.original_fullpath.include?(sm[sk][:link]) || (!sm[sk][:selected].blank? && request.original_fullpath.include?(sm[sk][:selected]))%>">
                                 <% if count>0 %>
                                   <%= sm[sk][:name] %><span style="color:#FF0000"><%="("+count.to_s+")"%></span>
                                 <% else %>
