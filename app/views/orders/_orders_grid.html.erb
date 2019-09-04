@@ -1,7 +1,7 @@
 <%- model_class = Order -%>
 <%= hidden_field_tag('why_decline') %>
 <% od = nil %>
-
+ 
 <%= grid(@orders, :show_filters => :always) do |g|
   g.after_row do |order, number_of_columns|
     # content_tag(:div, class: 'extra-row') do

@@ -59,7 +59,7 @@
       <%= f.select(:is_on_sell, Commodity::IS_ON_SELL.invert) %>
     </div>
   </div> -->
-  
+  <%= hidden_field_tag('source', @source) %> 
 
   
   <%= f.submit nil, :class => 'btn btn-primary' %>

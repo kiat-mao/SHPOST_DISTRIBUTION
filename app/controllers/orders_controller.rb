@@ -104,6 +104,7 @@ class OrdersController < ApplicationController
 
   # GET /orders/1/edit
   def edit
+    @source = request.referer
   end
 
   # POST /orders
@@ -132,19 +133,22 @@ class OrdersController < ApplicationController
   def update
     respond_to do |format|
       if @order.update(order_params)
-        if current_user.role.eql?"unitadmin"
-          format.html { redirect_to look_orders_url, notice: I18n.t('controller.update_success_notice', model: '订单')}
-          format.json { head :no_content }
-        else
-          if @order.is_fresh
-            format.html { redirect_to fresh_orders_url, notice: I18n.t('controller.update_success_notice', model: '订单')}
-            format.json { head :no_content }
-          else
-            format.html { redirect_to pending_orders_url, notice: I18n.t('controller.update_success_notice', model: '订单')}
-            format.json { head :no_content }
-          end
-        end
+        # if current_user.role.eql?"unitadmin"
+        #   format.html { redirect_to look_orders_url, notice: I18n.t('controller.update_success_notice', model: '订单')}
+        #   format.json { head :no_content }
+        # else
+        #   if @order.is_fresh
+        #     format.html { redirect_to fresh_orders_url, notice: I18n.t('controller.update_success_notice', model: '订单')}
+        #     format.json { head :no_content }
+        #   else
+        #     format.html { redirect_to pending_orders_url, notice: I18n.t('controller.update_success_notice', model: '订单')}
+        #     format.json { head :no_content }
+        #   end
+        # end
+        format.html { redirect_to params[:source], notice: I18n.t('controller.update_success_notice', model: '订单')}
+        format.json { head :no_content }       
       else
+        @source = params[:source]
         format.html { render action: 'edit' }
         format.json { render json: @order.errors, status: :unprocessable_entity }
       end
@@ -156,7 +160,7 @@ class OrdersController < ApplicationController
   def destroy
     @order.destroy!
     respond_to do |format|
-      format.html { redirect_to fresh_orders_url }
+      format.html { redirect_to request.referer  }
       format.json { head :no_content }
     end
   end
@@ -164,7 +168,9 @@ class OrdersController < ApplicationController
   def commodity_choose
     @order = Order.find(params[:id].to_i)
     @commodities = initialize_grid(Commodity.joins(:supplier).where("commodities.is_on_sell=? and suppliers.is_valid=?", true, true).order(:supplier_id, :cno))
+
   end
+
 
   private
     def logging

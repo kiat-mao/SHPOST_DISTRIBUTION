@@ -92,10 +92,10 @@ class OrderDetailsController < ApplicationController
     @order_detail.at_unit = current_user.unit
     @order_detail.status = "waiting"
     @order_detail.cost_price = @commodity.cost_price
-
+    
     respond_to do |format|
       if @order_detail.save
-        format.html { redirect_to commodity_choose_order_path(@order), notice: I18n.t('controller.create_success_notice', model: '子订单') }
+        format.html { redirect_to params[:referer], notice: I18n.t('controller.create_success_notice', model: '子订单') }
         format.json { render action: 'show', status: :created, location: @order_detail }
       else
         format.html { render action: 'new' }
@@ -126,7 +126,7 @@ class OrderDetailsController < ApplicationController
   def destroy
     @order_detail.destroy!
     respond_to do |format|
-      format.html { redirect_to fresh_orders_url }
+      format.html { redirect_to request.referer  }
       format.json { head :no_content }
     end
   end

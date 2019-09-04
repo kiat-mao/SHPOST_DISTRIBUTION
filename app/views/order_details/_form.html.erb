@@ -15,12 +15,13 @@
   <%= hidden_field_tag('commodity_id', @commodity_id) %> 
   <%= hidden_field_tag('order_id', @order.id) %> 
   <%= hidden_field_tag('source', @source) %> 
+  <%= hidden_field_tag('referer', request.referer) %> 
   <%= f.submit nil, :class => 'btn btn-primary' %>
   <% if @order_detail.new_record?%>
   <%= hidden_field_tag('commodity_id', @commodity.id) %> 
   <%= hidden_field_tag('order_id', @order.id) %> 
   
-  <%= link_to t('.cancel', :default => t("helpers.links.cancel")), commodity_choose_order_path(@order), :class => 'btn btn-default' %>
+  <%= link_to t('.cancel', :default => t("helpers.links.cancel")), request.referer, :class => 'btn btn-default' %>
   <% else %>
   <%= link_to t('.cancel', :default => t("helpers.links.cancel")), request.referer, :class => 'btn btn-default' %>
   <% end %>
