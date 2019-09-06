@@ -48,6 +48,7 @@ class OrderDetail < ActiveRecord::Base
   def checking!
     if self.waiting? || self.pending?
       self.at_unit = Unit::DELIVERY
+      self.check_at = Time.now
       super
     else
       false
@@ -57,6 +58,7 @@ class OrderDetail < ActiveRecord::Base
   def rechecking!
     if self.checking? || self.declined?
       self.at_unit = Unit::POSTBUY
+      self.recheck_at = Time.now
       super
     else
       false

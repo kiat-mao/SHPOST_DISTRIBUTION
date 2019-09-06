@@ -51,11 +51,19 @@
     g.column name: model_class.human_attribute_name(:why_decline), attribute: 'why_decline'
 
     g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |order_detail|
-      l order_detail.created_at
+      order_detail.created_at
     end
 
     g.column name: model_class.human_attribute_name(:closed_at), attribute: 'closed_at' do |order_detail|
-      l order_detail.closed_at if ! order_detail.closed_at.blank?
+      order_detail.closed_at if ! order_detail.closed_at.blank?
+    end
+
+    g.column name: model_class.human_attribute_name(:check_at), attribute: 'check_at' do |order_detail|
+      order_detail.check_at if ! order_detail.check_at.blank?
+    end
+
+    g.column name: model_class.human_attribute_name(:recheck_at), attribute: 'recheck_at' do |order_detail|
+      order_detail.recheck_at if ! order_detail.recheck_at.blank?
     end
 
     g.column name: omodel_class.human_attribute_name(:unit_id), attribute: 'unit_id', assoc: :order do |order_detail|
@@ -73,7 +81,7 @@
     if !params[:action].eql?"look"
       g.column do |order_detail|
         ActiveSupport::SafeBuffer.new << 
-          (link_to t('.edit', :default => t("helpers.links.edit")), edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if (can? :update, order_detail) && (order_detail.waiting? || order_detail.pending?) && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))) << ' ' <<
+          (link_to t('.edit', :default => t("helpers.links.edit")), edit_order_detail_path(order_detail), target: '_blank', :class => 'btn btn-xs btn-primary' if (can? :update, order_detail) && (order_detail.waiting? || order_detail.pending?) && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))) << ' ' <<
             (link_to t('.destroy', :default => t("helpers.links.destroy")), order_detail_path(order_detail), :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if (can? :destroy, order_detail) && order_detail.waiting?) << ' ' << 
             (link_to t('.to_recheck', :default => t("helpers.links.to_recheck")),
               to_recheck_order_detail_path(order_detail), :method => :post, :name => "order_detail_to_recheck", :class => 'btn btn-xs btn-primary' if ((can? :to_recheck, order_detail) && ((order_detail.checking? && params[:action].eql?("checking")) || (order_detail.declined? && params[:action].eql?("declined")))))  << ' ' << 

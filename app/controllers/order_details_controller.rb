@@ -68,13 +68,13 @@ class OrderDetailsController < ApplicationController
   # GET /order_details/new
   def new
     # @order = Order.find params[:order_id].to_i
-    # @commodity = Commodity.find params[:commodity_id].to_i
+    @commodity = Commodity.find params[:commodity_id].to_i
   end
 
   # GET /order_details/1/edit
   def edit
     @order = @order_detail.order
-    @commodity_id = @order_detail.commodity_id
+    @commodity = @order_detail.commodity
     @source = request.referer
     # binding.pry
     # @order = @order_detail.order
@@ -86,16 +86,16 @@ class OrderDetailsController < ApplicationController
   def create
     # @order = Order.find(params[:order_id].to_i)
     # @order_detail.order = @order
-    
-    # @commodity = Commodity.find(params[:commodity_id].to_i)
+    # binding.pry
+    @commodity = Commodity.find(params[:commodity_id].to_i)
     @order_detail.commodity = @commodity
     @order_detail.at_unit = current_user.unit
     @order_detail.status = "waiting"
-    @order_detail.cost_price = @commodity.cost_price
-
+    @order_detail.cost_price = @commodity.try :cost_price
+    
     respond_to do |format|
       if @order_detail.save
-        format.html { redirect_to commodity_choose_order_path(@order), notice: I18n.t('controller.create_success_notice', model: '子订单') }
+        format.html { redirect_to @order_detail, notice: I18n.t('controller.create_success_notice', model: '子订单') }
         format.json { render action: 'show', status: :created, location: @order_detail }
       else
         format.html { render action: 'new' }
@@ -104,6 +104,8 @@ class OrderDetailsController < ApplicationController
     end
   end
 
+  
+
   # PATCH/PUT /order_details/1
   # PATCH/PUT /order_details/1.json
   def update
@@ -111,7 +113,7 @@ class OrderDetailsController < ApplicationController
     # @commodity = @order_detail.commodity
     respond_to do |format|
       if @order_detail.update(order_detail_params)
-        format.html { redirect_to params[:source], notice: I18n.t('controller.update_success_notice', model: '子订单') }
+        format.html { redirect_to @order_detail, notice: I18n.t('controller.update_success_notice', model: '子订单') }
         format.json { head :no_content }
       else
         @source = params[:source]
@@ -126,7 +128,7 @@ class OrderDetailsController < ApplicationController
   def destroy
     @order_detail.destroy!
     respond_to do |format|
-      format.html { redirect_to fresh_orders_url }
+      format.html { redirect_to request.referer  }
       format.json { head :no_content }
     end
   end

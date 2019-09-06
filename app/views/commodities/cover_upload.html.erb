@@ -8,7 +8,7 @@
     <%= image_tag(@commodity.cover_url) if @commodity.cover? %>
     <%= f.file_field :cover, :class => 'text_field' %>
     <%= f.hidden_field :cover_cache %>
-   
+    <%= hidden_field_tag('source', @source) %> 
     <%= f.submit "确认上传", :class => 'btn btn-primary'%>
   </div>
   <%end%>

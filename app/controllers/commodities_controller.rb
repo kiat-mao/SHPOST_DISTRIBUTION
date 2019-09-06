@@ -19,10 +19,12 @@ class CommoditiesController < ApplicationController
 
   def edit
     set_autocom_update(@commodity)
+    @source = request.referer
   end
 
   
   def cover_upload
+    @source = request.referer
     # @operation = "commodity_upload"
     # @commodity = Commodity.find_by(id: params[:format])
     # @commodity.cover = params[:cover]
@@ -46,9 +48,10 @@ class CommoditiesController < ApplicationController
   def update
     respond_to do |format|
       if @commodity.update(commodity_params)
-        format.html { redirect_to @commodity, notice: I18n.t('controller.update_success_notice', model: '商品') }
+        format.html { redirect_to params[:source], notice: I18n.t('controller.update_success_notice', model: '商品') }
         format.json { head :no_content }
       else
+        @source = params[:source]
         format.html { render action: 'edit' }
         format.json { render json: @commodity.errors, status: :unprocessable_entity }
       end
@@ -62,7 +65,7 @@ class CommoditiesController < ApplicationController
       flash[:alert] = "已有子订单中包含该商品，不可删除"
     end
     respond_to do |format|
-      format.html { redirect_to commodities_url }
+      format.html { redirect_to request.referer }
       format.json { head :no_content }
     end
   end
@@ -222,10 +225,10 @@ class CommoditiesController < ApplicationController
     respond_to do |format|
       if @commodity.save
         txt = @commodity.is_on_sell ? "上架" : "下架"
-        format.html { redirect_to commodities_url, notice: "已成功#{txt}" }
+        format.html { redirect_to request.referer, notice: "已成功#{txt}" }
         format.json { head :no_content }
       else
-        format.html { redirect_to commodities_url }
+        format.html { redirect_to request.referer }
         format.json { render json: @commodity.errors, status: :unprocessable_entity }
       end
     end

@@ -18,9 +18,11 @@ class SuppliersController < ApplicationController
   end
 
   def edit
+    @source = request.referer
   end
 
   def contracts_upload
+    @source = request.referer
     # @supplier = Supplier.find_by(id: params[:format])
     # @supplier.contracts = @supplier.contracts.insert("params[:contracts]")
     # @supplier.save
@@ -49,9 +51,10 @@ class SuppliersController < ApplicationController
   def update
     respond_to do |format|
       if @supplier.update(supplier_params)
-        format.html { redirect_to @supplier, notice: I18n.t('controller.update_success_notice', model: '供应商') }
+        format.html { redirect_to params[:source], notice: I18n.t('controller.update_success_notice', model: '供应商') }
         format.json { head :no_content }
       else
+        @source = params[:source]
         format.html { render action: 'edit' }
         format.json { render json: @supplier.errors, status: :unprocessable_entity }
       end
@@ -65,7 +68,7 @@ class SuppliersController < ApplicationController
       flash[:alert] = "供应商下存在商品，不可删除。只能标记为无效。"
     end
     respond_to do |format|
-      format.html { redirect_to suppliers_url }
+      format.html { redirect_to request.referer }
       format.json { head :no_content }
     end
   end
@@ -186,10 +189,10 @@ class SuppliersController < ApplicationController
     respond_to do |format|
       if @supplier.save
         txt = @supplier.is_valid ? "有效" : "无效"
-        format.html { redirect_to suppliers_url, notice: "已成功标记为#{txt}" }
+        format.html { redirect_to request.referer, notice: "已成功标记为#{txt}" }
         format.json { head :no_content }
       else
-        format.html { redirect_to suppliers_url }
+        format.html { redirect_to request.referer }
         format.json { render json: @supplier.errors, status: :unprocessable_entity }
       end
     end

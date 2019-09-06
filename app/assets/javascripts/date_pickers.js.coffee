@@ -28,5 +28,21 @@ ready = ->
     changeMonth:true,
     changeYear:true
   });
+  $('#check_at_start_check_at_start').datepicker({
+    changeMonth:true,
+    changeYear:true
+  });
+  $('#check_at_end_check_at_end').datepicker({
+    changeMonth:true,
+    changeYear:true
+  });
+  $('#recheck_at_start_recheck_at_start').datepicker({
+    changeMonth:true,
+    changeYear:true
+  });
+  $('#recheck_at_end_recheck_at_end').datepicker({
+    changeMonth:true,
+    changeYear:true
+  });
 $(document).ready(ready)
 $(document).on('page:load', ready)

@@ -415,6 +415,8 @@ zh-CN:
         at_unit_id: "目前单位"
         created_at: "创建时间"
         updated_at: "更新时间"
+        check_at: "审核时间"
+        recheck_at: "复核时间"
   menu:
     permission:
       name: "权限管理"

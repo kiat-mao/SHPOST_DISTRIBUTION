@@ -9,7 +9,7 @@
     <% end %>
     
     <%= f.file_field :contracts, multiple: true%>
-    
+    <%= hidden_field_tag('source', @source) %> 
     <%= f.submit "确认上传", :class => 'btn btn-primary'%>
   </div>
  <%end%>
