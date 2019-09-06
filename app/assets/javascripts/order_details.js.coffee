@@ -1,7 +1,13 @@
 # Place all the behaviors and hooks related to the matching controller here.
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
-$(document).on "page:change", ->
+$ ->
+  order_status_change_js()
+
+$(document).on "page:load", ->
+  order_status_change_js()
+
+order_status_change_js = ->
   $ "a[name='order_detail_check_decline'], a[name='order_detail_recheck_decline'], a[name='order_order_detail_recheck_decline'], a[name='order_order_detail_check_decline'], a[name='order_check_decline'], a[name='order_recheck_decline']"
   .click (e) ->
     if confirm "确定驳回吗？"
