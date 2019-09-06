@@ -70,8 +70,8 @@ class UsersController < ApplicationController
     @operation = "reset_pwd"
     respond_to do |format|
       if @user.update(user_params)
-        format.html { redirect_to users_url, notice: "密码重置成功" }
-        format.json { head :no_content }
+        format.html { redirect_to request.referer, notice: "密码重置成功" }
+        format.js { head :no_content }
       else
         format.html { render action: 'reset_pwd' }
         format.json { render json: @user.errors, status: :unprocessable_entity }
@@ -81,12 +81,18 @@ class UsersController < ApplicationController
 
   def lock
     @user.lock
-    redirect_to users_url
+    respond_to do |format|
+      format.html {redirect_to request.referer}
+      format.json  { render json: @user}
+    end
   end
 
   def unlock
     @user.unlock  
-    redirect_to users_url
+    respond_to do |format|
+      format.html {redirect_to request.referer}
+      format.json  { render json: @user}
+    end
   end
 
   private
