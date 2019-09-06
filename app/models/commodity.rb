@@ -13,7 +13,9 @@ class Commodity < ActiveRecord::Base
 	validates :dms_no, :name, :supplier_id, :cost_price, :sell_price, presence: {:message => "不能为空"}
 	validates :cno, :dms_no, uniqueness: {:message => "该商品编码已存在"}
 	validates :name, uniqueness: {scope: :supplier,:message => "该供应商下已存在同名商品"}
+
 	validates :cost_price, :sell_price, numericality: {:greater_than => 0 }
+	 validates :sell_price, numericality: {:greater_than => :cost_price, :message => "必须不小于#{human_attribute_name(:cost_price)}" }
 
 
 	IS_ON_SELL = { true: '是', false: '否'}

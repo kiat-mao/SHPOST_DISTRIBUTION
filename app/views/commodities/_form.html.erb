@@ -15,7 +15,7 @@
   <div class="control-group">
     <%= f.label :supplier_id, :class => 'control-label' %>
     <div class="controls">
-      <% if @commodity.supplier_id.blank? %>
+      <% if !@commodity.persisted? %>
       <%= supplier_select_autocom("commodity",@commodity.id) %>
       <% else %>
       <%= @commodity.supplier.name %>

@@ -5,14 +5,14 @@ class SupplierAutocomController < ApplicationController
 
 	def c_autocomplete_supplier_name
 		term = params[:term]
-	    obj_id = params[:objid]
-	    obj = params[:obj]
+    obj_id = params[:objid]
+    obj = params[:obj]
 	    # binding.pry
 	    
-	    suppliers = Supplier.where("suppliers.name like ?","%#{term}%").order(:sno).all
+    suppliers = Supplier.where("suppliers.name like ?","%#{term}%").order(:sno).all
 	      
 	    # binding.pry
-	    render :json => suppliers.map { |supplier| {:id => supplier.id, :label => supplier.name, :value => supplier.name, :obj => obj_id} }
+    render :json => suppliers.map { |supplier| {:id => supplier.id, :label => supplier.name, :value => supplier.name, :obj => obj_id} }
 
   end
 end
