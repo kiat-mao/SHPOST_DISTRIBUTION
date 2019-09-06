@@ -34,6 +34,26 @@ class ReportsController < ApplicationController
         filters["create_at_end"] = params[:create_at_end][:create_at_end]
       end
 
+      if !params[:check_at_start].blank? && !params[:check_at_start][:check_at_start].blank?
+        selectorder_details = selectorder_details.where("order_details.check_at >= ?", to_date(params[:check_at_start][:check_at_start]))
+        filters["check_at_start"] = params[:check_at_start][:check_at_start]
+      end
+
+      if !params[:check_at_end].blank? && !params[:check_at_end][:check_at_end].blank?
+        selectorder_details = selectorder_details.where("order_details.check_at <= ?", to_date(params[:check_at_end][:check_at_end])+1.day)
+        filters["check_at_end"] = params[:check_at_end][:check_at_end]
+      end
+
+      if !params[:recheck_at_start].blank? && !params[:recheck_at_start][:recheck_at_start].blank?
+        selectorder_details = selectorder_details.where("order_details.recheck_at >= ?", to_date(params[:recheck_at_start][:recheck_at_start]))
+        filters["recheck_at_start"] = params[:recheck_at_start][:recheck_at_start]
+      end
+
+      if !params[:recheck_at_end].blank? && !params[:recheck_at_end][:recheck_at_end].blank?
+        selectorder_details = selectorder_details.where("order_details.recheck_at <= ?", to_date(params[:recheck_at_end][:recheck_at_end])+1.day)
+        filters["recheck_at_end"] = params[:recheck_at_end][:recheck_at_end]
+      end
+
       if !params[:supplier].blank? && !(params[:supplier].eql?"全部")
         selectorder_details = selectorder_details.where("suppliers.id = ?", params[:supplier].to_i)
         filters["supplier"] = Supplier.find(params[:supplier].to_i).name
@@ -153,10 +173,11 @@ class ReportsController < ApplicationController
     sheet1[1,3] = "供应商：#{filters['supplier']}"
     sheet1[1,5] = "商品名称：#{filters['commodity_name']}"
     sheet1[1,6] = "子订单状态： #{OrderDetail::STATUS_NAME_REPORT[filters['status'].to_sym]}"
-    sheet1[1,9] = "收货人：#{filters['order_user_name']}"
-    sheet1.row(1).set_format(9,red)
-    sheet1[1,12] = "创建单位：#{filters['create_unit_name']}"
+    sheet1[1,9] = "审核时间：#{filters['check_at_start']}至#{filters['check_at_end']}"
+    sheet1[1,12] = "收货人：#{filters['order_user_name']}"
     sheet1.row(1).set_format(12,red)
+    sheet1[1,15] = "创建单位：#{filters['create_unit_name']}"
+    sheet1.row(1).set_format(15,red)
     
     sheet1.row(2).default_format = filter
 
@@ -169,8 +190,9 @@ class ReportsController < ApplicationController
     sheet1[2,3] = "主订单编号：#{filters['order_no']}"
     sheet1[2,5] = "价格区间：#{filters['price_start']} - #{filters['price_end']}"
     sheet1[2,6] = "目前流转单位：#{filters['at_unit']}"
-    sheet1[2,9] = "收货人手机号码：#{filters['phone']}"
-    sheet1.row(2).set_format(9,red)
+    sheet1[2,9] = "复核时间：#{filters['recheck_at_start']}至#{filters['recheck_at_end']}"
+    sheet1[2,12] = "收货人手机号码：#{filters['phone']}"
+    sheet1.row(2).set_format(12,red)
     
     sheet1[3,0] = "子订单信息"
     sheet1.merge_cells(3, 0, 3, 15) 

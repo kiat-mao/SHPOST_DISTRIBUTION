@@ -4,7 +4,7 @@
   <%= form_tag('', :method => "get", name: 'form1') do %>
   <div style="float:right">   
     <%= link_to t('完成'),
-                    fresh_orders_url,
+                    request.referer,
             :class => 'btn btn-primary' %>
   </div>
   <%= grid(@commodities, :show_filters => :always) do |g|
@@ -31,7 +31,7 @@
     g.column in_csv: false do |commodity|
       ActiveSupport::SafeBuffer.new << 
       (link_to t('选择'),
-                      "/order_details/new?order_id=#{@order.id}&commodity_id=#{commodity.id}", :class => 'btn btn-xs btn-primary')
+                      "/order_details/new?order_id=#{@order.id}&commodity_id=#{commodity.id}", :class => 'btn btn-xs btn-primary', target: '_blank')
     end
   end 
 %>

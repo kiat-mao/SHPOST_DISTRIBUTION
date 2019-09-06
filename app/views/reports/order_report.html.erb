@@ -12,8 +12,19 @@
     <td><%= text_field("create_at_start","create_at_start") %></td>
     <td><%= label_tag(:create_at_end, "下单时间结束:") %></td>
     <td><%= text_field("create_at_end","create_at_end") %></td>
+    <td><%= label_tag(:check_at_start, "审核时间起始:") %></td>
+    <td><%= text_field("check_at_start","check_at_start") %></td>
+    <td><%= label_tag(:check_at_end, "审核时间结束:") %></td>
+    <td><%= text_field("check_at_end","check_at_end") %></td>
+    </tr>
+    <td><%= label_tag(:recheck_at_start, "复核时间起始:") %></td>
+    <td><%= text_field("recheck_at_start","recheck_at_start") %></td>
+    <td><%= label_tag(:recheck_at_end, "复核时间结束:") %></td>
+    <td><%= text_field("recheck_at_end","recheck_at_end") %></td>
     <td><%= label_tag(:supplier, "供应商:") %></td>
     <td><%= select_tag("supplier", options_for_select(Supplier.all.map{|u| [u.name,u.id]}.insert(0,"全部")), id: "supplier") %></td>
+    <td><%= label_tag(:at_unit, "目前流转单位:") %></td>
+    <td><%= select_tag("at_unit", options_for_select(@at_units.map{|u| [u.name,u.id]}.insert(0,"全部")), id: "at_unit") %></td>
     </tr>
     <tr style="line-height: 40px;height: 40px;">
     <td><%= label_tag(:commodity_name, "商品名称:") %></td>
@@ -22,18 +33,14 @@
     <td><%= select_tag(:status, options_for_select(OrderDetail::STATUS_NAME_REPORT.invert.to_a)) %></td>
     <td><%= label_tag(:order_no, "主订单编号:") %></td>
     <td><%= text_field("order_no","order_no") %></td>
+    <td><%= label_tag(:create_unit_name, "创建单位:") %></td>
+    <td><%= text_field("create_unit_name","create_unit_name") %></td>
     </tr>
     <tr style="line-height: 40px;height: 40px;">
     <td><%= label_tag(:price_start, "价格大于:") %></td>
     <td><%= text_field("price_start","price_start") %></td>
     <td><%= label_tag(:price_end, "价格小于:") %></td>
     <td><%= text_field("price_end","price_end") %></td>
-    <td><%= label_tag(:at_unit, "目前流转单位:") %></td>
-    <td><%= select_tag("at_unit", options_for_select(@at_units.map{|u| [u.name,u.id]}.insert(0,"全部")), id: "at_unit") %></td>
-    </tr>
-    <tr style="line-height: 40px;height: 40px;">
-    <td><%= label_tag(:create_unit_name, "创建单位:") %></td>
-    <td><%= text_field("create_unit_name","create_unit_name") %></td>
     <td><%= label_tag(:order_user_name, "收货人姓名:") %></td>
     <td><%= text_field("order_user_name","order_user_name") %></td>
     <td><%= label_tag(:phone, "收货人手机号码:") %></td>

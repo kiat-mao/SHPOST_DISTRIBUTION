@@ -85,7 +85,7 @@
                 if !params[:action].eql?"look"
                   content_tag(:b,"操作") +
                   content_tag(:p,(link_to t('.edit', :default => t("helpers.links.edit")),
-                        edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if ((can? :update, order_detail) && (order_detail.waiting? || order_detail.pending?) && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))))) +
+                        edit_order_detail_path(order_detail), target: '_blank', :class => 'btn btn-xs btn-primary' if ((can? :update, order_detail) && (order_detail.waiting? || order_detail.pending?) && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))))) +
                   content_tag(:p,(link_to t('.destroy', :default => t("helpers.links.destroy")),
                         order_detail_path(order_detail),
                          :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if ((can? :destroy, order_detail) && order_detail.waiting?))) +
