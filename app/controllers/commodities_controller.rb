@@ -83,12 +83,17 @@ class CommoditiesController < ApplicationController
             is_error = false
             is_red = ""
 
-            if file.include?('.xlsx')
+            if file.end_with?('.xlsx')
               instance= Roo::Excelx.new(file)
-            elsif file.include?('.xls')
+            elsif file.end_with?('.xls')
               instance= Roo::Excel.new(file)
-            elsif file.include?('.csv')
+            elsif file.end_with?('.csv')
               instance= Roo::CSV.new(file)
+            else
+              respond_to do |format|
+                format.html { redirect_to commodity_import_commodities_path, notice: "文件后缀名必须为xlsx,xls或csv" }
+                format.json { head :no_content }
+              end
             end
             instance.default_sheet = instance.sheets.first
             title_row = instance.row(1)
