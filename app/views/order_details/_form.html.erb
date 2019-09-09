@@ -8,6 +8,7 @@
   </div>
   <div class="control-group">
     <%= f.label :price, :class => 'control-label' %>
+    <font color="red">注意： 该价格为区局实际销售价，该价格直接参与并影响报表结算，请谨慎填写！（商家结算价为<%=@commodity.cost_price.to_s(:rounded, precision: 2)%>元）</font>
     <div class="controls">
       <%= f.text_field :price, :class => 'text_field' %>
     </div>

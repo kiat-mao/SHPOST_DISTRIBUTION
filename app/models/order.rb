@@ -9,6 +9,8 @@ class Order < ActiveRecord::Base
 
   validates :phone, presence: { :message => "电话或手机不能都为空" }, if: "tel.blank?"
 
+  validate :phone_complexity
+
   # validates :tel, presence: { :message => "电话或手机不能都为空" }, if: "tel.blank?"
 
   scope :fresh, -> { where(is_fresh: true)}
@@ -122,6 +124,19 @@ class Order < ActiveRecord::Base
       count = rows + 1 if count < rows + 1
     end
     self.no = "#{self.unit.short_name}#{today.strftime('%Y%m%d')}#{count.to_s.rjust(3, '0') }"
+  end
+
+  def phone_complexity
+    if tel.present?
+       if !tel.match(/^((\d{3,4}-)|\d{3.4}-)?\d{7,8}$/) 
+         errors.add :tel, "电话号码不正确"
+       end
+    end
+    if phone.present?
+      if !phone.match(/^1[34578]\d{9}$/) 
+         errors.add :phone, "手机号码不正确"
+       end
+    end
   end
   
 end
