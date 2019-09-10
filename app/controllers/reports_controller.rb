@@ -229,8 +229,8 @@ class ReportsController < ApplicationController
       sheet1[count_row,4] = x.commodity.supplier.name
       sheet1[count_row,5] = x.commodity.name
       sheet1[count_row,6] = x.amount
-      sheet1[count_row,7] = x.price.to_s(:rounded, precision: 2) 
-      sheet1[count_row,8] = x.cost_price.to_s(:rounded, precision: 2)
+      sheet1[count_row,7] = x.price.blank? ? "" : x.price.to_s(:rounded, precision: 2)
+      sheet1[count_row,8] = x.cost_price.blank? ? "" : x.cost_price.to_s(:rounded, precision: 2)
       sheet1[count_row,9] = x.status_name
       sheet1[count_row,10] = x.at_unit.try :name
       sheet1[count_row,11] = l x.created_at
@@ -977,7 +977,8 @@ class ReportsController < ApplicationController
   end
 
   def to_date(time)
-    date = Date.civil(time.split(/-|\//)[0].to_i,time.split(/-|\//)[1].to_i,time.split(/-|\//)[2].to_i)
+    # date = Date.civil(time.split(/-|\//)[0].to_i,time.split(/-|\//)[1].to_i,time.split(/-|\//)[2].to_i)
+    date = DateTime.parse(time).to_time
     return date
   end
 end
