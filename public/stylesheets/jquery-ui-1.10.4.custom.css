@@ -280,6 +280,10 @@
 .ui-widget-header .ui-state-error-text {
 	color: #ffffff;
 }
+
+.ui-widget-header select{
+	color: #000000;	
+}
 .ui-priority-primary,
 .ui-widget-content .ui-priority-primary,
 .ui-widget-header .ui-priority-primary {
