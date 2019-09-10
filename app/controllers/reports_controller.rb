@@ -69,6 +69,8 @@ class ReportsController < ApplicationController
       filters['status'] = params[:status]
       if params[:status].eql? "receiving_closed"
         selectorder_details = selectorder_details.where("order_details.status = ? or order_details.status = ?", OrderDetail::statuses[:receiving], OrderDetail::statuses[:closed])
+      elsif params[:status].eql? "not_canceled"
+        selectorder_details = selectorder_details.where("order_details.status != ?", OrderDetail::statuses[:canceled])
       elsif !params[:status].eql? "all"
         selectorder_details = selectorder_details.where("order_details.status = ?", params[:status])
       end
@@ -143,15 +145,23 @@ class ReportsController < ApplicationController
     end
     sheet1.column(10).width = 20
     11.upto(14) do |i|
+      sheet1.column(i).width = 16
+    end
+    15.upto(16) do |i|
+      sheet1.column(i).width = 10
+    end
+    sheet1.column(17).width = 35
+    sheet1.column(18).width = 25
+    sheet1.column(19).width = 15
+    sheet1.column(20).width = 35
+    21.upto(22) do |i|
       sheet1.column(i).width = 15
     end
-    sheet1.column(15).width = 35
-    sheet1.column(16).width = 25
-    sheet1.column(18).width = 35
-    19.upto(22) do |i|
+    sheet1.column(23).width = 16
+    24.upto(25) do |i|
       sheet1.column(i).width = 15
     end
-    sheet1.column(23).width = 20
+    sheet1.column(26).width = 20
 
     # 设置行高
     sheet1.row(0).height = 40
@@ -195,16 +205,16 @@ class ReportsController < ApplicationController
     sheet1.row(2).set_format(12,red)
     
     sheet1[3,0] = "子订单信息"
-    sheet1.merge_cells(3, 0, 3, 15) 
+    sheet1.merge_cells(3, 0, 3, 17) 
     
-    sheet1[3,15] = "主订单信息区"
-    sheet1.merge_cells(3, 16, 3, 24)
-    0.upto(24) do |i|
+    sheet1[3,18] = "主订单信息区"
+    sheet1.merge_cells(3, 18, 3, 26)
+    0.upto(26) do |i|
       sheet1.row(3).set_format(i, GreyFormat1.new(:grey, :black))
     end 
     
-    sheet1.row(4).concat %w{序号 子订单编号 商品编码 DMS商品编码 供应商 商品名称 数量 销售单价 商家结算价 订单状态 目前流转单位 下单时间 结单时间 是否审核过 是否复核过 最后一次驳回理由 主订单编号 收货人 收货地址 收货人电话 收货人手机 创建时间 创建人 创建单位 备注}
-    0.upto(24) do |i|
+    sheet1.row(4).concat %w{序号 子订单编号 商品编码 DMS商品编码 供应商 商品名称 数量 销售单价 商家结算价 订单状态 目前流转单位 下单时间 审核时间 复核时间 结单时间 是否审核过 是否复核过 最后一次驳回理由 主订单编号 收货人 收货地址 收货人电话 收货人手机 创建时间 创建人 创建单位 备注}
+    0.upto(26) do |i|
       sheet1.row(4).set_format(i, GreyFormat2.new(:grey, :black))
     end
 
@@ -224,21 +234,23 @@ class ReportsController < ApplicationController
       sheet1[count_row,9] = x.status_name
       sheet1[count_row,10] = x.at_unit.try :name
       sheet1[count_row,11] = l x.created_at
-      sheet1[count_row,12] = l x.closed_at if !x.closed_at.blank?
-      sheet1[count_row,13] = x.has_checked? ? "是" : "否"
-      sheet1[count_row,14] = x.has_rechecked? ? "是" : "否"
-      sheet1[count_row,15] = x.why_decline.blank? ? "" : x.why_decline
-      sheet1[count_row,16] = x.order.no
-      sheet1[count_row,17] = x.order.name
-      sheet1[count_row,18] = x.order.address
-      sheet1[count_row,19] = x.order.tel
-      sheet1[count_row,20] = x.order.phone
-      sheet1[count_row,21] = l x.created_at
-      sheet1[count_row,22] = x.order.user.try :name
-      sheet1[count_row,23] = x.order.unit.try :name
-      sheet1[count_row,24] = x.order.desc
+      sheet1[count_row,12] = l x.check_at if !x.check_at.blank?
+      sheet1[count_row,13] = l x.recheck_at if !x.recheck_at.blank?
+      sheet1[count_row,14] = l x.closed_at if !x.closed_at.blank?
+      sheet1[count_row,15] = x.has_checked? ? "是" : "否"
+      sheet1[count_row,16] = x.has_rechecked? ? "是" : "否"
+      sheet1[count_row,17] = x.why_decline.blank? ? "" : x.why_decline
+      sheet1[count_row,18] = x.order.no
+      sheet1[count_row,19] = x.order.name
+      sheet1[count_row,20] = x.order.address
+      sheet1[count_row,21] = x.order.tel
+      sheet1[count_row,22] = x.order.phone
+      sheet1[count_row,23] = l x.created_at
+      sheet1[count_row,24] = x.order.user.try :name
+      sheet1[count_row,25] = x.order.unit.try :name
+      sheet1[count_row,26] = x.order.desc
 
-      0.upto(24) do |x|
+      0.upto(26) do |x|
         sheet1.row(count_row).set_format(x, body)
       end 
       sheet1.row(count_row).height = 30
@@ -252,14 +264,14 @@ class ReportsController < ApplicationController
     sheet1[count_row,6] = "商品总数：#{reports.sum(:amount)}"
     sheet1[count_row,7] = "销售总额：#{reports.sum(:price).to_s(:rounded, precision: 2)}"
     sheet1[count_row,8] = "结算总额：#{reports.sum(:cost_price).to_s(:rounded, precision: 2)}"
-    0.upto(24) do |x|
+    0.upto(26) do |x|
       sheet1.row(count_row).set_format(x, bold)
     end
     sheet1.row(count_row).height = 25
 
     count_row += 1
     sheet1.row(count_row).default_format = filter
-    sheet1.merge_cells(count_row, 0, 0, 24)
+    sheet1.merge_cells(count_row, 0, 0, 26)
 
     if current_user.unitadmin? || current_user.superadmin?
       sheet1[count_row,0] = "打印机构：#{current_user.rolename}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"

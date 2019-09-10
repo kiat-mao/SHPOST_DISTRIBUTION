@@ -51,19 +51,19 @@
     g.column name: model_class.human_attribute_name(:why_decline), attribute: 'why_decline'
 
     g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |order_detail|
-      order_detail.created_at
+      l order_detail.created_at
     end
 
     g.column name: model_class.human_attribute_name(:closed_at), attribute: 'closed_at' do |order_detail|
-      order_detail.closed_at if ! order_detail.closed_at.blank?
+      l order_detail.closed_at if ! order_detail.closed_at.blank?
     end
 
     g.column name: model_class.human_attribute_name(:check_at), attribute: 'check_at' do |order_detail|
-      order_detail.check_at if ! order_detail.check_at.blank?
+      l order_detail.check_at if ! order_detail.check_at.blank?
     end
 
     g.column name: model_class.human_attribute_name(:recheck_at), attribute: 'recheck_at' do |order_detail|
-      order_detail.recheck_at if ! order_detail.recheck_at.blank?
+      l order_detail.recheck_at if ! order_detail.recheck_at.blank?
     end
 
     g.column name: omodel_class.human_attribute_name(:unit_id), attribute: 'unit_id', assoc: :order do |order_detail|

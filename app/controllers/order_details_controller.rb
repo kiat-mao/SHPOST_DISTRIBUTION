@@ -15,35 +15,35 @@ class OrderDetailsController < ApplicationController
   #审核被驳回子订单
   def pending
     @status = "pending"
-    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:pending]).order("orders.no, order_details.no"))
+    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:pending]), :order => 'created_at', :order_direction => 'desc')
     render "index"
   end
 
   #待审核子订单
   def checking
     @status = "checking"
-    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:checking]).order("orders.no, order_details.no"))
+    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:checking]), :order => 'created_at', :order_direction => 'desc')
     render "index"
   end
 
   #复核被驳回子订单
   def declined
     @status = "declined"
-    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:declined]).order("orders.no, order_details.no"))
+    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:declined]), :order => 'created_at', :order_direction => 'desc')
     render "index"
   end
 
   #待复核子订单
   def rechecking
     @status = "rechecking"
-    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:rechecking]).order("orders.no, order_details.no"))
+    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:rechecking]), :order => 'created_at', :order_direction => 'desc')
     render "index"
   end
 
   #待收货子订单
   def receiving
     @status = "receiving"
-    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:receiving]).order("orders.no, order_details.no"))
+    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:receiving]), :order => 'created_at', :order_direction => 'desc')
     render "index"
   end
 
@@ -51,9 +51,9 @@ class OrderDetailsController < ApplicationController
   def look
     @status = "look"
     if ! current_user.unitadmin? && ! current_user.superadmin? && current_user.branch?
-      @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where("order_details.status != 'waiting'").order("orders.no, order_details.no"))
+      @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where("order_details.status != 'waiting'"), :order => 'created_at', :order_direction => 'desc')
     else
-      @order_details = initialize_grid(@order_details.joins(:order).where("order_details.status != 'waiting'").order("orders.no, order_details.no"))
+      @order_details = initialize_grid(@order_details.joins(:order).where("order_details.status != 'waiting'"), :order => 'created_at', :order_direction => 'desc')
 
     end   
 

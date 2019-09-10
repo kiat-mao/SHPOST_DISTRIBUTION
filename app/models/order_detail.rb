@@ -19,7 +19,7 @@ class OrderDetail < ActiveRecord::Base
 
   STATUS_NAME = { waiting: '待处理', checking: '待审核', rechecking: '待复核', receiving: '待收货', closed: '结单', canceled: '取消', pending: '审核被驳回', declined: '复核被驳回'}
 
-  STATUS_NAME_REPORT = { all: '全部', waiting: '待处理', checking: '待审核', rechecking: '待复核', receiving: '待收货', closed: '结单', canceled: '取消', pending: '审核被驳回', declined: '复核被驳回', receiving_closed: '待收货或结单'}
+  STATUS_NAME_REPORT = { all: '全部', waiting: '待处理', checking: '待审核', rechecking: '待复核', receiving: '待收货', closed: '结单', canceled: '取消', pending: '审核被驳回', declined: '复核被驳回', receiving_closed: '待收货或结单', not_canceled: '取消以外'}
 
   def status_name
     status.blank? ? "" : OrderDetail::STATUS_NAME["#{status}".to_sym]
