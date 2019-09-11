@@ -13,7 +13,8 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery.ui.all
-//= require wice_grid
+//= require wice_grid_processor
+//= require wice_grid_saved_queries_init
 //= require autocomplete-rails
 
 
