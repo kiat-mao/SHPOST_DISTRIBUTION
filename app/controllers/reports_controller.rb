@@ -29,8 +29,8 @@ class ReportsController < ApplicationController
         filters["create_at_start"] = params[:create_at_start][:create_at_start]
       end
 
-      if !params[:create_at_end].blank? && !params[:create_at_end][:create_at_end].blank?
-        selectorder_details = selectorder_details.where("orders.created_at <= ?", to_date(params[:create_at_end][:create_at_end])+1.day)
+      if !params[:create_at_end].blank? && !params[:create_at_end][:create_at_end].blank? 
+        selectorder_details = selectorder_details.where("orders.created_at <= ?", to_date(params[:create_at_end][:create_at_end]))
         filters["create_at_end"] = params[:create_at_end][:create_at_end]
       end
 
@@ -40,7 +40,7 @@ class ReportsController < ApplicationController
       end
 
       if !params[:check_at_end].blank? && !params[:check_at_end][:check_at_end].blank?
-        selectorder_details = selectorder_details.where("order_details.check_at <= ?", to_date(params[:check_at_end][:check_at_end])+1.day)
+        selectorder_details = selectorder_details.where("order_details.check_at <= ?", to_date(params[:check_at_end][:check_at_end]))
         filters["check_at_end"] = params[:check_at_end][:check_at_end]
       end
 
@@ -50,7 +50,7 @@ class ReportsController < ApplicationController
       end
 
       if !params[:recheck_at_end].blank? && !params[:recheck_at_end][:recheck_at_end].blank?
-        selectorder_details = selectorder_details.where("order_details.recheck_at <= ?", to_date(params[:recheck_at_end][:recheck_at_end])+1.day)
+        selectorder_details = selectorder_details.where("order_details.recheck_at <= ?", to_date(params[:recheck_at_end][:recheck_at_end]))
         filters["recheck_at_end"] = params[:recheck_at_end][:recheck_at_end]
       end
 
@@ -229,8 +229,8 @@ class ReportsController < ApplicationController
       sheet1[count_row,4] = x.commodity.supplier.name
       sheet1[count_row,5] = x.commodity.name
       sheet1[count_row,6] = x.amount
-      sheet1[count_row,7] = x.price.to_s(:rounded, precision: 2) 
-      sheet1[count_row,8] = x.cost_price.to_s(:rounded, precision: 2)
+      sheet1[count_row,7] = x.price.blank? ? "" : x.price.to_s(:rounded, precision: 2)
+      sheet1[count_row,8] = x.cost_price.blank? ? "" : x.cost_price.to_s(:rounded, precision: 2)
       sheet1[count_row,9] = x.status_name
       sheet1[count_row,10] = x.at_unit.try :name
       sheet1[count_row,11] = l x.created_at
@@ -304,7 +304,7 @@ class ReportsController < ApplicationController
       end
 
       if !params[:close_at_end].blank? && !params[:close_at_end][:close_at_end].blank?
-        selectorder_details = selectorder_details.where("order_details.closed_at <= ?", to_date(params[:close_at_end][:close_at_end])+1.day)
+        selectorder_details = selectorder_details.where("order_details.closed_at <= ?", to_date(params[:close_at_end][:close_at_end]))
         filters["close_at_end"] = params[:close_at_end][:close_at_end]
       end
 
@@ -545,7 +545,7 @@ class ReportsController < ApplicationController
       end
 
       if !params[:create_at_end].blank? && !params[:create_at_end][:create_at_end].blank?
-        select_commodities = select_commodities.where("created_at <= ?", to_date(params[:create_at_end][:create_at_end])+1.day)
+        select_commodities = select_commodities.where("created_at <= ?", to_date(params[:create_at_end][:create_at_end]))
         filters["create_at_end"] = params[:create_at_end][:create_at_end]
       end
 
@@ -700,7 +700,7 @@ class ReportsController < ApplicationController
       end
 
       if !params[:close_at_end].blank? && !params[:close_at_end][:close_at_end].blank?
-        selectorder_details = selectorder_details.where("order_details.closed_at < ?", to_date(params[:close_at_end][:close_at_end])+1.day)
+        selectorder_details = selectorder_details.where("order_details.closed_at < ?", to_date(params[:close_at_end][:close_at_end]))
         filters["close_at_end"] = params[:close_at_end][:close_at_end]
       end
 
@@ -977,7 +977,8 @@ class ReportsController < ApplicationController
   end
 
   def to_date(time)
-    date = Date.civil(time.split(/-|\//)[0].to_i,time.split(/-|\//)[1].to_i,time.split(/-|\//)[2].to_i)
-    return date
+    # date = Date.civil(time.split(/-|\//)[0].to_i,time.split(/-|\//)[1].to_i,time.split(/-|\//)[2].to_i)
+    time.to_time
+    # return date
   end
 end
