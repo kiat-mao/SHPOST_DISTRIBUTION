@@ -13,8 +13,9 @@ class ReportsController < ApplicationController
   end
 
 
-    def order_report
-    filters = {}
+  def order_report
+    @filters = {}
+    @selectorder_details = nil
 
     if ! current_user.unitadmin? && ! current_user.superadmin? && current_user.branch?
       @at_units = Unit.where("unit_type=? or unit_type=? or id=?", "delivery", "postbuy", current_user.unit.id)
@@ -22,101 +23,109 @@ class ReportsController < ApplicationController
       @at_units = Unit.all
     end
     unless request.get?
-      selectorder_details = OrderDetail.accessible_by(current_ability).joins(:order).joins(:order=>[:unit]).joins(:commodity).joins(:commodity=>[:supplier])
-
+      @selectorder_details = OrderDetail.accessible_by(current_ability).joins(:order).joins(:order=>[:unit]).joins(:commodity).joins(:commodity=>[:supplier])
+      
       if !params[:create_at_start].blank? && !params[:create_at_start][:create_at_start].blank?
-        selectorder_details = selectorder_details.where("orders.created_at >= ?", to_date(params[:create_at_start][:create_at_start]))
-        filters["create_at_start"] = params[:create_at_start][:create_at_start]
+        @selectorder_details = @selectorder_details.where("orders.created_at >= ?", to_date(params[:create_at_start][:create_at_start]))
+        @filters["create_at_start"] = params[:create_at_start][:create_at_start]
       end
 
       if !params[:create_at_end].blank? && !params[:create_at_end][:create_at_end].blank? 
-        selectorder_details = selectorder_details.where("orders.created_at <= ?", to_date(params[:create_at_end][:create_at_end]))
-        filters["create_at_end"] = params[:create_at_end][:create_at_end]
+        @selectorder_details = @selectorder_details.where("orders.created_at <= ?", to_date(params[:create_at_end][:create_at_end])+1.minute)
+        @filters["create_at_end"] = params[:create_at_end][:create_at_end]
       end
 
       if !params[:check_at_start].blank? && !params[:check_at_start][:check_at_start].blank?
-        selectorder_details = selectorder_details.where("order_details.check_at >= ?", to_date(params[:check_at_start][:check_at_start]))
-        filters["check_at_start"] = params[:check_at_start][:check_at_start]
+        @selectorder_details = @selectorder_details.where("order_details.check_at >= ?", to_date(params[:check_at_start][:check_at_start]))
+        @filters["check_at_start"] = params[:check_at_start][:check_at_start]
       end
 
       if !params[:check_at_end].blank? && !params[:check_at_end][:check_at_end].blank?
-        selectorder_details = selectorder_details.where("order_details.check_at <= ?", to_date(params[:check_at_end][:check_at_end]))
-        filters["check_at_end"] = params[:check_at_end][:check_at_end]
+        @selectorder_details = @selectorder_details.where("order_details.check_at <= ?", to_date(params[:check_at_end][:check_at_end])+1.minute)
+        @filters["check_at_end"] = params[:check_at_end][:check_at_end]
       end
 
       if !params[:recheck_at_start].blank? && !params[:recheck_at_start][:recheck_at_start].blank?
-        selectorder_details = selectorder_details.where("order_details.recheck_at >= ?", to_date(params[:recheck_at_start][:recheck_at_start]))
-        filters["recheck_at_start"] = params[:recheck_at_start][:recheck_at_start]
+        @selectorder_details = @selectorder_details.where("order_details.recheck_at >= ?", to_date(params[:recheck_at_start][:recheck_at_start]))
+        @filters["recheck_at_start"] = params[:recheck_at_start][:recheck_at_start]
       end
 
       if !params[:recheck_at_end].blank? && !params[:recheck_at_end][:recheck_at_end].blank?
-        selectorder_details = selectorder_details.where("order_details.recheck_at <= ?", to_date(params[:recheck_at_end][:recheck_at_end]))
-        filters["recheck_at_end"] = params[:recheck_at_end][:recheck_at_end]
+        @selectorder_details = @selectorder_details.where("order_details.recheck_at <= ?", to_date(params[:recheck_at_end][:recheck_at_end])+1.minute)
+        @filters["recheck_at_end"] = params[:recheck_at_end][:recheck_at_end]
       end
 
       if !params[:supplier].blank? && !(params[:supplier].eql?"全部")
-        selectorder_details = selectorder_details.where("suppliers.id = ?", params[:supplier].to_i)
-        filters["supplier"] = Supplier.find(params[:supplier].to_i).name
+        @selectorder_details = @selectorder_details.where("suppliers.id = ?", params[:supplier].to_i)
+        @filters["supplier"] = Supplier.find(params[:supplier].to_i).name
+        @filters["supplier_option"] = params[:supplier]
       else
-        filters["supplier"] = "全部"
+        @filters["supplier"] = "全部"
+        @filters["supplier_option"] = "全部"
       end
 
       if !params[:commodity_name].blank? && !params[:commodity_name][:commodity_name].blank?
-        selectorder_details = selectorder_details.where("commodities.name like ?", "%#{params[:commodity_name][:commodity_name]}%")
-        filters["commodity_name"] = params[:commodity_name][:commodity_name]
+        @selectorder_details = @selectorder_details.where("commodities.name like ?", "%#{params[:commodity_name][:commodity_name]}%")
+        @filters["commodity_name"] = params[:commodity_name][:commodity_name]
       end
 
-      filters['status'] = params[:status]
+      @filters['status'] = params[:status]
       if params[:status].eql? "receiving_closed"
-        selectorder_details = selectorder_details.where("order_details.status = ? or order_details.status = ?", OrderDetail::statuses[:receiving], OrderDetail::statuses[:closed])
+        @selectorder_details = @selectorder_details.where("order_details.status = ? or order_details.status = ?", OrderDetail::statuses[:receiving], OrderDetail::statuses[:closed])
       elsif params[:status].eql? "not_canceled"
-        selectorder_details = selectorder_details.where("order_details.status != ?", OrderDetail::statuses[:canceled])
+        @selectorder_details = @selectorder_details.where("order_details.status != ?", OrderDetail::statuses[:canceled])
       elsif !params[:status].eql? "all"
-        selectorder_details = selectorder_details.where("order_details.status = ?", params[:status])
+        @selectorder_details = @selectorder_details.where("order_details.status = ?", params[:status])
       end
 
       if !params[:order_no].blank? && !params[:order_no][:order_no].blank?
-        selectorder_details = selectorder_details.where("orders.no = ?", params[:order_no][:order_no])
-        filters["order_no"] = params[:order_no][:order_no]
+        @selectorder_details = @selectorder_details.where("orders.no = ?", params[:order_no][:order_no])
+        @filters["order_no"] = params[:order_no][:order_no]
       end
 
       if !params[:price_start].blank? && !params[:price_start][:price_start].blank?
-        selectorder_details = selectorder_details.where("order_details.price >= ?", params[:price_start][:price_start].to_f)
-        filters["price_start"] = params[:price_start][:price_start]
+        @selectorder_details = @selectorder_details.where("order_details.price >= ?", params[:price_start][:price_start].to_f)
+        @filters["price_start"] = params[:price_start][:price_start]
       end
 
       if !params[:price_end].blank? && !params[:price_end][:price_end].blank?
-        selectorder_details = selectorder_details.where("order_details.price <= ?", params[:price_end][:price_end].to_f)
-        filters["price_end"] = params[:price_end][:price_end]
+        @selectorder_details = @selectorder_details.where("order_details.price <= ?", params[:price_end][:price_end].to_f)
+        @filters["price_end"] = params[:price_end][:price_end]
       end
 
       if !params[:at_unit].blank? && !(params[:at_unit].eql?"全部")
-        selectorder_details = selectorder_details.where("order_details.at_unit_id = ?", params[:at_unit].to_i)
-        filters["at_unit"] = Unit.find(params[:at_unit].to_i).name
+        @selectorder_details = @selectorder_details.where("order_details.at_unit_id = ?", params[:at_unit].to_i)
+        @filters["at_unit"] = Unit.find(params[:at_unit].to_i).name
+        @filters["at_unit_option"] = params[:at_unit]
       else
-        filters["at_unit"] = "全部"
+        @filters["at_unit"] = "全部"
+        @filters["at_unit_option"] = "全部"
       end
 
       if !params[:create_unit_name].blank? && !params[:create_unit_name][:create_unit_name].blank?
-        selectorder_details = selectorder_details.where("units.name like ?", "%#{params[:create_unit_name][:create_unit_name]}%")
-        filters["create_unit_name"] = params[:create_unit_name][:create_unit_name]
+        @selectorder_details = @selectorder_details.where("units.name like ?", "%#{params[:create_unit_name][:create_unit_name]}%")
+        @filters["create_unit_name"] = params[:create_unit_name][:create_unit_name]
       end
 
       if !params[:order_user_name].blank? && !params[:order_user_name][:order_user_name].blank?
-        selectorder_details = selectorder_details.where("orders.name like ?", "%#{params[:order_user_name][:order_user_name]}%")
-        filters["order_user_name"] = params[:order_user_name][:order_user_name]
+        @selectorder_details = @selectorder_details.where("orders.name like ?", "%#{params[:order_user_name][:order_user_name]}%")
+        @filters["order_user_name"] = params[:order_user_name][:order_user_name]
       end
 
       if !params[:phone].blank? && !params[:phone][:phone].blank?
-        selectorder_details = selectorder_details.where("orders.phone = ? or orders.tel = ?", params[:phone][:phone], params[:phone][:phone])
-        filters["phone"] = params[:phone][:phone]
+        @selectorder_details = @selectorder_details.where("orders.phone = ? or orders.tel = ?", params[:phone][:phone], params[:phone][:phone])
+        @filters["phone"] = params[:phone][:phone]
       end
 
-      if selectorder_details.blank?
-        flash[:alert] = "无数据"
-        redirect_to :action => 'order_report'
+      if !params[:is_query].blank? and params[:is_query].eql?"true"
+        render '/reports/order_report'
       else
-        send_data(order_report_xls_content_for(filters, selectorder_details),:type => "text/excel;charset=utf-8; header=present",:filename => "订单管理报表_#{Time.now.strftime("%Y%m%d")}.xls")  
+        if @selectorder_details.blank?
+          flash[:alert] = "无数据"
+          redirect_to :action => 'order_report'
+        else
+          send_data(order_report_xls_content_for(@filters, @selectorder_details),:type => "text/excel;charset=utf-8; header=present",:filename => "订单管理报表_#{Time.now.strftime("%Y%m%d")}.xls")  
+        end
       end
     end
   end
@@ -245,7 +254,7 @@ class ReportsController < ApplicationController
       sheet1[count_row,20] = x.order.address
       sheet1[count_row,21] = x.order.tel
       sheet1[count_row,22] = x.order.phone
-      sheet1[count_row,23] = l x.created_at
+      sheet1[count_row,23] = l x.order.created_at
       sheet1[count_row,24] = x.order.user.try :name
       sheet1[count_row,25] = x.order.unit.try :name
       sheet1[count_row,26] = x.order.desc
@@ -288,29 +297,30 @@ class ReportsController < ApplicationController
   def supplier_report
     authorize! "report", "SupplierReport"
 
-    filters = {}
+    @filters = {}
     units = []
     counts = {}
     amounts = {}
     prices = {}
     cost_prices = {}
+    @reports = nil
 
     unless request.get?
       selectorder_details = OrderDetail.accessible_by(current_ability).joins(:order).joins(:order=>[:unit]).joins(:commodity).joins(:commodity=>[:supplier]).where("order_details.status = ?", "closed")
 
       if !params[:close_at_start].blank? && !params[:close_at_start][:close_at_start].blank?
         selectorder_details = selectorder_details.where("order_details.closed_at >= ?", to_date(params[:close_at_start][:close_at_start]))
-        filters["close_at_start"] = params[:close_at_start][:close_at_start]
+        @filters["close_at_start"] = params[:close_at_start][:close_at_start]
       end
 
       if !params[:close_at_end].blank? && !params[:close_at_end][:close_at_end].blank?
-        selectorder_details = selectorder_details.where("order_details.closed_at <= ?", to_date(params[:close_at_end][:close_at_end]))
-        filters["close_at_end"] = params[:close_at_end][:close_at_end]
+        selectorder_details = selectorder_details.where("order_details.closed_at <= ?", to_date(params[:close_at_end][:close_at_end])+1.minute)
+        @filters["close_at_end"] = params[:close_at_end][:close_at_end]
       end
 
       if !params[:commodity_name].blank? && !params[:commodity_name][:commodity_name].blank?
         selectorder_details = selectorder_details.where("commodities.name like ?", "%#{params[:commodity_name][:commodity_name]}%")
-        filters["commodity_name"] = params[:commodity_name][:commodity_name]
+        @filters["commodity_name"] = params[:commodity_name][:commodity_name]
       end
 
       # if !params[:price_start].blank? && !params[:price_start][:price_start].blank?
@@ -325,9 +335,11 @@ class ReportsController < ApplicationController
 
       if !params[:supplier].blank? && !(params[:supplier].eql?"全部")
         selectorder_details = selectorder_details.where("suppliers.id = ?", params[:supplier].to_i)
-        filters["supplier"] = Supplier.find(params[:supplier].to_i).name
+        @filters["supplier"] = Supplier.find(params[:supplier].to_i).name
+        @filters["supplier_option"] = params[:supplier]
       else
-        filters["supplier"] = "全部"
+        @filters["supplier"] = "全部"
+        @filters["supplier_option"] = "全部"
       end
 
       # params[:checkbox].each do |x|
@@ -343,19 +355,24 @@ class ReportsController < ApplicationController
       #   filters["units"] = "全部"
       # end 
 
-      if selectorder_details.blank?
-        flash[:alert] = "无数据"
-        redirect_to :action => 'supplier_report'
+      @reports = selectorder_details.order("suppliers.sno, commodities.cno").group("suppliers.sno").group("commodities.cno").pluck("suppliers.sno, commodities.cno, sum(order_details.amount), sum(order_details.cost_price * order_details.amount)")
+        
+      if !params[:is_query].blank? and params[:is_query].eql?"true"
+        render '/reports/supplier_report'
       else
-        # counts = selectorder_details.order("suppliers.sno, commodities.cno").group("suppliers.sno").group("commodities.cno").count
-        # amounts = selectorder_details.order("suppliers.sno, commodities.cno").group("suppliers.sno").group("commodities.cno").sum("order_details.amount")
-        # prices = selectorder_details.order("suppliers.sno, commodities.cno").group("suppliers.sno").group("commodities.cno").sum("order_details.price * order_details.amount")
-        # cost_prices = selectorder_details.order("suppliers.sno, commodities.cno").group("suppliers.sno").group("commodities.cno").sum("order_details.cost_price * order_details.amount")
+        if selectorder_details.blank?
+          flash[:alert] = "无数据"
+          redirect_to :action => 'supplier_report'
+        else
+          # counts = selectorder_details.order("suppliers.sno, commodities.cno").group("suppliers.sno").group("commodities.cno").count
+          # amounts = selectorder_details.order("suppliers.sno, commodities.cno").group("suppliers.sno").group("commodities.cno").sum("order_details.amount")
+          # prices = selectorder_details.order("suppliers.sno, commodities.cno").group("suppliers.sno").group("commodities.cno").sum("order_details.price * order_details.amount")
+          # cost_prices = selectorder_details.order("suppliers.sno, commodities.cno").group("suppliers.sno").group("commodities.cno").sum("order_details.cost_price * order_details.amount")
 
-        #suppliers.sno, commodities.cno,销售数量, 销售金额(元), 销售成本(元)
-        reports = selectorder_details.order("suppliers.sno, commodities.cno").group("suppliers.sno").group("commodities.cno").pluck("suppliers.sno, commodities.cno, sum(order_details.amount), sum(order_details.cost_price * order_details.amount)")
-
-        send_data(supplier_report_xls_content_for(filters,reports),:type => "text/excel;charset=utf-8; header=present",:filename => "供应商销售结算报表_#{Time.now.strftime("%Y%m%d")}.xls")  
+          #suppliers.sno, commodities.cno,销售数量, 销售金额(元), 销售成本(元)
+          
+          send_data(supplier_report_xls_content_for(@filters,@reports),:type => "text/excel;charset=utf-8; header=present",:filename => "供应商销售结算报表_#{Time.now.strftime("%Y%m%d")}.xls")  
+        end
       end
     end
   end
@@ -499,7 +516,7 @@ class ReportsController < ApplicationController
 
       count_row += 1
     end
-    count_row += 1    
+    # count_row += 1    
 
     sheet1[count_row,0] = "合计"
     sheet1.merge_cells(count_row, 0, count_row, 4)
@@ -534,45 +551,54 @@ class ReportsController < ApplicationController
   def commodity_report
     authorize! "report", "CommodityReport"
 
-    filters = {}
+    @filters = {}
+    @select_commodities = nil
 
     unless request.get?
-      select_commodities = Commodity.all.order(:supplier_id, :cno)
+      @select_commodities = Commodity.all.order(:supplier_id, :cno)
 
       if !params[:create_at_start].blank? && !params[:create_at_start][:create_at_start].blank?
-        select_commodities = select_commodities.where("created_at >= ?", to_date(params[:create_at_start][:create_at_start]))
-        filters["create_at_start"] = params[:create_at_start][:create_at_start]
+        @select_commodities = @select_commodities.where("created_at >= ?", to_date(params[:create_at_start][:create_at_start]))
+        @filters["create_at_start"] = params[:create_at_start][:create_at_start]
       end
 
       if !params[:create_at_end].blank? && !params[:create_at_end][:create_at_end].blank?
-        select_commodities = select_commodities.where("created_at <= ?", to_date(params[:create_at_end][:create_at_end]))
-        filters["create_at_end"] = params[:create_at_end][:create_at_end]
+        @select_commodities = @select_commodities.where("created_at <= ?", to_date(params[:create_at_end][:create_at_end])+1.minute)
+        @filters["create_at_end"] = params[:create_at_end][:create_at_end]
       end
 
       if !params[:supplier].blank? && !(params[:supplier].eql?"全部")
-        select_commodities = select_commodities.where("supplier_id = ?", params[:supplier].to_i)
-        filters["supplier"] = Supplier.find(params[:supplier].to_i).name
+        @select_commodities = @select_commodities.where("supplier_id = ?", params[:supplier].to_i)
+        @filters["supplier"] = Supplier.find(params[:supplier].to_i).name
+        @filters["supplier_option"] = params[:supplier]
       else
-        filters["supplier"] = "全部"
+        @filters["supplier"] = "全部"
+        @filters["supplier_option"] = "全部"
       end
 
       if !params[:commodity_name].blank? && !params[:commodity_name][:commodity_name].blank?
-        select_commodities = select_commodities.where("name like ?", "%#{params[:commodity_name][:commodity_name]}%")
-        filters["commodity_name"] = params[:commodity_name][:commodity_name]
+        @select_commodities = @select_commodities.where("name like ?", "%#{params[:commodity_name][:commodity_name]}%")
+        @filters["commodity_name"] = params[:commodity_name][:commodity_name]
       end
 
       if !params[:is_on_sell].blank? && !(params[:is_on_sell].eql?"全部")
-        select_commodities = select_commodities.where("is_on_sell = ?", (params[:is_on_sell].eql?"true"))
-        filters["is_on_sell"] = Commodity::IS_ON_SELL[params[:is_on_sell].to_sym]
+        @select_commodities = @select_commodities.where("is_on_sell = ?", (params[:is_on_sell].eql?"true"))
+        @filters["is_on_sell"] = Commodity::IS_ON_SELL[params[:is_on_sell].to_sym]
+        @filters["is_on_sell_option"] = params[:is_on_sell]
       else
-        filters["is_on_sell"] = "全部"
+        @filters["is_on_sell"] = "全部"
+        @filters["is_on_sell_option"] = "全部"
       end
 
-      if select_commodities.blank?
-        flash[:alert] = "无数据"
-        redirect_to :action => 'commodity_report'
+      if !params[:is_query].blank? and params[:is_query].eql?"true"
+        render '/reports/commodity_report'
       else
-        send_data(commodity_report_xls_content_for(filters, select_commodities),:type => "text/excel;charset=utf-8; header=present",:filename => "商品管理报表_#{Time.now.strftime("%Y%m%d")}.xls")  
+        if @select_commodities.blank?
+          flash[:alert] = "无数据"
+          redirect_to :action => 'commodity_report'
+        else
+          send_data(commodity_report_xls_content_for(@filters, @select_commodities),:type => "text/excel;charset=utf-8; header=present",:filename => "商品管理报表_#{Time.now.strftime("%Y%m%d")}.xls")  
+        end
       end
     end
   end
@@ -684,80 +710,88 @@ class ReportsController < ApplicationController
   def unit_report
     authorize! "report", "UnitReport"
 
-    filters = {}
-    units = []
+    @filters = {}
+    @units = []
     counts = {}
     amounts = {}
     prices = {}
     cost_prices = {}
+    @reports = nil
 
     unless request.get?
       selectorder_details = OrderDetail.accessible_by(current_ability).joins(:order).joins(:order=>[:unit]).joins(:commodity).joins(:commodity=>[:supplier]).where("order_details.status = ?", "closed")
 
       if !params[:close_at_start].blank? && !params[:close_at_start][:close_at_start].blank?
         selectorder_details = selectorder_details.where("order_details.closed_at >= ?", to_date(params[:close_at_start][:close_at_start]))
-        filters["close_at_start"] = params[:close_at_start][:close_at_start]
+        @filters["close_at_start"] = params[:close_at_start][:close_at_start]
       end
 
       if !params[:close_at_end].blank? && !params[:close_at_end][:close_at_end].blank?
-        selectorder_details = selectorder_details.where("order_details.closed_at < ?", to_date(params[:close_at_end][:close_at_end]))
-        filters["close_at_end"] = params[:close_at_end][:close_at_end]
+        selectorder_details = selectorder_details.where("order_details.closed_at < ?", to_date(params[:close_at_end][:close_at_end])+1.minute)
+        @filters["close_at_end"] = params[:close_at_end][:close_at_end]
       end
 
       if !params[:commodity_name].blank? && !params[:commodity_name][:commodity_name].blank?
         selectorder_details = selectorder_details.where("commodities.name like ?", "%#{params[:commodity_name][:commodity_name]}%")
-        filters["commodity_name"] = params[:commodity_name][:commodity_name]
+        @filters["commodity_name"] = params[:commodity_name][:commodity_name]
       end
 
       if !params[:price_start].blank? && !params[:price_start][:price_start].blank?
         selectorder_details = selectorder_details.where("order_details.price >= ?", params[:price_start][:price_start].to_f)
-        filters["price_start"] = params[:price_start][:price_start]
+        @filters["price_start"] = params[:price_start][:price_start]
       end
 
       if !params[:price_end].blank? && !params[:price_end][:price_end].blank?
-        selectorder_details=selectorder_details.where("order_details.price <= ?", params[:price_end][:price_end].to_f)
-        filters["price_end"] = params[:price_end][:price_end]
+        selectorder_details = selectorder_details.where("order_details.price <= ?", params[:price_end][:price_end].to_f)
+        @filters["price_end"] = params[:price_end][:price_end]
       end
 
       if !params[:supplier].blank? && !(params[:supplier].eql?"全部")
         selectorder_details = selectorder_details.where("suppliers.id = ?", params[:supplier].to_i)
-        filters["supplier"] = Supplier.find(params[:supplier].to_i).name
+        @filters["supplier"] = Supplier.find(params[:supplier].to_i).name
+        @filters["supplier_option"] = params[:supplier]
       else
-        filters["supplier"] = "全部"
+        @filters["supplier"] = "全部"
+        @filters["supplier_option"] = "全部"
       end
 
       if (current_user.unit.blank?) || (current_user.unit.eql? Unit::DELIVERY) || (current_user.unit.eql? Unit::POSTBUY)
         params[:checkbox].each do |x|
           if (!x[1].blank?) && (x[1].eql?"1") 
-            units << x[0].to_i
+            @units << x[0].to_i
           end
         end    
 
-        if !units.blank?  
-          selectorder_details = selectorder_details.where("orders.unit_id in (?)", units)
-          filters["units"] = units.map{|u| Unit.find(u).name}.compact.join(",")
+        if !@units.blank?  
+          selectorder_details = selectorder_details.where("orders.unit_id in (?)", @units)
+          @filters["units"] = @units.map{|u| Unit.find(u).name}.compact.join(",")
         else
-          filters["units"] = "全部"
+          @filters["units"] = "全部"
         end 
       else
         selectorder_details = selectorder_details.where("orders.unit_id = ?", current_user.unit.id)
-        filters["units"] = current_user.unit.name
+        @filters["units"] = current_user.unit.name
       end
 
-      if selectorder_details.blank?
-        flash[:alert] = "无数据"
-        redirect_to :action => 'unit_report'
+      @reports = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").pluck("units.id, commodities.cno, sum(order_details.amount), sum(order_details.price * order_details.amount), sum(order_details.cost_price * order_details.amount)")
+
+      if !params[:is_query].blank? and params[:is_query].eql?"true"
+        render '/reports/unit_report'
       else
-        # counts = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").count
-        # amounts = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").sum("order_details.amount")
-        # prices = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").sum("order_details.price * order_details.amount")
-        # cost_prices = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").sum("order_details.cost_price * order_details.amount")
+        if selectorder_details.blank?
+          flash[:alert] = "无数据"
+          redirect_to :action => 'unit_report'
+        else
+          # counts = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").count
+          # amounts = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").sum("order_details.amount")
+          # prices = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").sum("order_details.price * order_details.amount")
+          # cost_prices = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").sum("order_details.cost_price * order_details.amount")
 
-        #units.id, commodities.cno,销售数量, 销售金额(元), 销售成本(元)
-        reports = selectorder_details.order("units.id, commodities.cno").group("units.id").group("commodities.cno").pluck("units.id, commodities.cno, sum(order_details.amount), sum(order_details.price * order_details.amount), sum(order_details.cost_price * order_details.amount)")
-
-        
-        send_data(unit_report_xls_content_for(filters,reports),:type => "text/excel;charset=utf-8; header=present",:filename => "机构销售结算报表_#{Time.now.strftime("%Y%m%d")}.xls")  
+          #units.id, commodities.cno,销售数量, 销售金额(元), 销售成本(元)
+          
+          
+          send_data(unit_report_xls_content_for(@filters,@reports),:type => "text/excel;charset=utf-8; header=present",:filename => "机构销售结算报表_#{Time.now.strftime("%Y%m%d")}.xls")  
+        end
       end
     end
   end

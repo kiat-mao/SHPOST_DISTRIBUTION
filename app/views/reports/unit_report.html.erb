@@ -5,23 +5,23 @@
 <br><br><br>
  
 
-<%= form_tag("/shpost_distribution/reports/unit_report",format: "xls", method: "post") do -%>
+<%= form_tag("", name: 'form1') do -%>
 <table>
     <tr style="line-height: 40px;height: 40px;">
         <td><%= label_tag(:close_at_start, "结单时间起始:") %></td>
-        <td><%= text_field("close_at_start","close_at_start") %></td>
+        <td><%= text_field("close_at_start","close_at_start", value: @filters['close_at_start']) %></td>
         <td><%= label_tag(:close_at_end, "结单时间结束:") %></td>
-        <td><%= text_field("close_at_end","close_at_end") %></td>
+        <td><%= text_field("close_at_end","close_at_end", value: @filters['close_at_end']) %></td>
         <td><%= label_tag(:commodity_name, "商品名称:") %></td>
-        <td><%= text_field("commodity_name","commodity_name") %></td>  
+        <td><%= text_field("commodity_name","commodity_name", value: @filters['commodity_name']) %></td>  
     </tr>
     <tr style="line-height: 40px;height: 40px;">   
         <td><%= label_tag(:price_start, "销售价格大于:") %></td>
-        <td><%= text_field("price_start","price_start") %></td>
+        <td><%= text_field("price_start","price_start", value: @filters['price_start']) %></td>
         <td><%= label_tag(:price_end, "销售价格小于:") %></td>
-        <td><%= text_field("price_end","price_end") %></td>
+        <td><%= text_field("price_end","price_end", value: @filters['price_end']) %></td>
         <td><%= label_tag(:supplier, "供应商:") %></td>
-        <td><%= select_tag("supplier", options_for_select(Supplier.all.map{|u| [u.name,u.id]}.insert(0,"全部")), id: "supplier") %></td>
+        <td><%= select_tag("supplier", options_for_select(Supplier.all.map{|u| [u.name,u.id]}.insert(0,"全部"), :selected=> @filters["supplier_option"]), id: "supplier") %></td>
     </tr>
 </table>
 <% if (current_user.unit.blank?) || (current_user.unit.eql? Unit::DELIVERY) || (current_user.unit.eql? Unit::POSTBUY) %>
@@ -34,7 +34,7 @@
         <% if no==1 %>
         <tr style="line-height: 40px;height: 40px;">
         <% end %>
-            <td width="25%"><%= check_box("checkbox",u.id.to_s)%><%= u.name %></td>
+            <td width="25%"><%= check_box("checkbox",u.id.to_s, checked:((@units.blank?) ? false : (@units.include?u.id))) %><%= u.name %></td>
             <% no += 1 %>
         <% if no==4 %>
         </tr>   
@@ -44,8 +44,106 @@
         
 </table>
 <% end %>
-    <%= submit_tag "报表导出",:class => 'btn btn-primary' %>
+    <%= submit_tag "报表导出",:class => 'btn btn-primary', onclick: "form1.action='/shpost_distribution/reports/unit_report?is_query=false';form1.submit();" %>
+    <%= submit_tag "查询",:class => 'btn btn-primary', onclick: "form1.action='/shpost_distribution/reports/unit_report?is_query=true';form1.submit();" %> 
        
 <% end -%>
 
-
+<% if !@reports.blank? %>
+<table border="1" table-layout="fixed">
+    <tr class= 'nowrap'>
+        <td>序号</td>
+        <td>机构名称</td>
+        <td>商品编码</td>
+        <td>DMS商品编码</td>
+        <td>供应商</td>
+        <td>商品名称</td>
+        <td>销售数量</td>
+        <td>平均执行销售价(元)</td>
+        <td>商家结算价(元)</td>
+        <td>销售金额(元)</td>
+        <td>销售成本(元)</td>
+        <td>销售收入(元)</td>
+    </tr>
+    <% i=1 %>
+    <% xj_amount = 0 %>
+    <% xj_detail_price = 0 %>
+    <% xj_detail_cost_price = 0 %>
+    <% xj_income = 0 %>
+    <% hj_amount = 0 %>
+    <% hj_detail_price = 0 %>
+    <% hj_detail_cost_price = 0 %>
+    <% hj_income = 0 %>
+    <%  def unit_reports(reports)
+            unit_id = reports[0][0]
+            rows = []
+            unit_reports = {unit_id => rows}
+            reports.each do |row|
+              if !row[0].eql? unit_id
+                unit_id = row[0]
+                rows = []
+                unit_reports[unit_id] = rows
+              end
+              rows.append row
+            end
+            unit_reports
+        end
+    %>
+    <% unit_reports(@reports).each do |unit_id, rows| %>
+        <% xj_amount = 0 %>
+        <% xj_detail_price = 0 %>
+        <% xj_detail_cost_price = 0 %>
+        <% xj_income = 0 %>
+        <% rows.each do |row| %>
+            <% commodity = Commodity.find_by(cno: row[1]) %>
+            <tr class= 'nowrap'>
+                <% if row[1].eql?rows.first[1] %>
+                <td rowspan=<%= "#{rows.size+1}" %>><%= i %></td>
+                <td rowspan=<%= "#{rows.size+1}" %>><%= Unit.find(unit_id).try :name %></td>
+                <% end %>
+                <td><%= row[1] %></td>
+                <td><%= commodity.dms_no %></td>
+                <td><%= commodity.supplier.try :name %></td>
+                <td><%= commodity.name %></td>
+                <td><%= row[2] %></td>
+                <% xj_amount += row[2] %>
+                <td><%= (row[3] / row[2]).to_s(:rounded, precision: 2) %></td>
+                <td><%= (row[4] / row[2]).to_s(:rounded, precision: 2) %></td>
+                <td><%= row[3].to_s(:rounded, precision: 2) %></td>
+                <% xj_detail_price += row[3] %>
+                <td><%= row[4].to_s(:rounded, precision: 2) %></td>
+                <% xj_detail_cost_price += row[4] %>
+                <% income = row[3] - row[4] %>
+                <td><%= income.to_s(:rounded, precision: 2) %></td>
+                <% xj_income += income %>
+            </tr>
+        <% end %>
+        <% i += 1 %>
+        <tr class= 'nowrap'>
+            <td><font color="red">小计</font></td>
+            <td><font color="red">---</font></td>
+            <td><font color="red">---</font></td>
+            <td><font color="red">---</font></td>
+            <td><font color="red"><%= xj_amount %></font></td>
+            <td><font color="red">---</font></td>
+            <td><font color="red">---</font></td>
+            <td><font color="red"><%= xj_detail_price %></font></td>
+            <td><font color="red"><%= xj_detail_cost_price %></font></td>
+            <td><font color="red"><%= xj_income %></font></td>
+        </tr>
+        <% hj_amount += xj_amount %>
+        <% hj_detail_price += xj_detail_price %>
+        <% hj_detail_cost_price += xj_detail_cost_price %>
+        <% hj_income += xj_income %>
+    <% end %>
+    <tr class= 'nowrap'>
+        <td colspan="6"><font color="red">合计</font></td>
+        <td><font color="red"><%= hj_amount %></font></td>
+        <td><font color="red">---</font></td>
+        <td><font color="red">---</font></td>
+        <td><font color="red"><%= hj_detail_price %></font></td>
+        <td><font color="red"><%= hj_detail_cost_price %></font></td>
+        <td><font color="red"><%= hj_income %></font></td>
+    </tr>
+</table>
+<% end %>
