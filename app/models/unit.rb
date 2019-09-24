@@ -1,4 +1,4 @@
-class Unit < ActiveRecord::Base
+class Unit < ApplicationRecord 
   has_many :users, dependent: :destroy
   has_many :units, as: :parent
 

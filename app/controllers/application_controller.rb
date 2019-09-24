@@ -7,11 +7,11 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :exception
 
-  before_filter :configure_charsets
-  before_filter :authenticate_user!
+  before_action :configure_charsets
+  before_action :authenticate_user!
 
   def self.user_logs_filter *args
-    after_filter args.first.select{|k,v| k == :only || k == :expert} do |controller|
+    after_action args.first.select{|k,v| k == :only || k == :expert} do |controller|
       save_user_log args.first.reject{|k,v| k == :only || k == :expert}
     end
   end

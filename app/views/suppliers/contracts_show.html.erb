@@ -3,9 +3,12 @@
   <h1 face="微软雅黑" color='#D9B300' size=3>供应商合同</h1>
 </div>
 <dl class="dl-horizontal">
-   <%= form_for @supplier, html: { multipart: true } do |f| %>
-        <% @supplier.contracts.each do |x|%>
-           <p><%= image_tag(x.url) %></p>
-        <% end %>
-   <% end %>
+  <% @supplier.contracts.each_with_index do |x, index|%>
+  <p> <%= image_tag(x.url) %></p>
+     <%= link_to t('.delete', :default => t("helpers.links.delete")),
+              delete_contracts_supplier_path(@supplier, index),
+              :method => 'delete',
+              :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => '确定删除?')) },
+              :class => 'btn btn-danger' %>  
+  <% end %> 
 </dl>

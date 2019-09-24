@@ -1,4 +1,4 @@
-class Supplier < ActiveRecord::Base
+class Supplier < ApplicationRecord 
 	has_many :commodities, dependent: :destroy
 # <<<<<<< HEAD
     
@@ -12,6 +12,8 @@ class Supplier < ActiveRecord::Base
 
     mount_uploaders :contracts, ContractsUploader
     serialize :contracts, JSON
+    # after_commit :remove_previously_stored_contracts, on: :update
+    # skip_callback :commit, :after, :remove_previously_stored_contracts
     
 	IS_VALID = { true: '是', false: '否'}
 

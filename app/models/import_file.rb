@@ -1,4 +1,4 @@
-class ImportFile < ActiveRecord::Base
+class ImportFile < ApplicationRecord 
 	belongs_to :user
 	belongs_to :unit
 	belongs_to :symbol, polymorphic: true

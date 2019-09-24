@@ -1,2 +1,2 @@
-class UpDownload < ActiveRecord::Base
+class UpDownload < ApplicationRecord 
 end

@@ -12,7 +12,7 @@
       <%= check_box("checkbox","order_detail", onclick: "window.location.href= '#{ eval(params[:action] + '_order_details_path')}'") %>只显示子订单
       <% end %>
   </div>
-
+ </br></br>
   <%= render partial: 'orders_grid' %>
 <%end %>
 </div>

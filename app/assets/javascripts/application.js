@@ -22,8 +22,32 @@
 //= require_tree .
 // var ready;
 
+
+
+//= require jquery
+//= require jquery.ui.all
+//= require_tree .
+
+
+
+
+$(function () {
+  $('.image-sortable').sortable({
+    axis: 'y',
+    items: '.image'
+  });
+
+  $('.add-image').click(function () {
+    $('.image-sortable').append('<div class="image"><input multiple="multiple" type="file" name="supplier[contracts][]"></div>');
+  });
+
+  $('.remove-image').click(function () {
+    $(this).parent('.image').remove();
+  });
+});
+
 function ajaxsuppliers() {
-	$('#supplier_name').bind('railsAutocomplete.select', function(event, data){
+  $('#supplier_name').bind('railsAutocomplete.select', function(event, data){
     /* Do something here */
     var sid = "#"+data.item.obj+"_supplier_id";
     $(sid).val(data.item.id);

@@ -113,7 +113,9 @@ ShpostDistribution::Application.routes.draw do
       get 'contracts_upload'
       post 'contracts_upload' => 'suppliers#contracts_upload'
       get 'contracts_show'
+      delete 'delete_contracts'
     end
+   
   end
 
   resources :commodities do

@@ -1,4 +1,4 @@
-class OrderDetail < ActiveRecord::Base
+class OrderDetail < ApplicationRecord 
   belongs_to :order
   belongs_to :at_unit, class_name: "Unit"
   belongs_to :commodity

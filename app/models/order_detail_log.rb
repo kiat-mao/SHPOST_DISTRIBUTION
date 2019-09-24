@@ -1,4 +1,4 @@
-class OrderDetailLog < ActiveRecord::Base
+class OrderDetailLog < ApplicationRecord 
   belongs_to :user
   belongs_to :order_detail
 

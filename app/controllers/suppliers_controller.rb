@@ -20,17 +20,18 @@ class SuppliersController < ApplicationController
   def edit
   end
 
-  def contracts_upload
-    # @supplier = Supplier.find_by(id: params[:format])
-    # @supplier.contracts = @supplier.contracts.insert("params[:contracts]")
-    # @supplier.save
-    # x = @supplier.contracts
-    # @supplier.contracts = x.concat(params[:contracts])
-    # s = Supplier.new(params[:supplier])
-    
+  
+  
+  def delete_contracts
+    remain_contracts = @supplier.contracts # copy initial avatars
+    delete_contracts = remain_contracts.delete_at(params[:format].to_i)  # delete the target image
+    delete_contracts.try(:remove!) # delete image
+    @supplier.contracts = remain_contracts # re-assign back
+    @supplier.save  
+    redirect_to contracts_show_supplier_url
   end
-  def contracts_show
-  end
+
+  
 
   
 
@@ -68,6 +69,7 @@ class SuppliersController < ApplicationController
       format.html { redirect_to suppliers_url }
       format.json { head :no_content }
     end
+
   end
 
   def supplier_import

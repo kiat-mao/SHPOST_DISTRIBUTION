@@ -2,15 +2,17 @@
 <div class="page-header">
   <font face="微软雅黑" color='#D9B300' size=3>上传合同:
   </font>
-  <%= form_for @supplier, :html => { :class => 'form-horizontal' } do |f| %>
+  
   <div class="controls">
+  <%= form_for @supplier, :html => { :class => 'form-horizontal' } do |f| %>
+    
     <% @supplier.contracts.each do |x| %>
-      <%= f.hidden_field  :contracts, multiple: true, value: x.identifier %>
+      <%= hidden_field :supplier, :contracts, multiple: true,  value:  x.cache_name || x.identifier %>
     <% end %>
-    
+  
     <%= f.file_field :contracts, multiple: true%>
-    
-    <%= f.submit "确认上传", :class => 'btn btn-primary'%>
-  </div>
- <%end%>
+    <%= f.hidden_field :contracts_cache, multiple: true%>
+  <%= f.submit "确认上传", :class => 'btn btn-primary' %>
+<% end %>
+
 </div>
