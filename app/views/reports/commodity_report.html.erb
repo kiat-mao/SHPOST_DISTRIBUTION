@@ -5,23 +5,72 @@
 <br><br><br>
  
 
-<%= form_tag("/shpost_distribution/reports/commodity_report",format: "xls", method: "post") do -%>
+<%= form_tag("", name: 'form1') do -%>
 <table>
     <tr style="line-height: 40px;height: 40px;">
     	<td><%= label_tag(:create_at_start, "创建时间起始:") %></td>
-        <td><%= text_field("create_at_start","create_at_start") %></td>
+        <td><%= text_field("create_at_start","create_at_start", value: @filters['create_at_start']) %></td>
         <td><%= label_tag(:create_at_end, "创建时间结束:") %></td>
-        <td><%= text_field("create_at_end","create_at_end") %></td>
+        <td><%= text_field("create_at_end","create_at_end", value: @filters['create_at_end']) %></td>
         <td><%= label_tag(:supplier, "供应商:") %></td>
-        <td><%= select_tag("supplier", options_for_select(Supplier.all.map{|u| [u.name,u.id]}.insert(0,"全部")), id: "supplier") %></td>
+        <td><%= select_tag("supplier", options_for_select(Supplier.all.map{|u| [u.name,u.id]}.insert(0,"全部"), :selected=> @filters["supplier_option"]), id: "supplier") %></td>
     </tr>
     <tr style="line-height: 40px;height: 40px;">
         <td><%= label_tag(:commodity_name, "商品名称:") %></td>
-        <td><%= text_field("commodity_name","commodity_name") %></td>   
+        <td><%= text_field("commodity_name","commodity_name", value: @filters['commodity_name']) %></td>   
         <td><%= label_tag(:is_on_sell, "是否上架:") %></td>
-    	<td><%= select_tag(:is_on_sell, options_for_select(Commodity::IS_ON_SELL.invert.to_a.insert(0,"全部"))) %></td>
+    	<td><%= select_tag(:is_on_sell, options_for_select(Commodity::IS_ON_SELL.invert.to_a.insert(0,"全部"), :selected=> @filters["is_on_sell_option"])) %></td>
     </tr>
 </table>
-    <%= submit_tag "报表导出",:class => 'btn btn-primary' %>
+    <%= submit_tag "报表导出",:class => 'btn btn-primary', onclick: "form1.action='/shpost_distribution/reports/commodity_report?is_query=false';form1.submit();" %>
+    <%= submit_tag "查询",:class => 'btn btn-primary', onclick: "form1.action='/shpost_distribution/reports/commodity_report?is_query=true';form1.submit();" %>
        
 <% end -%>
+
+<% if !@select_commodities.blank? %>
+<table border="1" table-layout="fixed">
+    <tr class= 'nowrap'>
+        <td>序号</td>
+        <td>供应商</td>
+        <td>商品编码</td>
+        <td>DMS商品编码</td>
+        <td>商品名称</td>
+        <td>商家结算价</td>
+        <td>最低销售价</td>
+        <td>是否上架</td>
+        <td>上架时间</td>
+        <td>下架时间</td>
+        <td>商品详情</td>
+    </tr>
+    <% i=1 %>
+    <% @select_commodities.each do |x| %>
+    <tr class= 'nowrap'>
+        <td><%= i %></td>
+        <td><%= x.supplier.try :name %></td>
+        <td><%= x.cno %></td>
+        <td><%= x.dms_no %></td>
+        <td><%= x.name %></td>
+        <td><%= x.cost_price.to_s(:rounded, precision: 2) %></td>
+        <td><%= x.sell_price.to_s(:rounded, precision: 2) %></td>
+        <td><font color="red"><%= x.is_on_sell_name %></font></td>
+        <td><%= l x.created_at %></td>
+        <td><%= l x.updated_at if ! x.is_on_sell %></td>
+        <td><%= x.desc %></td>
+    </tr>
+    <% i += 1 %>  
+    <% end %>
+    <tr class= 'nowrap'>
+        <td></td>
+        <td><b>合计</b></td>
+        <td><b>商品总数：<%= @select_commodities.count %></b></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>
+<% end %>
