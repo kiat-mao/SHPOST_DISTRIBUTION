@@ -128,8 +128,12 @@ setupJqueryUiDateTimepicker = ->
 
     labelText = datetimepickerHiddenField.data('button-text')
 
+    
+    $(removeLink).before(" <i id=\"#{removeLink.id}_ui\" class=\"fa fa-calendar ui-datepicker-trigger\" title=\"#{labelText}\" ></i> ")
+
     # datetimepicker constructor
-    datetimepickerHiddenField.datetimepicker
+    #$("##{removeLink.id}_ui").datetimepicker
+    $(datetimepickerHiddenField).datetimepicker
       firstDay:        1
       format:      dateFormat
       changeMonth:     true
@@ -156,13 +160,11 @@ setupJqueryUiDateTimepicker = ->
           (theOther, selected)-> theOther > selected
         )
 
-        $(that).html(dateText.toLocaleString())
+        $(that).html(datetimepickerHiddenField.val())
         if eventToTriggerOnChange
           datetimepickerHiddenField.trigger(eventToTriggerOnChange)
 
     datetimepickerContainer = datetimepickerHiddenField.parent()
-
-    $(removeLink).before(" <i class=\"fa fa-calendar ui-datepicker-trigger\" title=\"#{labelText}\" ></i> ")
 
     newlyAdded = $('.fa-calendar', datetimepickerContainer)
 

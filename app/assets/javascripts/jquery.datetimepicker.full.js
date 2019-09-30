@@ -2147,7 +2147,12 @@ var datetimepickerFactory = function ($) {
 					windowScrollTop;
 
 				$dateInput = datetimepicker.data('input');
-				dateInputOffset = $dateInput.offset();
+				if ($dateInput.attr('type') == 'hidden'){
+					dateInputOffset = $dateInput.parent().offset();
+				}
+				else{
+					dateInputOffset = $dateInput.offset();
+				}
 				dateInputElem = $dateInput[0];
 
 				verticalAnchorEdge = 'top';
