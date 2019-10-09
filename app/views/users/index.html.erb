@@ -1,6 +1,7 @@
 <%- model_class = User -%>
 <div class="page-header">
   <h1><%=t '.title', :default => model_class.model_name.human%></h1>
+  <%= render partial: '/layouts/page_size' %>
   <div style="float:right">
     <% if can? :new, User %>
       <%= link_to t('.new_user', :default => t("helpers.links.new_user")),
@@ -9,7 +10,6 @@
     <% end %>
   </div>
 </div>
-
 
 <%= grid(@users_grid) do |g|
 

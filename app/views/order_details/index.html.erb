@@ -4,6 +4,7 @@
 <%- smodel_class = Supplier -%>
 <div class="page-header">
   <h1><%=t '.title', :default => model_class.model_name.human%></h1>
+  <%= render partial: '/layouts/page_size' %>
   <div style="float:right">   
     <%= link_to t('.back', :default => t("helpers.links.back")),
             eval(@status + '_orders_' +'path'),

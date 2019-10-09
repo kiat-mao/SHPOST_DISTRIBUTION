@@ -13,7 +13,7 @@
     </div>
   </div>
   <div class="control-group">
-    <%= f.label :supplier_id, :class => 'control-label' %>
+    <%= f.label :supplier_id, :class => 'control-label' %>(*模糊匹配 空格罗列所有供应商)
     <div class="controls">
       <% if !@commodity.persisted? %>
       <%= supplier_select_autocom("commodity",@commodity.id) %>

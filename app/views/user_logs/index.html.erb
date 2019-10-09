@@ -2,7 +2,7 @@
 <div class="page-header">
   <h1><%=t '.title', :default => model_class.model_name.human%></h1>
 </div>
-
+<%= render partial: '/layouts/page_size' %>
 <%= grid(@user_logs_grid) do |g|
 
     g.column name: model_class.human_attribute_name(:username), attribute: 'name', assoc: :user do |user_log|

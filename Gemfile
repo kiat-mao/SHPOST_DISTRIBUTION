@@ -99,7 +99,8 @@ gem "soap4r"
 
 gem "savon"
 
-gem 'rails3-jquery-autocomplete'
+gem 'rails-jquery-autocomplete'
+
 gem 'nifty-generators'
 
 gem 'jquery_datepicker'
