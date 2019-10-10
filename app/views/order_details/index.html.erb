@@ -12,6 +12,11 @@
   </div>
 </div>
 <%= grid(@order_details) do |g|
+    g.row_attributes do |order_detail|
+      if !(order_detail.closed? || order_detail.canceled?) && !order_detail.commodity.on_sell?
+        {style: 'background-color: rgb(255, 105, 104);'}
+      end
+    end
 
     g.column name: model_class.human_attribute_name(:no), attribute: 'no'
 

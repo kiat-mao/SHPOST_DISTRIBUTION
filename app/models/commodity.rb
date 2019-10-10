@@ -21,11 +21,15 @@ class Commodity < ActiveRecord::Base
 	IS_ON_SELL = { true: '是', false: '否'}
 
 	def is_on_sell_name
-	    if is_on_sell
-	    	name = "是"
-	    else
-	        name = "否"
-	    end
+    if is_on_sell
+    	name = "是"
+    else
+       name = "否"
+    end
+	end
+
+	def on_sell?
+		is_on_sell && self.supplier.is_valid
 	end
 
 	def can_destroy?
