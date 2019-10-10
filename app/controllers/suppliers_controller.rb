@@ -69,7 +69,7 @@ class SuppliersController < ApplicationController
       flash[:alert] = "供应商下存在商品，不可删除。只能标记为无效。"
     end
     respond_to do |format|
-      format.html { redirect_to request.referer }
+      format.html { redirect_to suppliers_url }
       format.json { head :no_content }
     end
   end

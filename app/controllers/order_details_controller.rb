@@ -15,48 +15,59 @@ class OrderDetailsController < ApplicationController
   #审核被驳回子订单
   def pending
     @status = "pending"
-    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:pending]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
+    @order_details_grid = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:pending]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     render "index"
   end
 
   #待审核子订单
   def checking
     @status = "checking"
-    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:checking]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
+    @order_details_grid = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:checking]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     render "index"
   end
 
   #复核被驳回子订单
   def declined
     @status = "declined"
-    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:declined]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
+    @order_details_grid = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:declined]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     render "index"
   end
 
   #待复核子订单
   def rechecking
     @status = "rechecking"
-    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:rechecking]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
+    @order_details_grid = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:rechecking]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     render "index"
   end
 
   #待收货子订单
   def receiving
     @status = "receiving"
-    @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:receiving]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
+    @order_details_grid = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where(status: OrderDetail.statuses[:receiving]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     render "index"
   end
 
   #查看子订单
   def look
     @status = "look"
+    where_sql = "order_details.status != 'waiting'"
+    @add_status = params[:status]
+    
+    if !params[:status].blank?
+      if params[:status].eql?"receiving_closed"
+        where_sql = "order_details.status = 'receiving' or order_details.status = 'closed'"
+      elsif params[:status].eql?"not_canceled"
+        where_sql = "order_details.status != 'canceled' and order_details.status != 'waiting'"
+      end
+    end
+   
     if ! current_user.unitadmin? && ! current_user.superadmin? && current_user.branch?
-      @order_details = initialize_grid(@order_details.joins(:order).accessible_by(current_ability).where("order_details.status != 'waiting'"), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
+      @order_details = @order_details.joins(:order).accessible_by(current_ability).where(where_sql)
     else
-      @order_details = initialize_grid(@order_details.joins(:order).where("order_details.status != 'waiting'"), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
-
-    end   
-
+      @order_details = @order_details.joins(:order).where(where_sql)
+    end  
+    @order_details_grid = initialize_grid(@order_details, :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size]) 
+    
     render "index"
   end
 

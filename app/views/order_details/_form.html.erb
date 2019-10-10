@@ -2,15 +2,16 @@
   <%= f.error_messages %>
   <div class="control-group">
     <%= f.label :amount, :class => 'control-label' %>
+    <font color="red">(必填)</font>
     <div class="controls">
-      <%= f.text_field :amount, :class => 'text_field' %>
+      <%= f.text_field :amount, :class => 'text_field', :id => 'amount' %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :price, :class => 'control-label' %>
-    <font color="red">注意： 该价格为区局实际销售价，该价格直接参与并影响报表结算，请谨慎填写！（商家结算价为<%=@commodity.cost_price.to_s(:rounded, precision: 2)%>元）</font>
+    <font color="red">(必填)注意： 该价格为区局实际销售价，该价格直接参与并影响报表结算，请谨慎填写！（商家结算价为<%=@commodity.cost_price.to_s(:rounded, precision: 2)%>元）</font>
     <div class="controls">
-      <%= f.text_field :price, :class => 'text_field' %>
+      <%= f.text_field :price, :class => 'text_field', :id => 'price' %>
     </div>
   </div>
   <%= hidden_field_tag('commodity_id', @commodity.id) %> 

@@ -498,7 +498,7 @@ zh-CN:
             role: :Order
           selected: "/order_details/receiving"
         pending_order:
-          name: "被驳回订单"
+          name: "审核被驳回订单"
           link: "/orders/pending"
           need_count: false
           needrole:
@@ -506,7 +506,7 @@ zh-CN:
             role: :Order
           selected: "/order_details/pending"
         declined_order:
-          name: "被驳回订单"
+          name: "复核被驳回订单"
           link: "/orders/declined"
           need_count: false
           needrole:

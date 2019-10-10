@@ -1,3 +1,9 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
+$ ->
+  show_order_details_js()
+   
+$(document).on "page:load", ->
+  show_order_details_js()
+
+show_order_details_js = ->
+  $("[name='detail']").click (e) -> 
+    $(this).parents('tr').next('.extra-row').slideToggle("fast");

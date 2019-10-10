@@ -3,10 +3,12 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 $ ->
   order_status_change_js()
-
+  ready()
+  
 $(document).on "page:load", ->
   order_status_change_js()
-
+  ready()
+ 
 order_status_change_js = ->
   $ "a[name='order_detail_check_decline'], a[name='order_detail_recheck_decline'], a[name='order_order_detail_recheck_decline'], a[name='order_order_detail_check_decline'], a[name='order_check_decline'], a[name='order_recheck_decline']"
   .click (e) ->
@@ -42,5 +44,12 @@ order_status_change_js = ->
     if not confirm "确定送审吗？" 
     then false
 
+ready = ->
+  $("#amount").keypress(enterpress)
+  $("#price").keypress(enterpress)
 
+enterpress = (e) ->
+  e = e || window.event;   
+  if e.keyCode == 13    
+    return false;
       

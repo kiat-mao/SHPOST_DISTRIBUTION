@@ -2,8 +2,9 @@
 <%= hidden_field_tag('why_decline') %>
 <% od = nil %>
  
-<%= grid(@orders, :show_filters => :always) do |g|
-  g.after_row do |order, number_of_columns|
+<%= grid(@orders, :show_filters => :always) do |g| %>
+<div id="details" >
+<%  g.after_row do |order, number_of_columns|
     # content_tag(:div, class: 'extra-row') do
         buffer = ""
         i = 1
@@ -127,8 +128,9 @@
         buffer  
       # end
   end
-
-    g.column name: model_class.human_attribute_name(:no), attribute: 'no'
+%>
+</div>
+<%  g.column name: model_class.human_attribute_name(:no), attribute: 'no'
 
     g.column name: model_class.human_attribute_name(:name), attribute: 'name'
 
