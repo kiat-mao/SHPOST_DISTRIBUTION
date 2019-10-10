@@ -15,13 +15,12 @@
     g.column name: model_class.human_attribute_name(:no), attribute: 'no'
 
     g.column name: model_class.human_attribute_name(:name), attribute: 'name'  do |unit|
-      [unit.name.cutname, {title: unit.name}]
-    end
+      [unit.name.try(:abridge, 18), {title: unit.name}] end
 
     g.column name: model_class.human_attribute_name(:short_name), attribute: 'short_name'
 
     g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'  do |unit|
-      [unit.desc.cutname, {title: unit.desc}]
+      [unit.desc.try(:abridge), {title: unit.desc}]
     end
     # g.column name: model_class.human_attribute_name(:tcbd_khdh), attribute: 'tcbd_khdh'
 
