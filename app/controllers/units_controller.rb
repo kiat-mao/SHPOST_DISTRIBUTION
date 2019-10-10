@@ -5,7 +5,7 @@ class UnitsController < ApplicationController
   # GET /units.json
   def index
     #@unit = Unit.all
-    @units_grid = initialize_grid(@units)
+    @units_grid = initialize_grid(@units, :per_page => params[:page_size])
   end
 
   # GET /units/1

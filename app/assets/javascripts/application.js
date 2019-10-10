@@ -23,6 +23,7 @@
 // var ready;
 
 function ajaxsuppliers() {
+  jQuery.railsAutocomplete.options.noMatchesLabel = "没有相应记录"
 	$('#supplier_name').bind('railsAutocomplete.select', function(event, data){
     /* Do something here */
     var sid = "#"+data.item.obj+"_supplier_id";

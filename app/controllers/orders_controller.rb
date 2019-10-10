@@ -11,37 +11,37 @@ class OrdersController < ApplicationController
 
   #新建订单
   def fresh
-    @orders = initialize_grid(@orders.accessible_by(current_ability).fresh, :order => 'created_at', :order_direction => 'desc')
+    @orders = initialize_grid(@orders.accessible_by(current_ability).fresh, :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     render "index"
   end
 
   #审核被驳回订单
   def pending
-    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status([OrderDetail.statuses[:pending]]), :order => 'created_at', :order_direction => 'desc')
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status([OrderDetail.statuses[:pending]]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     render "index"
   end
 
   #待审核订单
   def checking
-    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status([OrderDetail.statuses[:checking]]), :order => 'created_at', :order_direction => 'desc')
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status([OrderDetail.statuses[:checking]]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     render "index"
   end
 
   #复核被驳回订单
   def declined
-    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status([ OrderDetail.statuses[:declined]]), :order => 'created_at', :order_direction => 'desc')
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status([ OrderDetail.statuses[:declined]]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     render "index"
   end
 
   #待复核订单
   def rechecking
-    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status([OrderDetail.statuses[:rechecking]]), :order => 'created_at', :order_direction => 'desc')
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status([OrderDetail.statuses[:rechecking]]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     render "index"
   end
 
   #待收货订单
   def receiving
-    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status([OrderDetail.statuses[:receiving]]), :order => 'created_at', :order_direction => 'desc')
+    @orders = initialize_grid(@orders.accessible_by(current_ability).by_status([OrderDetail.statuses[:receiving]]), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     render "index"
   end
 
@@ -86,9 +86,9 @@ class OrdersController < ApplicationController
   # 查看
   def look
     if ! current_user.unitadmin? && ! current_user.superadmin?&& current_user.branch?
-      @orders = initialize_grid(@orders.accessible_by(current_ability).where(is_fresh: false), :order => 'created_at', :order_direction => 'desc')
+      @orders = initialize_grid(@orders.accessible_by(current_ability).where(is_fresh: false), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     else
-      @orders = initialize_grid(@orders.where(is_fresh: false), :order => 'created_at', :order_direction => 'desc')
+      @orders = initialize_grid(@orders.where(is_fresh: false), :order => 'created_at', :order_direction => 'desc', :per_page => params[:page_size])
     end    
     render "index"
   end

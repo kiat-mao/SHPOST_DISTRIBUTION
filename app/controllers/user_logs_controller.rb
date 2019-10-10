@@ -7,7 +7,8 @@ class UserLogsController < ApplicationController
     @user_logs_grid = initialize_grid(@user_logs, 
       :order => 'user_logs.id',
       :order_direction => 'desc',
-    	include: :user)
+    	include: :user,
+      :per_page => params[:page_size])
   end
 
   # GET /user_logs/1

@@ -7,7 +7,8 @@ class SuppliersController < ApplicationController
       :order_direction => 'asc',
       :name => 'suppliers',
       :enable_export_to_csv => true,
-      :csv_file_name => 'suppliers')
+      :csv_file_name => 'suppliers',
+      :per_page => params[:page_size])
     export_grid_if_requested
   end
 

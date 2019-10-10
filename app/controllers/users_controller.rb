@@ -7,7 +7,8 @@ class UsersController < ApplicationController
   # GET /users.json
   def index
     #@users = User.all
-    @users_grid = initialize_grid(@users)
+    @users_grid = initialize_grid(@users,
+      :per_page => params[:page_size])
   end
 
   # GET /users/1
