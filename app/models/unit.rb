@@ -18,7 +18,9 @@ class Unit < ActiveRecord::Base
   def unit_type_name
     unit_type.blank? ? "" : self.class.human_attribute_name("unit_type_#{unit_type}")
   end
-
+  
+  
+  
   def can_destroy?
 		if self.users.blank?
 			return true

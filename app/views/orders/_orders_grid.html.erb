@@ -132,20 +132,25 @@
 
     g.column name: model_class.human_attribute_name(:name), attribute: 'name'
 
-    g.column name: model_class.human_attribute_name(:address), attribute: 'address'
+    g.column name: model_class.human_attribute_name(:address), attribute: 'address' do |order|
+      [order.address.cutname, {title: order.address}]
+    end
 
     g.column name: model_class.human_attribute_name(:phone), attribute: 'phone'
 
     g.column name: model_class.human_attribute_name(:tel), attribute: 'tel'
 
-    g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'
+    g.column name: model_class.human_attribute_name(:desc), attribute: 'desc' do |order|
+      [order.desc.cutname, {title: order.desc}]
+    end
+      
 
     g.column name: model_class.human_attribute_name(:user_id), attribute: 'name', assoc: :user do |order|
       order.user.try :name
     end
 
-    g.column name: model_class.human_attribute_name(:unit_id), attribute: 'name', assoc: :unit, custom_filter: :auto do |order|
-      order.unit.try :name
+    g.column name: model_class.human_attribute_name(:unit_id), attribute: 'name', assoc: :unit, custom_filter: :auto, allow_multiple_selection: false do |order|
+      [order.unit.name.cutname, {title: order.unit.name}]
     end
 
     g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |order|
