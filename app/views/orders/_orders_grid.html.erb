@@ -6,128 +6,126 @@
 <div id="details" >
 <%  g.after_row do |order, number_of_columns|
     # content_tag(:div, class: 'extra-row') do
-        buffer = ""
-        i = 1
-        if (!current_user.unit.blank?) && ((current_user.unit.eql? Unit::DELIVERY) || (current_user.unit.eql? Unit::POSTBUY)) && (!params[:action].eql?"look")
-          order_details = order.order_details.where("status != ?", "canceled")
-        else
-          order_details = order.order_details
-        end
-        order_details.each do |order_detail|
-          if !(order_detail.closed? || order_detail.canceled?) && !order_detail.commodity.on_sell?
-            style =  'background-color: rgb(255, 105, 104);'
-          end
-          od = order_detail
-          buffer += content_tag :tr, style: style do
-            content_tag(:td) do
-              content_tag(:div) do
+      buffer = ""
+      i = 1
+      if (!current_user.unit.blank?) && ((current_user.unit.eql? Unit::DELIVERY) || (current_user.unit.eql? Unit::POSTBUY)) && (!params[:action].eql?"look")
+        order_details = order.order_details.where("status != ?", "canceled")
+      else
+        order_details = order.order_details
+      end
+      
+      order_details.each do |order_detail|
+        od = order_detail
+        buffer += content_tag(:tr, class: order.no) do
+          content_tag(:td) do
+            content_tag(:div) do
+                     # without buffer only the last tag will appear
+              content_tag(:b,"序号") +
+              content_tag(:p,i)
+              # raw buffer
+            end
+          end +
+          content_tag(:td) do
+            content_tag(:div) do
+                     # without buffer only the last tag will appear
+              content_tag(:b,"子订单编码") +
+              content_tag(:p,order_detail.try(:no), :name => "od_no")
+            end
+          end +
+          content_tag(:td) do
+            content_tag(:div) do
                        # without buffer only the last tag will appear
-                content_tag(:b,"序号") +
-                content_tag(:p,i)
-                # raw buffer
-              end
-            end +
-            content_tag(:td) do
-              content_tag(:div) do
+              content_tag(:b,"商品") +
+              content_tag(:p,order_detail.commodity.name)
+            end
+          end +
+          content_tag(:td) do
+            content_tag(:div) do
                        # without buffer only the last tag will appear
-                content_tag(:b,"子订单编码") +
-                content_tag(:p,order_detail.try(:no), :name => "od_no")
-              end
-            end +
-            content_tag(:td) do
-              content_tag(:div) do
-                         # without buffer only the last tag will appear
-                content_tag(:b,"商品") +
-                content_tag(:p,order_detail.commodity.name)
-              end
-            end +
-            content_tag(:td) do
-              content_tag(:div) do
-                         # without buffer only the last tag will appear
-                content_tag(:b,"供应商") +
-                content_tag(:p,order_detail.commodity.supplier.name)
-              end
-            end +
-            content_tag(:td) do
-              content_tag(:div) do
-                         # without buffer only the last tag will appear
-                content_tag(:b,"数量") +
-                content_tag(:p,order_detail.amount)
-              end
-            end +
-            content_tag(:td) do
-              content_tag(:div) do
-                         # without buffer only the last tag will appear
-                content_tag(:b,"执行销售价") +
-                content_tag(:p,number_with_precision(order_detail.price, precision: 2))
-              end
-            end +
-            content_tag(:td) do
-              content_tag(:div) do
-                         # without buffer only the last tag will appear
-                content_tag(:b,"状态") +
-                content_tag(:p,order_detail.status_name)
-              end
-            end +
-            content_tag(:td) do
-              content_tag(:div) do
-                         # without buffer only the last tag will appear
-                content_tag(:b,"目前单位") +
-                content_tag(:p,order_detail.at_unit.blank? ? "" : order_detail.at_unit.name)
-              end
-            end +
-            content_tag(:td) do
-              content_tag(:div) do
-                         # without buffer only the last tag will appear
-                content_tag(:b,"最后操作") +
-                content_tag(:p,order_detail.order_detail_logs.blank? ? "" : order_detail.order_detail_logs.last.single_log_info)
-              end
-            end +
-            content_tag(:td) do
-              content_tag(:div) do
-                         # without buffer only the last tag will appear
-                if !params[:action].eql?"look"
-                  content_tag(:b,"操作") +
-                  content_tag(:p,(link_to t('.edit', :default => t("helpers.links.edit")),
-                        edit_order_detail_path(order_detail), target: '_blank', :class => 'btn btn-xs btn-primary' if ((can? :update, order_detail) && (order_detail.waiting? || order_detail.pending?) && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))))) +
-                  content_tag(:p,(link_to t('.destroy', :default => t("helpers.links.destroy")),
-                        order_detail_path(order_detail),
-                         :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if ((can? :destroy, order_detail) && order_detail.waiting?))) +
-                  content_tag(:p,(link_to t('.to_recheck', :default => t("helpers.links.to_recheck")),
-                        to_recheck_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_to_recheck", :class => 'btn btn-xs btn-primary' if ((can? :to_recheck, order_detail) && ((order_detail.checking? && params[:action].eql?("checking")) || (order_detail.declined? && params[:action].eql?("declined")))))) +
-                  content_tag(:p,(link_to t('.check_decline', :default => t("helpers.links.check_decline")),
-                        check_decline_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_check_decline", :class => 'btn btn-xs btn-primary' if ((can? :check_decline, order_detail) && ((order_detail.checking? && params[:action].eql?("checking")) || (order_detail.declined? && params[:action].eql?("declined")))))) +
-                  content_tag(:p,(link_to t('.place', :default => t("helpers.links.place")),
-                        place_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_place", :class => 'btn btn-xs btn-primary' if ((can? :place, order_detail) && order_detail.rechecking? && (params[:action].eql?"rechecking")))) +
-                  content_tag(:p,(link_to t('.recheck_decline', :default => t("helpers.links.recheck_decline")),
-                        recheck_decline_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_recheck_decline", :class => 'btn btn-xs btn-primary' if ((can? :recheck_decline, order_detail) && order_detail.rechecking? && (params[:action].eql?"rechecking")))) +
-                  content_tag(:p,(link_to t('.confirm', :default => t("helpers.links.confirm")),
-                        confirm_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_confirm", :class => 'btn btn-xs btn-primary' if ((can? :confirm, order_detail)&&order_detail.receiving?) && (params[:action].eql?"receiving"))) +
-                  content_tag(:p,(link_to t('.cancel', :default => t("helpers.links.cancel")),
-                        cancel_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && order_detail.pending? && (params[:action].eql?"pending")))) +
-                  content_tag(:p,(link_to t('.to_check', :default => t("helpers.links.to_check")),
-                        to_check_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_to_check", :class => 'btn btn-xs btn-primary' if ((can? :to_check, order_detail) && order_detail.pending? && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))))) +
-                  content_tag( :p, (link_to "查看日志",  order_detail_order_detail_logs_path(order_detail), remote: true, class: 'btn btn-xs btn-primary', data: {type: 'script'} if ((can? :read, OrderDetailLog) && !(order_detail.waiting?))))
-                  # content_tag(:p,(link_to t('.read_log', :default => t("helpers.links.read_log")),
-                  #       read_log_order_detail_path(order_detail), :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?))))
-                else
-                  content_tag(:b,"操作") +
-                  content_tag(:p,(link_to t('.edit', :default => t("helpers.links.edit")),
-                        edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if ((can? :update, order_detail) && (current_user.role.eql?"unitadmin")))) + 
-                  content_tag(:p,(link_to t('.cancel', :default => t("helpers.links.cancel")),
-                        cancel_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && (current_user.role.eql?"unitadmin") && !(order_detail.canceled?)))) +
-                  content_tag( :p, (link_to "查看日志",  order_detail_order_detail_logs_path(order_detail), remote: true, class: 'btn btn-xs btn-primary', data: {type: 'script'} if ((can? :read, OrderDetailLog) && !(order_detail.waiting?))))
-                  # content_tag(:p,(link_to t('.read_log', :default => t("helpers.links.read_log")),
-                  #       read_log_order_detail_path(order_detail), :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?))))
-                end
+              content_tag(:b,"供应商") +
+              content_tag(:p,order_detail.commodity.supplier.name)
+            end
+          end +
+          content_tag(:td) do
+            content_tag(:div) do
+                       # without buffer only the last tag will appear
+              content_tag(:b,"数量") +
+              content_tag(:p,order_detail.amount)
+            end
+          end +
+          content_tag(:td) do
+            content_tag(:div) do
+                       # without buffer only the last tag will appear
+              content_tag(:b,"执行销售价") +
+              content_tag(:p,number_with_precision(order_detail.price, precision: 2))
+            end
+          end +
+          content_tag(:td) do
+            content_tag(:div) do
+                       # without buffer only the last tag will appear
+              content_tag(:b,"状态") +
+              content_tag(:p,order_detail.status_name)
+            end
+          end +
+          content_tag(:td) do
+            content_tag(:div) do
+                       # without buffer only the last tag will appear
+              content_tag(:b,"目前单位") +
+              content_tag(:p,order_detail.at_unit.blank? ? "" : order_detail.at_unit.name)
+            end
+          end +
+          content_tag(:td) do
+            content_tag(:div) do
+                       # without buffer only the last tag will appear
+              content_tag(:b,"最后操作") +
+              content_tag(:p,order_detail.order_detail_logs.blank? ? "" : order_detail.order_detail_logs.last.single_log_info)
+            end
+          end +
+          content_tag(:td) do
+            content_tag(:div) do
+                       # without buffer only the last tag will appear
+              if !params[:action].eql?"look"
+                content_tag(:b,"操作") +
+                content_tag(:p,(link_to t('.edit', :default => t("helpers.links.edit")),
+                      edit_order_detail_path(order_detail), target: '_blank', :class => 'btn btn-xs btn-primary' if ((can? :update, order_detail) && (order_detail.waiting? || order_detail.pending?) && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))))) +
+                content_tag(:p,(link_to t('.destroy', :default => t("helpers.links.destroy")),
+                      order_detail_path(order_detail),
+                       :method => :delete, :data => { :confirm => t('wice_grid.saved_query_deletion_confirmation', :default => t("helpers.links.confirm", :default => '确定删除?')) }, :class => 'btn btn-xs btn-danger' if ((can? :destroy, order_detail) && order_detail.waiting?))) +
+                content_tag(:p,(link_to t('.to_recheck', :default => t("helpers.links.to_recheck")),
+                      to_recheck_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_to_recheck", :class => 'btn btn-xs btn-primary' if ((can? :to_recheck, order_detail) && ((order_detail.checking? && params[:action].eql?("checking")) || (order_detail.declined? && params[:action].eql?("declined")))))) +
+                content_tag(:p,(link_to t('.check_decline', :default => t("helpers.links.check_decline")),
+                      check_decline_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_check_decline", :class => 'btn btn-xs btn-primary' if ((can? :check_decline, order_detail) && ((order_detail.checking? && params[:action].eql?("checking")) || (order_detail.declined? && params[:action].eql?("declined")))))) +
+                content_tag(:p,(link_to t('.place', :default => t("helpers.links.place")),
+                      place_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_place", :class => 'btn btn-xs btn-primary' if ((can? :place, order_detail) && order_detail.rechecking? && (params[:action].eql?"rechecking")))) +
+                content_tag(:p,(link_to t('.recheck_decline', :default => t("helpers.links.recheck_decline")),
+                      recheck_decline_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_recheck_decline", :class => 'btn btn-xs btn-primary' if ((can? :recheck_decline, order_detail) && order_detail.rechecking? && (params[:action].eql?"rechecking")))) +
+                content_tag(:p,(link_to t('.confirm', :default => t("helpers.links.confirm")),
+                      confirm_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_confirm", :class => 'btn btn-xs btn-primary' if ((can? :confirm, order_detail)&&order_detail.receiving?) && (params[:action].eql?"receiving"))) +
+                content_tag(:p,(link_to t('.cancel', :default => t("helpers.links.cancel")),
+                      cancel_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && order_detail.pending? && (params[:action].eql?"pending")))) +
+                content_tag(:p,(link_to t('.to_check', :default => t("helpers.links.to_check")),
+                      to_check_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_to_check", :class => 'btn btn-xs btn-primary' if ((can? :to_check, order_detail) && order_detail.pending? && ((params[:action].eql?"fresh") || (params[:action].eql?"pending"))))) +
+                content_tag( :p, (link_to "查看日志",  order_detail_order_detail_logs_path(order_detail), remote: true, class: 'btn btn-xs btn-primary', data: {type: 'script'} if ((can? :read, OrderDetailLog) && !(order_detail.waiting?))))
+                # content_tag(:p,(link_to t('.read_log', :default => t("helpers.links.read_log")),
+                #       read_log_order_detail_path(order_detail), :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?))))
+              else
+                content_tag(:b,"操作") +
+                content_tag(:p,(link_to t('.edit', :default => t("helpers.links.edit")),
+                      edit_order_detail_path(order_detail), :class => 'btn btn-xs btn-primary' if ((can? :update, order_detail) && (current_user.role.eql?"unitadmin")))) + 
+                content_tag(:p,(link_to t('.cancel', :default => t("helpers.links.cancel")),
+                      cancel_order_detail_path(order_detail), :method => :post, :name => "order_order_detail_cancel", :class => 'btn btn-xs btn-primary' if ((can? :cancel, order_detail) && (current_user.role.eql?"unitadmin") && !(order_detail.canceled?)))) +
+                content_tag( :p, (link_to "查看日志",  order_detail_order_detail_logs_path(order_detail), remote: true, class: 'btn btn-xs btn-primary', data: {type: 'script'} if ((can? :read, OrderDetailLog) && !(order_detail.waiting?))))
+                # content_tag(:p,(link_to t('.read_log', :default => t("helpers.links.read_log")),
+                #       read_log_order_detail_path(order_detail), :method => :get, :class => 'btn btn-xs btn-primary', target: '_blank' if ((can? :read_log, order_detail) && !(order_detail.waiting?))))
               end
             end
           end
-          i+=1
-        end
-        buffer  
-      # end
-  end
+        end 
+        i+=1
+      end
+      buffer  
+    end
+    # end
 %>
 </div>
 <%  g.column name: model_class.human_attribute_name(:no), attribute: 'no'
@@ -156,6 +154,7 @@
 
     g.column  do |order|
       ActiveSupport::SafeBuffer.new << 
+      button_tag("子订单信息", class: "btn btn-xs btn-primary", name: 'detail')<< ' ' <<
       (link_to t('.edit', :default => t("helpers.links.edit")),
                       edit_order_path(order), :class => 'btn btn-xs btn-primary' if (can? :update, order) && ((((params[:action].eql?"fresh") || (params[:action].eql?"pending")) && order.can_update?) || (current_user.role.eql?"unitadmin")   )) << ' ' <<
       (link_to t('.destroy', :default => t("helpers.links.destroy")),
