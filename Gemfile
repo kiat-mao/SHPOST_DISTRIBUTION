@@ -51,7 +51,7 @@ gem 'devise-i18n-views'
 #gem 'cancan', git: 'https://github.com/francocatena/cancan'
 gem 'cancancan'
 
-gem 'wice_grid', '~> 3.6', '>= 3.6.2'
+gem 'wice_grid', path: 'lib/wice_grid-3.6.2'
 
 gem 'font-awesome-sass',  '~> 4.3'
 
@@ -99,7 +99,8 @@ gem "soap4r"
 
 gem "savon"
 
-gem 'rails3-jquery-autocomplete'
+gem 'rails-jquery-autocomplete'
+
 gem 'nifty-generators'
 
 gem 'jquery_datepicker'

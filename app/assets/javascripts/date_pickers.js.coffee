@@ -1,4 +1,5 @@
 ready = ->
+  
   jQuery.datetimepicker.setLocale('zh');
   $('#start_date_start_date').datetimepicker({
     changeMonth:true,

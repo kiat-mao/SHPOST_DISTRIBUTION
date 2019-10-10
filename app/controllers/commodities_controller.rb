@@ -7,7 +7,8 @@ class CommoditiesController < ApplicationController
       :order_direction => 'asc',
       :name => 'commodities',
       :enable_export_to_csv => true,
-      :csv_file_name => 'commodities')
+      :csv_file_name => 'commodities',
+      :per_page => params[:page_size])
     export_grid_if_requested
   end
 

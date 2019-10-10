@@ -14,8 +14,11 @@
           order_details = order.order_details
         end
         order_details.each do |order_detail|
+          if !(order_detail.closed? || order_detail.canceled?) && !order_detail.commodity.on_sell?
+            style =  'background-color: rgb(255, 105, 104);'
+          end
           od = order_detail
-          buffer += content_tag(:tr) do
+          buffer += content_tag :tr, style: style do
             content_tag(:td) do
               content_tag(:div) do
                        # without buffer only the last tag will appear

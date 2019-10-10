@@ -5,6 +5,8 @@
 <div class="page-header">
   <h1><%=t '.title', :default => model_class.model_name.human%></h1>
   <%= form_tag('', :method => "get", name: 'form1') do %>
+    <%= render partial: '/layouts/page_size' %>
+  
     <div style="float:right">  
       <% if params[:action].eql?"look" %>
         <b>状态:</b><%= select_tag(:status, options_for_select([["--", "no"], ["待收货或结单", "receiving_closed"], ["取消以外", "not_canceled"]], :selected=> @add_status)) %>
