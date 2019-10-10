@@ -12,7 +12,6 @@ class Ability
         can :role, :unitadmin
         can :role, :user
         can :manage, UpDownload
-
         # cannot :role, :superadmin
         cannot [:role, :create, :destroy, :update], User, role: 'superadmin'
         can :update, User, id: user.id

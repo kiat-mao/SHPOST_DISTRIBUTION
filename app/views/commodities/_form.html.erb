@@ -2,18 +2,21 @@
   <%= f.error_messages %>
   <div class="control-group">
     <%= f.label :dms_no, :class => 'control-label' %>
+    <font color="red">(必填)</font>
     <div class="controls">
-      <%= f.text_field :dms_no, :class => 'text_field' %>
+      <%= f.text_field :dms_no, :class => 'text_field', :id => 'dms_no' %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :name, :class => 'control-label' %>
+    <font color="red">(必填)</font>
     <div class="controls">
-      <%= f.text_field :name, :class => 'text_field' %>
+      <%= f.text_field :name, :class => 'text_field', :id => 'name' %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :supplier_id, :class => 'control-label' %>
+    <font color="red">(必填)</font>
     <div class="controls">
       <% if !@commodity.persisted? %>
       <%= supplier_select_autocom("commodity",@commodity.id) %>
@@ -24,20 +27,22 @@
   </div>
   <div class="control-group">
     <%= f.label :cost_price, :class => 'control-label' %>
+    <font color="red">(必填)</font>
     <div class="controls">
-      <%= f.text_field :cost_price, :class => 'text_field' %>
+      <%= f.text_field :cost_price, :class => 'text_field', :id => 'cost_price' %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :sell_price, :class => 'control-label' %>
+    <font color="red">(必填)</font>
     <div class="controls">
-      <%= f.text_field :sell_price, :class => 'text_field' %>
+      <%= f.text_field :sell_price, :class => 'text_field', :id => 'sell_price' %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :desc, :class => 'control-label' %>
     <div class="controls">
-      <%= f.text_area :desc, :class => 'text_field' %>
+      <%= f.text_area :desc, :class => 'text_field', :id => 'desc' %>
     </div>
   </div>
   <div class="control-group">

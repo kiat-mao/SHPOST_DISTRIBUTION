@@ -65,7 +65,7 @@ class CommoditiesController < ApplicationController
       flash[:alert] = "已有子订单中包含该商品，不可删除"
     end
     respond_to do |format|
-      format.html { redirect_to request.referer }
+      format.html { redirect_to commodities_url }
       format.json { head :no_content }
     end
   end

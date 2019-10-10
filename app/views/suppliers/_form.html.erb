@@ -2,20 +2,22 @@
   <%= f.error_messages %>
   <div class="control-group">
     <%= f.label :sno, :class => 'control-label' %>
+    <font color="red">(必填)</font>
     <div class="controls">
-      <%= f.text_field :sno, :class => 'text_field' %>
+      <%= f.text_field :sno, :class => 'text_field', :id => 'sno' %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :name, :class => 'control-label' %>
+    <font color="red">(必填)</font>
     <div class="controls">
-      <%= f.text_field :name, :class => 'text_field' %>
+      <%= f.text_field :name, :class => 'text_field', :id => 'name' %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :valid_before, :class => 'control-label' %>
     <div class="controls">
-      <%= f.text_field :valid_before, value: @supplier.valid_before.blank? ? "" : @supplier.valid_before.localtime.strftime('%Y-%m-%d').to_s %>
+      <%= f.text_field :valid_before, value: @supplier.valid_before.blank? ? "" : @supplier.valid_before.localtime.strftime('%Y-%m-%d').to_s, :id => 'valid_before' %>
     </div>
   </div>
   <div class="control-group">
@@ -32,7 +34,6 @@
       <%= f.select(:is_valid, Supplier::IS_VALID.invert) %>
     </div>
   </div> -->
-  
   <%= hidden_field_tag('source', @source) %> 
   
   <%= f.submit nil, :class => 'btn btn-primary' %>

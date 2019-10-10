@@ -2,32 +2,36 @@
   <%= f.error_messages %>
   <div class="control-group">
     <%= f.label :name, :class => 'control-label' %>
+    <font color="red">(必填)</font>
     <div class="controls">
-      <%= f.text_field :name, :class => 'text_field' %>
+      <%= f.text_field :name, :class => 'text_field', :id => 'name' %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :address, :class => 'control-label' %>
+    <font color="red">(必填)</font>
     <div class="controls">
-      <%= f.text_field :address, :class => 'text_field' %>
+      <%= f.text_field :address, :class => 'text_field', :id => 'address' %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :tel, :class => 'control-label' %>
+    <font color="red">(收货人电话，手机二选一必填)</font>
     <div class="controls">
-      <%= f.text_field :tel, :class => 'text_field' %>
+      <%= f.text_field :tel, :class => 'text_field', :id => 'tel' %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :phone, :class => 'control-label' %>
+    <font color="red">(收货人电话，手机二选一必填)</font>
     <div class="controls">
-      <%= f.text_field :phone, :class => 'text_field' %>
+      <%= f.text_field :phone, :class => 'text_field', :id => 'phone' %>
     </div>
   </div>
   <div class="control-group">
     <%= f.label :desc, :class => 'control-label' %>
     <div class="controls">
-      <%= f.text_area :desc, :class => 'text_field' %>
+      <%= f.text_area :desc, :class => 'text_field', :id => 'desc' %>
     </div>
   </div>
   <%= hidden_field_tag('source', @source) %> 

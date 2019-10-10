@@ -9,7 +9,6 @@ ready = ->
     changeYear:true
   });
   $('#supplier_valid_before').datetimepicker({
-    showAnim:"blind",
     changeMonth:true,
     changeYear:true
   });
