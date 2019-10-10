@@ -14,12 +14,14 @@
 <%= grid(@units_grid) do |g|
     g.column name: model_class.human_attribute_name(:no), attribute: 'no'
 
-    g.column name: model_class.human_attribute_name(:name), attribute: 'name'
+    g.column name: model_class.human_attribute_name(:name), attribute: 'name'  do |unit|
+      [unit.name.cutname, {title: unit.name}]
+    end
 
     g.column name: model_class.human_attribute_name(:short_name), attribute: 'short_name'
 
     g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'  do |unit|
-      unit.desc.cutname
+      [unit.desc.cutname, {title: unit.desc}]
     end
     # g.column name: model_class.human_attribute_name(:tcbd_khdh), attribute: 'tcbd_khdh'
 
