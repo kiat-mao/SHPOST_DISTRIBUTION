@@ -49,6 +49,13 @@
 
 .wice-grid{
 
+  table-layout:auto;
+  th,td{
+   overflow:hidden;
+   white-space:nowrap;
+   text-overflow:ellipsis;
+
+  }
 
   .desc,  .asc{
     padding-right: 18px;
@@ -100,7 +107,7 @@
 
   /* in case of twitter bootstrap :) */
   thead th select{
-    width: auto;
+   /* width: auto;*/
   }
 
   .pagination{
@@ -110,7 +117,7 @@
 
 
   tr.wg-filter-row  input[type=text] {
-    width: 100px;
+   /* width: 100px;*/
   }
 
   .pagination_status {

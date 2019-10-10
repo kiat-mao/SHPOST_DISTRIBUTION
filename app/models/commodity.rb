@@ -28,6 +28,8 @@ class Commodity < ActiveRecord::Base
 	    end
 	end
 
+    
+
 	def can_destroy?
 		if self.order_details.blank?
 			return true
@@ -36,6 +38,8 @@ class Commodity < ActiveRecord::Base
 		end
 	end
 
+    
+
 	def can_cover_upload
 		if Unit.unit_type = 'postbuy'
 			return true
@@ -43,7 +47,8 @@ class Commodity < ActiveRecord::Base
 			return false
 		end
 	end
-
+    
+   
 	
 
 	private
@@ -59,4 +64,14 @@ class Commodity < ActiveRecord::Base
 
     self.cno = "#{self.supplier.sno}-#{count.to_s.rjust(5, '0')}"
   end
+end
+
+class String
+	def cutname(max_length = 20)
+	   if self.length > max_length
+	      "#{self[0,  max_length]}..."
+       else
+       	  "#{self}"
+       end
+    end
 end

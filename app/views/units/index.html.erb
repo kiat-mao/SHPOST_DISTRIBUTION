@@ -17,11 +17,12 @@
 
     g.column name: model_class.human_attribute_name(:short_name), attribute: 'short_name'
 
-    g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'
-
+    g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'  do |unit|
+      unit.desc.cutname
+    end
     # g.column name: model_class.human_attribute_name(:tcbd_khdh), attribute: 'tcbd_khdh'
 
-    g.column name: model_class.human_attribute_name(:unit_type), attribute: 'unit_type',custom_filter: Unit::TYPE.invert do |unit| 
+    g.column name: model_class.human_attribute_name(:unit_type), attribute: 'unit_type', allow_multiple_selection: false, custom_filter: Unit::TYPE.invert do |unit| 
       unit.unit_type_name
     end
     

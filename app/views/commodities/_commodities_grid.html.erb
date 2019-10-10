@@ -4,10 +4,12 @@
 
     g.column name: model_class.human_attribute_name(:dms_no), attribute: 'dms_no'
 
-    g.column name: model_class.human_attribute_name(:name), attribute: 'name'
+    g.column name: model_class.human_attribute_name(:name), attribute: 'name' do |commodity|
+      [commodity.name.cutname,{title: commodity.name}]
+    end
 
-    g.column name: model_class.human_attribute_name(:supplier_id), attribute: 'name', assoc: :supplier do |commodity|
-      commodity.supplier.try :name
+    g.column name: model_class.human_attribute_name(:supplier_id), attribute: 'name', assoc: :supplier  do |commodity|
+      [commodity.supplier.name.cutname,{title: commodity.supplier.name}]
     end
 
     g.column name: model_class.human_attribute_name(:cost_price), attribute: 'cost_price' do |commodity|
@@ -18,7 +20,10 @@
       number_with_precision(commodity.sell_price, precision: 2)
     end
 
-    g.column name: model_class.human_attribute_name(:desc), attribute: 'desc'
+    g.column name: model_class.human_attribute_name(:desc), attribute: 'desc' do |commodity|
+      [commodity.desc.cutname, {title: commodity.desc}]
+    end
+
 
     g.column name: model_class.human_attribute_name(:is_on_sell), attribute: 'is_on_sell', filter_type: :boolean do |commodity|
         commodity.is_on_sell_name
@@ -36,14 +41,14 @@
     #    image_tag(commodity.cover_url, height: '150', width: '150')
     # end
     # height: '50', width: '50'
-
+  
     g.column in_csv: false do |commodity|
       ActiveSupport::SafeBuffer.new << 
       (link_to t('.edit', :default => t("helpers.links.edit")),
                       edit_commodity_path(commodity), :class => 'btn btn-xs btn-primary' if can? :update, commodity) << ' ' <<
       (link_to t('.cover_upload', :default => t("helpers.links.cover_upload")),
                       cover_upload_commodity_path(commodity), :method => :post, :class => 'btn btn-xs btn-primary'if can? :cover_upload, commodity ) << ' ' <<
-      (link_to t('.cover_show', :default => t("helpers.links.cover_show")),
+     (link_to t('.cover_show', :default => t("helpers.links.cover_show")),
                       cover_show_commodity_path(commodity), :class => 'btn btn-xs btn-primary', target: '_blank' if !commodity.cover.blank?  ) << ' ' <<
       (link_to t('.destroy', :default => t("helpers.links.destroy")),
                       commodity_path(commodity),
