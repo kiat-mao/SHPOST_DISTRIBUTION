@@ -123,7 +123,7 @@
 %>
 </div>
 <%  g.row_attributes do |order|
-      {style: 'background-color: rgb(174, 238, 238);'}
+      {name: 'order_row', style: 'background-color: rgb(174, 238, 238);cursor: pointer;'}
     end
 %>
 <%  g.column name: model_class.human_attribute_name(:no), attribute: 'no'
@@ -157,7 +157,6 @@
 
     g.column  do |order|
       ActiveSupport::SafeBuffer.new << 
-      button_tag("子订单信息", class: "btn btn-xs btn-primary", name: 'detail')<< ' ' <<
       (link_to t('.edit', :default => t("helpers.links.edit")),
                       edit_order_path(order), :class => 'btn btn-xs btn-primary' if (can? :update, order) && ((((params[:action].eql?"fresh") || (params[:action].eql?"pending")) && order.can_update?) || (current_user.role.eql?"unitadmin")   )) << ' ' <<
       (link_to t('.destroy', :default => t("helpers.links.destroy")),
