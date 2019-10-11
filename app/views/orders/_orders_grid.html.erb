@@ -45,14 +45,14 @@
             content_tag(:div) do
                        # without buffer only the last tag will appear
               content_tag(:b,"商品") +
-              content_tag(:p,order_detail.commodity.name)
+              content_tag(:p, order_detail.commodity.name.try(:abridge, 18), title: order_detail.commodity.name)
             end
           end +
           content_tag(:td) do
             content_tag(:div) do
                        # without buffer only the last tag will appear
               content_tag(:b,"供应商") +
-              content_tag(:p,order_detail.commodity.supplier.name)
+              content_tag(:p, order_detail.commodity.supplier.name.try(:abridge, 18), title: order_detail.commodity.supplier.name)
             end
           end +
           content_tag(:td) do
@@ -79,8 +79,8 @@
           content_tag(:td) do
             content_tag(:div) do
                        # without buffer only the last tag will appear
-              content_tag(:b,"目前单位") +
-              content_tag(:p,order_detail.at_unit.blank? ? "" : order_detail.at_unit.name)
+              content_tag(:b, "目前单位") +
+              content_tag(:p, order_detail.at_unit.try(:name).try(:abridge, 18), title: order_detail.at_unit.try(:name))
             end
           end +
           content_tag(:td) do
@@ -131,7 +131,7 @@
     g.column name: model_class.human_attribute_name(:name), attribute: 'name'
 
     g.column name: model_class.human_attribute_name(:address), attribute: 'address' do |order|
-      [order.address.cutname, {title: order.address}]
+      [order.address.try(:abridge), {title: order.address}]
     end
 
     g.column name: model_class.human_attribute_name(:phone), attribute: 'phone'
@@ -139,7 +139,7 @@
     g.column name: model_class.human_attribute_name(:tel), attribute: 'tel'
 
     g.column name: model_class.human_attribute_name(:desc), attribute: 'desc' do |order|
-      [order.desc.blank? ? "" : order.desc.cutname, {title: order.desc}]
+      [order.desc.try(:abridge), {title: order.desc}]
     end
       
 
@@ -148,7 +148,7 @@
     end
 
     g.column name: model_class.human_attribute_name(:unit_id), attribute: 'name', assoc: :unit, custom_filter: :auto, allow_multiple_selection: false do |order|
-      [order.unit.name.cutname, {title: order.unit.name}]
+      [order.unit.name.try(:abridge, 18), {title: order.unit.name}]
     end
 
     g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |order|

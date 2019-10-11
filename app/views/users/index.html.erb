@@ -18,11 +18,11 @@
     g.column name: model_class.human_attribute_name(:username), attribute: 'username'
 
     g.column name: model_class.human_attribute_name(:email), attribute: 'email' do |user|
-      [user.email.cutname(10),{title: user.email}]
+      [user.email.try(:abridge, 10), {title: user.email}]
     end
 
     g.column name: model_class.human_attribute_name(:unit_id), attribute: 'unit_id' , allow_multiple_selection: false, custom_filter: Unit.accessible_by(current_ability).map{|u| [u.name,u.id]} do |user|
-      user.unit.try :name 
+      [user.unit.try(:name).try(:abridge, 18), {title: user.unit.try(:name)}]
     end
 
     g.column name: model_class.human_attribute_name(:role), attribute: 'role' , allow_multiple_selection: false, custom_filter: User::ROLE.delete_if{|k| k.eql? :superadmin}.invert do |user| 

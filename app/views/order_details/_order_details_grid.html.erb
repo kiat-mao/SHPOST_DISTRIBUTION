@@ -16,7 +16,7 @@
     end
 
     g.column name: smodel_class.human_attribute_name(:name), attribute: 'name', assoc: [:commodity, :supplier] do |order_detail|
-      order_detail.commodity.supplier.try :name
+      [order_detail.commodity.supplier.name.try(:abridge, 18), {title: order_detail.commodity.supplier.name}]
     end
 
     g.column name: cmodel_class.human_attribute_name(:cno), attribute: 'cno', assoc: :commodity do |order_detail|
@@ -28,7 +28,7 @@
     end
 
     g.column name: cmodel_class.human_attribute_name(:name), attribute: 'name', assoc: :commodity do |order_detail|
-      order_detail.commodity.try :name
+      [order_detail.commodity.name.try(:abridge, 18), {title: order_detail.commodity.name}]
     end
 
     g.column name: model_class.human_attribute_name(:amount), attribute: 'amount'
@@ -37,11 +37,12 @@
       number_with_precision(order_detail.price, precision: 2)
     end
 
-    g.column name: model_class.human_attribute_name(:status), attribute: 'status',custom_filter: OrderDetail::STATUS_NAME.invert do |order_detail| 
+    g.column name: model_class.human_attribute_name(:status), attribute: 'status', allow_multiple_selection: false, custom_filter: OrderDetail::STATUS_NAME.invert do |order_detail| 
       order_detail.status_name
     end
 
-    g.column name: model_class.human_attribute_name(:why_decline), attribute: 'why_decline'
+    g.column name: model_class.human_attribute_name(:why_decline), attribute: 'why_decline' do |order_detail|
+    end
 
     g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |order_detail|
       l order_detail.created_at
@@ -60,7 +61,7 @@
     end
 
     g.column name: omodel_class.human_attribute_name(:unit_id), attribute: 'unit_id', assoc: :order do |order_detail|
-      order_detail.order.unit.try :name
+      [order_detail.order.unit.name.try(:abridge, 18), {title: order_detail.commodity.name}]
     end
 
     g.column name: omodel_class.human_attribute_name(:user_id), attribute: 'name', assoc: [:order, :user] do |order_detail|

@@ -71,11 +71,11 @@ class Commodity < ActiveRecord::Base
 end
 
 class String
-	def cutname(max_length = 20)
-	   if self.length > max_length
-	      "#{self[0,  max_length]}..."
-       else
-       	  "#{self}"
-       end
+	def abridge(max_length = 20)
+	  if self.length > max_length
+	    "#{self[0,  max_length]}..."
+    else
+      "#{self}"
     end
+  end
 end

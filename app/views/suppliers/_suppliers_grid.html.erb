@@ -3,7 +3,9 @@
 <%= grid(@suppliers, :show_filters => :always) do |g|
     g.column name: model_class.human_attribute_name(:sno), attribute: 'sno'
 
-    g.column name: model_class.human_attribute_name(:name), attribute: 'name'
+    g.column name: model_class.human_attribute_name(:name), attribute: 'name' do |supplier|
+      [supplier.name.try(:abridge, 18), {title: supplier.name}]
+    end
 
     g.column name: model_class.human_attribute_name(:valid_before), attribute: 'valid_before' do |supplier|
       l(supplier.valid_before, format: :day) if !supplier.valid_before.blank?
