@@ -16,7 +16,7 @@
       
       order_details.each do |order_detail|
         od = order_detail
-        buffer += content_tag(:tr, name: order.no, class: 'extra-row') do
+        buffer += content_tag(:tr, name: order.no, class: 'extra-row', style: order_detail.out_sell_warning? ? "background-color: rgb(255, 105, 105);" : "") do
           content_tag(:td) do
             if order_detail.id == order_details.first.id
               content_tag(:div, align:"middle") do

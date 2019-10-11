@@ -4,6 +4,11 @@
 <%- smodel_class = Supplier -%>
 <div id = 'order_details'>
 <%= grid(@order_details_grid, :show_filters => :always) do |g|
+    g.row_attributes do |order_detail|
+      if order_detail.out_sell_warning?
+        {style: 'background-color: rgb(255, 105, 105);'}
+      end
+    end
 
     g.column name: model_class.human_attribute_name(:no), attribute: 'no'
 

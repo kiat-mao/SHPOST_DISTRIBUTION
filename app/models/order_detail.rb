@@ -45,6 +45,14 @@ class OrderDetail < ActiveRecord::Base
     false
   end
 
+  def out_sell_warning?
+    if !(self.canceled? || self.closed?) && ! self.commodity.on_sell?
+      return true
+    else
+      return false
+    end
+  end
+
   def checking!
     if self.waiting? || self.pending?
       self.at_unit = Unit::DELIVERY
