@@ -1,11 +1,11 @@
 class Supplier < ActiveRecord::Base
 	has_many :commodities, dependent: :destroy
 
-	validates :sno, :name, presence: {:message => "不能为空"}
+	validates :sno, :name, :valid_before, presence: {:message => "不能为空"}
 	validates :sno, uniqueness: {:message => "该供应商编码已存在"}
 
-    mount_uploaders :contracts, ContractsUploader
-    serialize :contracts, JSON
+  mount_uploaders :contracts, ContractsUploader
+  serialize :contracts, JSON
     
 	IS_VALID = { true: '是', false: '否'}
 
