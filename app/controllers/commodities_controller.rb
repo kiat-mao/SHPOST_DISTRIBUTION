@@ -242,12 +242,8 @@ class CommoditiesController < ApplicationController
 
 
   private
-    def set_commodity
-      @commodity = Commodity.find(params[:id])
-    end
-
     def commodity_params
-      params.require(:commodity).permit(:cno, :dms_no, :name, :supplier_id, :cost_price, :sell_price, :desc, :is_on_sell, :cover)
+      params.require(:commodity).permit(:cno, :dms_no, :name, :supplier_id , :desc, :is_on_sell, :cover).merge params.require(:commodity).permit(:cost_price, :sell_price).transform_values{|x| x.truncate_decimal(2)}
     end
 
     def upload_commodity(file)

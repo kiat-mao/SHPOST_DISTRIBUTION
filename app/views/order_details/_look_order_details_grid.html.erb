@@ -4,6 +4,11 @@
 <%- smodel_class = Supplier -%>
 <div id = 'order_details'>
 <%= grid(@order_details_grid, :show_filters => :always, hide_submit_button: true, hide_reset_button: true) do |g|
+    g.row_attributes do |order_detail|
+      if order_detail.out_sell_warning?
+        {style: 'background-color: rgb(255, 105, 105);'}
+      end
+    end
 
     g.column name: model_class.human_attribute_name(:no), attribute: 'no'
 
@@ -16,7 +21,7 @@
     end
 
     g.column name: smodel_class.human_attribute_name(:name), attribute: 'name', assoc: [:commodity, :supplier] do |order_detail|
-      [order_detail.commodity.supplier.name.try(:abridge, 18), {title: order_detail.commodity.supplier.name}]
+      [order_detail.commodity.supplier.name.try(:truncate, 18), {title: order_detail.commodity.supplier.name}]
     end
 
     g.column name: cmodel_class.human_attribute_name(:cno), attribute: 'cno', assoc: :commodity do |order_detail|
@@ -28,7 +33,7 @@
     end
 
     g.column name: cmodel_class.human_attribute_name(:name), attribute: 'name', assoc: :commodity do |order_detail|
-      [order_detail.commodity.name.try(:abridge, 18), {title: order_detail.commodity.name}]
+      [order_detail.commodity.name.try(:truncate, 18), {title: order_detail.commodity.name}]
     end
 
     g.column name: model_class.human_attribute_name(:amount), attribute: 'amount'
@@ -68,7 +73,7 @@
     end
 
     g.column name: omodel_class.human_attribute_name(:unit_id), attribute: 'unit_id', assoc: :order do |order_detail|
-      [order_detail.order.unit.name.try(:abridge, 18), {title: order_detail.commodity.name}]
+      [order_detail.order.unit.name.try(:truncate, 18), {title: order_detail.commodity.name}]
     end
 
     g.column name: omodel_class.human_attribute_name(:user_id), attribute: 'name', assoc: [:order, :user] do |order_detail|

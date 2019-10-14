@@ -15,7 +15,7 @@ order_status_change_js = ->
     if confirm "确定驳回吗？"
       why_decline = prompt('驳回理由')
       if why_decline?
-        this.href = "#{ this.href }?why_decline=#{why_decline}"
+        this.href = "#{ this.href }?why_decline=#{encodeURI(why_decline)}"
       else false
     else false
 

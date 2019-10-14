@@ -5,11 +5,11 @@
     g.column name: model_class.human_attribute_name(:dms_no), attribute: 'dms_no'
 
     g.column name: model_class.human_attribute_name(:name), attribute: 'name' do |commodity|
-      [commodity.name.try(:abridge, 18), {title: commodity.name}]
+      [commodity.name.try(:truncate, 18), {title: commodity.name}]
     end
 
     g.column name: model_class.human_attribute_name(:supplier_id), attribute: 'name', assoc: :supplier  do |commodity|
-      [commodity.supplier.name.try(:abridge, 18), {title: commodity.supplier.name}]
+      [commodity.supplier.name.try(:truncate, 18), {title: commodity.supplier.name}]
     end
 
     g.column name: model_class.human_attribute_name(:cost_price), attribute: 'cost_price' do |commodity|
@@ -21,7 +21,7 @@
     end
 
     g.column name: model_class.human_attribute_name(:desc), attribute: 'desc' do |commodity|
-      [commodity.desc.try(:abridge), {title: commodity.desc}]
+      [commodity.desc.try(:truncate, 18), {title: commodity.desc}]
     end
 
 

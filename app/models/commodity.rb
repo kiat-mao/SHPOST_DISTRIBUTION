@@ -71,11 +71,24 @@ class Commodity < ActiveRecord::Base
 end
 
 class String
-	def abridge(max_length = 20)
-	  if self.length > max_length
-	    "#{self[0,  max_length]}..."
+  def truncate_decimal(scale = 2)
+    if scale.to_i < 0
+      scale = 2
+    end
+    if self.include?('.')
+      _ary = self.split('.')
+      if _ary.size == 2
+        if scale == 0
+          return _ary[0]
+        else
+          _ary[1] = _ary[1][0, scale.to_i]
+          return "#{_ary[0]}.#{_ary[1]}"
+        end
+      else
+        return self
+      end
     else
-      "#{self}"
+      return self
     end
   end
 end

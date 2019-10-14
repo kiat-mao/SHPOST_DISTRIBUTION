@@ -45,5 +45,9 @@ ready = ->
     changeMonth:true,
     changeYear:true
   });
+  $('#valid_before').datetimepicker({
+    changeMonth:true,
+    changeYear:true
+  });
 $(document).ready(ready)
 $(document).on('page:load', ready)

@@ -16,7 +16,7 @@
       
       order_details.each do |order_detail|
         od = order_detail
-        buffer += content_tag(:tr, name: order.no, class: 'extra-row') do
+        buffer += content_tag(:tr, name: order.no, class: 'extra-row', style: order_detail.out_sell_warning? ? "background-color: rgb(255, 105, 105);" : "") do
           content_tag(:td) do
             if order_detail.id == order_details.first.id
               content_tag(:div, align:"middle") do
@@ -45,14 +45,14 @@
             content_tag(:div) do
                        # without buffer only the last tag will appear
               content_tag(:b,"商品") +
-              content_tag(:p, order_detail.commodity.name.try(:abridge, 18), title: order_detail.commodity.name)
+              content_tag(:p, order_detail.commodity.name.try(:truncate, 18), title: order_detail.commodity.name)
             end
           end +
           content_tag(:td) do
             content_tag(:div) do
                        # without buffer only the last tag will appear
               content_tag(:b,"供应商") +
-              content_tag(:p, order_detail.commodity.supplier.name.try(:abridge, 18), title: order_detail.commodity.supplier.name)
+              content_tag(:p, order_detail.commodity.supplier.name.try(:truncate, 18), title: order_detail.commodity.supplier.name)
             end
           end +
           content_tag(:td) do
@@ -87,7 +87,7 @@
             content_tag(:div) do
                        # without buffer only the last tag will appear
               content_tag(:b, "目前单位") +
-              content_tag(:p, order_detail.at_unit.try(:name).try(:abridge, 18), title: order_detail.at_unit.try(:name))
+              content_tag(:p, order_detail.at_unit.try(:name).try(:truncate, 18), title: order_detail.at_unit.try(:name))
             end
           end +
           content_tag(:td) do
@@ -130,7 +130,7 @@
 %>
 </div>
 <%  g.row_attributes do |order|
-      {style: 'background-color: rgb(174, 238, 238);'}
+      {name: 'order_row', style: 'background-color: rgb(174, 238, 238);cursor: pointer;'}
     end
 %>
 <%  g.column name: model_class.human_attribute_name(:no), attribute: 'no'
@@ -138,7 +138,7 @@
     g.column name: model_class.human_attribute_name(:name), attribute: 'name'
 
     g.column name: model_class.human_attribute_name(:address), attribute: 'address' do |order|
-      [order.address.try(:abridge), {title: order.address}]
+      [order.address.try(:truncate, 18), {title: order.address}]
     end
 
     g.column name: model_class.human_attribute_name(:phone), attribute: 'phone'
@@ -146,7 +146,7 @@
     g.column name: model_class.human_attribute_name(:tel), attribute: 'tel'
 
     g.column name: model_class.human_attribute_name(:desc), attribute: 'desc' do |order|
-      [order.desc.try(:abridge), {title: order.desc}]
+      [order.desc.try(:truncate, 18), {title: order.desc}]
     end
       
 
@@ -155,7 +155,7 @@
     end
 
     g.column name: model_class.human_attribute_name(:unit_id), attribute: 'name', assoc: :unit, custom_filter: :auto, allow_multiple_selection: false do |order|
-      [order.unit.name.try(:abridge, 18), {title: order.unit.name}]
+      [order.unit.name.try(:truncate, 18), {title: order.unit.name}]
     end
 
     g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |order|
@@ -168,7 +168,6 @@
 
     g.column  do |order|
       ActiveSupport::SafeBuffer.new << 
-      button_tag("子订单信息", class: "btn btn-xs btn-primary", name: 'detail')<< ' ' <<
       (link_to t('.edit', :default => t("helpers.links.edit")),
                       edit_order_path(order), :class => 'btn btn-xs btn-primary' if (can? :update, order) && ((((params[:action].eql?"fresh") || (params[:action].eql?"pending")) && order.can_update?) || (current_user.role.eql?"unitadmin")   )) << ' ' <<
       (link_to t('.destroy', :default => t("helpers.links.destroy")),

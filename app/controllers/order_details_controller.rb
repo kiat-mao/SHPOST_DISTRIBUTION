@@ -209,6 +209,6 @@ class OrderDetailsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def order_detail_params
-      params.require(:order_detail).permit(:amount, :price, :commodity_id, :branch_name, :branch_no)
+      params.require(:order_detail).permit(:amount, :commodity_id, :branch_name, :branch_no).merge params.require(:order_detail).permit(:price).transform_values{|x| x.truncate_decimal(2)}
     end
 end

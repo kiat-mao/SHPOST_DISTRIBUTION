@@ -4,7 +4,7 @@
     g.column name: model_class.human_attribute_name(:sno), attribute: 'sno'
 
     g.column name: model_class.human_attribute_name(:name), attribute: 'name' do |supplier|
-      [supplier.name.try(:abridge, 18), {title: supplier.name}]
+      [supplier.name.try(:truncate, 18), {title: supplier.name}]
     end
 
     g.column name: model_class.human_attribute_name(:valid_before), attribute: 'valid_before' do |supplier|
