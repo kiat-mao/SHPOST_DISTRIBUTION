@@ -12,6 +12,10 @@
   <dd><%= @order_detail.price %></dd>
   <dt><strong><%= model_class.human_attribute_name(:commodity_id) %>:</strong></dt>
   <dd><%= @order_detail.commodity.name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:branch_no) %>:</strong></dt>
+  <dd><%= @order_detail.branch_no %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:branch_name) %>:</strong></dt>
+  <dd><%= @order_detail.branch_name %></dd>
 </dl>
 
 <%= submit_tag "关闭",:id=>'submit_button', onclick: "window.close();" ,:class => 'btn btn-primary'%>

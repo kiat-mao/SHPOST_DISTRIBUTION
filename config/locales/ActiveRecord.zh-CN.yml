@@ -413,6 +413,9 @@ zh-CN:
         updated_at: "更新时间"
         check_at: "审核时间"
         recheck_at: "复核时间"
+        branch_name: "营业部名称"
+        branch_no: "营业部代码"
+        cost_price: "商家结算价"
   menu:
     permission:
       name: "权限管理"

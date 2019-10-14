@@ -65,6 +65,13 @@
           content_tag(:td) do
             content_tag(:div) do
                        # without buffer only the last tag will appear
+              content_tag(:b,"状态") +
+              content_tag(:p,order_detail.status_name)
+            end
+          end +
+          content_tag(:td) do
+            content_tag(:div) do
+                       # without buffer only the last tag will appear
               content_tag(:b,"执行销售价") +
               content_tag(:p,number_with_precision(order_detail.price, precision: 2))
             end
@@ -72,8 +79,8 @@
           content_tag(:td) do
             content_tag(:div) do
                        # without buffer only the last tag will appear
-              content_tag(:b,"状态") +
-              content_tag(:p,order_detail.status_name)
+              content_tag(:b,"商家结算价") +
+              content_tag(:p,number_with_precision(order_detail.cost_price, precision: 2))
             end
           end +
           content_tag(:td) do
@@ -153,6 +160,10 @@
 
     g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |order|
       l order.created_at
+    end
+
+    g.column name: model_class.human_attribute_name(:updated_at), attribute: 'updated_at' do |order|
+      l order.updated_at
     end
 
     g.column  do |order|

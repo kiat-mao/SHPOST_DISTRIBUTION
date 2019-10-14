@@ -7,43 +7,56 @@
 <%= form_tag("", name: 'form1') do -%>
 <table>
     <tr style="line-height: 40px;height: 40px;">
-    <td><%= label_tag(:create_at_start, "下单时间起始:") %></td>
-    <td><%= text_field("create_at_start","create_at_start", value: @filters['create_at_start']) %></td>
-    <td><%= label_tag(:create_at_end, "下单时间结束:") %></td>
-    <td><%= text_field("create_at_end","create_at_end", value: @filters['create_at_end']) %></td>
-    <td><%= label_tag(:check_at_start, "审核时间起始:") %></td>
-    <td><%= text_field("check_at_start","check_at_start", value: @filters["check_at_start"]) %></td>
-    <td><%= label_tag(:check_at_end, "审核时间结束:") %></td>
-    <td><%= text_field("check_at_end","check_at_end", value: @filters["check_at_end"]) %></td>
+        <td><%= label_tag(:create_at_start, "下单时间起始:") %></td>
+        <td><%= text_field("create_at_start","create_at_start", value: @filters['create_at_start']) %></td>
+        <td><%= label_tag(:create_at_end, "下单时间结束:") %></td>
+        <td><%= text_field("create_at_end","create_at_end", value: @filters['create_at_end']) %></td>
+        <td><%= label_tag(:supplier, "供应商:") %></td>
+        <td><%= select_tag("supplier", options_for_select(Supplier.all.map{|u| [u.name,u.id]}.insert(0,"全部"), :selected=> @filters["supplier_option"]), id: "supplier") %></td>
     </tr>
-    <td><%= label_tag(:recheck_at_start, "复核时间起始:") %></td>
-    <td><%= text_field("recheck_at_start","recheck_at_start", value: @filters["recheck_at_start"]) %></td>
-    <td><%= label_tag(:recheck_at_end, "复核时间结束:") %></td>
-    <td><%= text_field("recheck_at_end","recheck_at_end", value: @filters["recheck_at_end"]) %></td>
-    <td><%= label_tag(:supplier, "供应商:") %></td>
-    <td><%= select_tag("supplier", options_for_select(Supplier.all.map{|u| [u.name,u.id]}.insert(0,"全部"), :selected=> @filters["supplier_option"]), id: "supplier") %></td>
-    <td><%= label_tag(:at_unit, "目前流转单位:") %></td>
-    <td><%= select_tag("at_unit", options_for_select(@at_units.map{|u| [u.name,u.id]}.insert(0,"全部"), :selected=> @filters["at_unit_option"]), id: "at_unit") %></td>
+    <tr style="line-height: 40px;height: 40px;"> 
+        <td><%= label_tag(:check_at_start, "审核时间起始:") %></td>
+        <td><%= text_field("check_at_start","check_at_start", value: @filters["check_at_start"]) %></td>
+        <td><%= label_tag(:check_at_end, "审核时间结束:") %></td>
+        <td><%= text_field("check_at_end","check_at_end", value: @filters["check_at_end"]) %></td>
+        <td><%= label_tag(:commodity_name, "商品名称:") %></td>
+        <td><%= text_field("commodity_name","commodity_name", value: @filters["commodity_name"]) %></td>   
     </tr>
-    <tr style="line-height: 40px;height: 40px;">
-    <td><%= label_tag(:commodity_name, "商品名称:") %></td>
-    <td><%= text_field("commodity_name","commodity_name", value: @filters["commodity_name"]) %></td>   
-    <td><%= label_tag(:status, "子订单状态:") %></td>
-    <td><%= select_tag(:status, options_for_select(OrderDetail::STATUS_NAME_REPORT.invert.to_a, :selected=> @filters['status'])) %></td>
-    <td><%= label_tag(:order_no, "主订单编号:") %></td>
-    <td><%= text_field("order_no","order_no", value: @filters["order_no"]) %></td>
-    <td><%= label_tag(:create_unit_name, "创建单位:") %></td>
-    <td><%= text_field("create_unit_name","create_unit_name", value: @filters["create_unit_name"]) %></td>
+    <tr style="line-height: 40px;height: 40px;">    
+        <td><%= label_tag(:recheck_at_start, "复核时间起始:") %></td>
+        <td><%= text_field("recheck_at_start","recheck_at_start", value: @filters["recheck_at_start"]) %></td>
+        <td><%= label_tag(:recheck_at_end, "复核时间结束:") %></td>
+        <td><%= text_field("recheck_at_end","recheck_at_end", value: @filters["recheck_at_end"]) %></td>
+        <td><%= label_tag(:at_unit, "目前流转单位:") %></td>
+        <td><%= select_tag("at_unit", options_for_select(@at_units.map{|u| [u.name,u.id]}.insert(0,"全部"), :selected=> @filters["at_unit_option"]), id: "at_unit") %></td>
     </tr>
     <tr style="line-height: 40px;height: 40px;">
-    <td><%= label_tag(:price_start, "价格大于:") %></td>
-    <td><%= text_field("price_start","price_start", value: @filters["price_start"]) %></td>
-    <td><%= label_tag(:price_end, "价格小于:") %></td>
-    <td><%= text_field("price_end","price_end", value: @filters["price_end"]) %></td>
-    <td><%= label_tag(:order_user_name, "收货人姓名:") %></td>
-    <td><%= text_field("order_user_name","order_user_name", value: @filters["order_user_name"]) %></td>
-    <td><%= label_tag(:phone, "收货人手机号码:") %></td>
-    <td><%= text_field("phone","phone", value: @filters["phone"]) %></td>
+        <td><%= label_tag(:price_start, "价格大于:") %></td>
+        <td><%= text_field("price_start","price_start", value: @filters["price_start"]) %></td>
+        <td><%= label_tag(:price_end, "价格小于:") %></td>
+        <td><%= text_field("price_end","price_end", value: @filters["price_end"]) %></td>
+        <td><%= label_tag(:order_user_name, "收货人姓名:") %></td>
+        <td><%= text_field("order_user_name","order_user_name", value: @filters["order_user_name"]) %></td>
+    </tr>
+    <tr style="line-height: 40px;height: 40px;">
+        <td><%= label_tag(:branch_no, "营业部代码:") %></td>
+        <td><%= text_field("branch_no","branch_no", value: @filters["branch_no"]) %></td>  
+        <td><%= label_tag(:branch_name, "营业部名称:") %></td>
+        <td><%= text_field("branch_name","branch_name", value: @filters["branch_name"]) %></td>  
+        <td><%= label_tag(:phone, "收货人手机号码:") %></td>
+        <td><%= text_field("phone","phone", value: @filters["phone"]) %></td>
+    </tr>
+    <tr style="line-height: 40px;height: 40px;">
+        <td><%= label_tag(:order_no_start, "主订单编号起始:") %></td>
+        <td><%= text_field("order_no_start","order_no_start", value: @filters['order_no_start']) %></td>
+        <td><%= label_tag(:order_no_end, "主订单编号结束:") %></td>
+        <td><%= text_field("order_no_end","order_no_end", value: @filters['order_no_end']) %></td>
+        <td><%= label_tag(:create_unit_name, "创建单位:") %></td>
+        <td><%= text_field("create_unit_name","create_unit_name", value: @filters["create_unit_name"]) %></td>
+    </tr>
+    <tr style="line-height: 40px;height: 40px;">        
+        <td><%= label_tag(:status, "子订单状态:") %></td>
+        <td><%= select_tag(:status, options_for_select(OrderDetail::STATUS_NAME_REPORT.invert.to_a, :selected=> @filters['status'])) %></td>        
     </tr>
 </table>
     <%= submit_tag "报表导出",:class => 'btn btn-primary', onclick: "form1.action='/shpost_distribution/reports/order_report?is_query=false';form1.submit();" %>
@@ -52,7 +65,7 @@
 <% if !@selectorder_details.blank? %>
 <table border="1" table-layout="fixed">
     <tr class= 'nowrap'>
-        <td colspan="18" align="center">子订单信息</td>
+        <td colspan="20" align="center">子订单信息</td>
         <td colspan="9" align="center">主订单信息区</td>
     </tr>
     <tr class= 'nowrap'>
@@ -67,6 +80,8 @@
         <td>商家结算价</td>
         <td>订单状态</td>
         <td>目前流转单位</td>
+        <td>营业部代码</td>
+        <td>营业部名称</td>
         <td>下单时间</td>
         <td>审核时间</td>
         <td>复核时间</td>
@@ -98,6 +113,8 @@
         <td><%= x.cost_price.blank? ? "" : x.cost_price.to_s(:rounded, precision: 2) %></td>
         <td><%= x.status_name %></td>
         <td><%= x.at_unit.try :name %></td>
+        <td><%= x.try :branch_no %></td>
+        <td><%= x.try :branch_name %></td>
         <td><%= l x.created_at %></td>
         <td><%= l x.check_at if !x.check_at.blank? %></td>
         <td><%= l x.recheck_at if !x.recheck_at.blank? %></td>
@@ -127,6 +144,8 @@
         <td><b>商品总数:<%= @selectorder_details.sum(:amount) %></b></td>
         <td><b>销售总额:<%= @selectorder_details.sum(:price).to_s(:rounded, precision: 2) %></b></td>
         <td><b>结算总额:<%= @selectorder_details.sum(:cost_price).to_s(:rounded, precision: 2) %></b></td>
+        <td></td>
+        <td></td>
         <td></td>
         <td></td>
         <td></td>

@@ -78,11 +78,6 @@ class ReportsController < ApplicationController
         @selectorder_details = @selectorder_details.where("order_details.status = ?", params[:status])
       end
 
-      if !params[:order_no].blank? && !params[:order_no][:order_no].blank?
-        @selectorder_details = @selectorder_details.where("orders.no = ?", params[:order_no][:order_no])
-        @filters["order_no"] = params[:order_no][:order_no]
-      end
-
       if !params[:price_start].blank? && !params[:price_start][:price_start].blank?
         @selectorder_details = @selectorder_details.where("order_details.price >= ?", params[:price_start][:price_start].to_f)
         @filters["price_start"] = params[:price_start][:price_start]
@@ -115,6 +110,26 @@ class ReportsController < ApplicationController
       if !params[:phone].blank? && !params[:phone][:phone].blank?
         @selectorder_details = @selectorder_details.where("orders.phone = ? or orders.tel = ?", params[:phone][:phone], params[:phone][:phone])
         @filters["phone"] = params[:phone][:phone]
+      end
+
+      if !params[:branch_no].blank? && !params[:branch_no][:branch_no].blank?
+        @selectorder_details = @selectorder_details.where("order_details.branch_no = ?", "%#{params[:branch_no][:branch_no]}%")
+        @filters["branch_no"] = params[:branch_no][:branch_no]
+      end
+
+      if !params[:branch_name].blank? && !params[:branch_name][:branch_name].blank?
+        @selectorder_details = @selectorder_details.where("order_details.branch_name like ?", "%#{params[:branch_name][:branch_name]}%")
+        @filters["branch_name"] = params[:branch_name][:branch_name]
+      end
+
+      if !params[:order_no_start].blank? && !params[:order_no_start][:order_no_start].blank?
+        @selectorder_details = @selectorder_details.where("orders.no >= ?", params[:order_no_start][:order_no_start])
+        @filters["order_no_start"] = params[:order_no_start][:order_no_start]
+      end
+
+      if !params[:order_no_end].blank? && !params[:order_no_end][:order_no_end].blank?
+        @selectorder_details = @selectorder_details.where("orders.no <= ?", params[:order_no_end][:order_no_end])
+        @filters["order_no_end"] = params[:order_no_end][:order_no_end]
       end
 
       if !params[:is_query].blank? and params[:is_query].eql?"true"
@@ -153,24 +168,24 @@ class ReportsController < ApplicationController
       sheet1.column(i).width = 15
     end
     sheet1.column(10).width = 20
-    11.upto(14) do |i|
+    11.upto(16) do |i|
       sheet1.column(i).width = 16
     end
-    15.upto(16) do |i|
+    17.upto(18) do |i|
       sheet1.column(i).width = 10
     end
-    sheet1.column(17).width = 35
-    sheet1.column(18).width = 25
-    sheet1.column(19).width = 15
-    sheet1.column(20).width = 35
-    21.upto(22) do |i|
+    sheet1.column(19).width = 35
+    sheet1.column(20).width = 25
+    sheet1.column(21).width = 15
+    sheet1.column(22).width = 35
+    23.upto(24) do |i|
       sheet1.column(i).width = 15
     end
-    sheet1.column(23).width = 16
-    24.upto(25) do |i|
+    sheet1.column(25).width = 16
+    26.upto(27) do |i|
       sheet1.column(i).width = 15
     end
-    sheet1.column(26).width = 20
+    sheet1.column(28).width = 20
 
     # 设置行高
     sheet1.row(0).height = 40
@@ -183,7 +198,7 @@ class ReportsController < ApplicationController
     # 表头
     # sheet1.merge_cells(start_row, start_col, end_row, end_col)      
     sheet1.row(0).default_format = title 
-    sheet1.merge_cells(0, 0, 0, 24)
+    sheet1.merge_cells(0, 0, 0, 28)
     sheet1[0,0] = "           订单管理报表"
 
     sheet1.row(1).default_format = filter
@@ -192,11 +207,13 @@ class ReportsController < ApplicationController
     sheet1[1,3] = "供应商：#{filters['supplier']}"
     sheet1[1,5] = "商品名称：#{filters['commodity_name']}"
     sheet1[1,6] = "子订单状态： #{OrderDetail::STATUS_NAME_REPORT[filters['status'].to_sym]}"
-    sheet1[1,9] = "审核时间：#{filters['check_at_start']}至#{filters['check_at_end']}"
+    sheet1[1,9] = "收货人手机号码：#{filters['phone']}"
+    sheet1.row(1).set_format(9,red)
     sheet1[1,12] = "收货人：#{filters['order_user_name']}"
     sheet1.row(1).set_format(12,red)
     sheet1[1,15] = "创建单位：#{filters['create_unit_name']}"
     sheet1.row(1).set_format(15,red)
+    sheet1[1,18] = "营业部代码：#{filters['branch_no']}"
     
     sheet1.row(2).default_format = filter
 
@@ -206,24 +223,27 @@ class ReportsController < ApplicationController
       sheet1[2,0] = "  单位名称：#{current_user.unit.name}"
     end
 
-    sheet1[2,3] = "主订单编号：#{filters['order_no']}"
-    sheet1[2,5] = "价格区间：#{filters['price_start']} - #{filters['price_end']}"
-    sheet1[2,6] = "目前流转单位：#{filters['at_unit']}"
-    sheet1[2,9] = "复核时间：#{filters['recheck_at_start']}至#{filters['recheck_at_end']}"
-    sheet1[2,12] = "收货人手机号码：#{filters['phone']}"
-    sheet1.row(2).set_format(12,red)
+    sheet1[2,3] = "价格区间：#{filters['price_start']} - #{filters['price_end']}"
+    sheet1[2,5] = "目前流转单位：#{filters['at_unit']}"
+    sheet1[2,6] = "复核时间：#{filters['recheck_at_start']}至#{filters['recheck_at_end']}"
+    sheet1[2,9] = "审核时间：#{filters['check_at_start']}至#{filters['check_at_end']}"
+
+    sheet1[2,12] = "主订单编号起始：#{filters['order_no_start']}"
+    sheet1[2,15] = "主订单编号结束：#{filters['order_no_end']}"
+    sheet1[2,18] = "营业部名称：#{filters['branch_name']}"
+    
     
     sheet1[3,0] = "子订单信息"
-    sheet1.merge_cells(3, 0, 3, 17) 
+    sheet1.merge_cells(3, 0, 3, 19) 
     
-    sheet1[3,18] = "主订单信息区"
-    sheet1.merge_cells(3, 18, 3, 26)
-    0.upto(26) do |i|
+    sheet1[3,20] = "主订单信息区"
+    sheet1.merge_cells(3, 20, 3, 28)
+    0.upto(28) do |i|
       sheet1.row(3).set_format(i, GreyFormat1.new(:grey, :black))
     end 
     
-    sheet1.row(4).concat %w{序号 子订单编号 商品编码 DMS商品编码 供应商 商品名称 数量 销售单价 商家结算价 订单状态 目前流转单位 下单时间 审核时间 复核时间 结单时间 是否审核过 是否复核过 最后一次驳回理由 主订单编号 收货人 收货地址 收货人电话 收货人手机 创建时间 创建人 创建单位 备注}
-    0.upto(26) do |i|
+    sheet1.row(4).concat %w{序号 子订单编号 商品编码 DMS商品编码 供应商 商品名称 数量 销售单价 商家结算价 订单状态 目前流转单位 营业部代码 营业部名称 下单时间 审核时间 复核时间 结单时间 是否审核过 是否复核过 最后一次驳回理由 主订单编号 收货人 收货地址 收货人电话 收货人手机 创建时间 创建人 创建单位 备注}
+    0.upto(28) do |i|
       sheet1.row(4).set_format(i, GreyFormat2.new(:grey, :black))
     end
 
@@ -242,24 +262,26 @@ class ReportsController < ApplicationController
       sheet1[count_row,8] = x.cost_price.blank? ? "" : x.cost_price.to_s(:rounded, precision: 2)
       sheet1[count_row,9] = x.status_name
       sheet1[count_row,10] = x.at_unit.try :name
-      sheet1[count_row,11] = l x.created_at
-      sheet1[count_row,12] = l x.check_at if !x.check_at.blank?
-      sheet1[count_row,13] = l x.recheck_at if !x.recheck_at.blank?
-      sheet1[count_row,14] = l x.closed_at if !x.closed_at.blank?
-      sheet1[count_row,15] = x.has_checked? ? "是" : "否"
-      sheet1[count_row,16] = x.has_rechecked? ? "是" : "否"
-      sheet1[count_row,17] = x.why_decline.blank? ? "" : x.why_decline
-      sheet1[count_row,18] = x.order.no
-      sheet1[count_row,19] = x.order.name
-      sheet1[count_row,20] = x.order.address
-      sheet1[count_row,21] = x.order.tel
-      sheet1[count_row,22] = x.order.phone
-      sheet1[count_row,23] = l x.order.created_at
-      sheet1[count_row,24] = x.order.user.try :name
-      sheet1[count_row,25] = x.order.unit.try :name
-      sheet1[count_row,26] = x.order.desc
+      sheet1[count_row,11] = x.try :branch_no
+      sheet1[count_row,12] = x.try :branch_name
+      sheet1[count_row,13] = l x.created_at
+      sheet1[count_row,14] = l x.check_at if !x.check_at.blank?
+      sheet1[count_row,15] = l x.recheck_at if !x.recheck_at.blank?
+      sheet1[count_row,16] = l x.closed_at if !x.closed_at.blank?
+      sheet1[count_row,17] = x.has_checked? ? "是" : "否"
+      sheet1[count_row,18] = x.has_rechecked? ? "是" : "否"
+      sheet1[count_row,19] = x.why_decline.blank? ? "" : x.why_decline
+      sheet1[count_row,20] = x.order.no
+      sheet1[count_row,21] = x.order.name
+      sheet1[count_row,22] = x.order.address
+      sheet1[count_row,23] = x.order.tel
+      sheet1[count_row,24] = x.order.phone
+      sheet1[count_row,25] = l x.order.created_at
+      sheet1[count_row,26] = x.order.user.try :name
+      sheet1[count_row,27] = x.order.unit.try :name
+      sheet1[count_row,28] = x.order.desc
 
-      0.upto(26) do |x|
+      0.upto(28) do |x|
         sheet1.row(count_row).set_format(x, body)
       end 
       sheet1.row(count_row).height = 30
@@ -273,14 +295,14 @@ class ReportsController < ApplicationController
     sheet1[count_row,6] = "商品总数：#{reports.sum(:amount)}"
     sheet1[count_row,7] = "销售总额：#{reports.sum(:price).to_s(:rounded, precision: 2)}"
     sheet1[count_row,8] = "结算总额：#{reports.sum(:cost_price).to_s(:rounded, precision: 2)}"
-    0.upto(26) do |x|
+    0.upto(28) do |x|
       sheet1.row(count_row).set_format(x, bold)
     end
     sheet1.row(count_row).height = 25
 
     count_row += 1
     sheet1.row(count_row).default_format = filter
-    sheet1.merge_cells(count_row, 0, 0, 26)
+    sheet1.merge_cells(count_row, 0, 0, 28)
 
     if current_user.unitadmin? || current_user.superadmin?
       sheet1[count_row,0] = "打印机构：#{current_user.rolename}                     打印人：#{current_user.name}                打印时间：#{Time.now.strftime('%Y-%m-%d %H:%m:%S')}"

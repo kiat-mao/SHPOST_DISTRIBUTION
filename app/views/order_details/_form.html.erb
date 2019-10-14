@@ -14,6 +14,19 @@
       <%= f.text_field :price, :class => 'text_field', :id => 'price' %>
     </div>
   </div>
+  <div class="control-group">
+    <%= f.label :branch_no, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :branch_no, :class => 'text_field', :id => 'branch_no' %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :branch_name, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :branch_name, :class => 'text_field', :id => 'branch_name' %>
+    </div>
+  </div>
+  
   <%= hidden_field_tag('commodity_id', @commodity.id) %> 
   <%= hidden_field_tag('order_id', @order.id) %> 
   <%= hidden_field_tag('source', @source) %> 

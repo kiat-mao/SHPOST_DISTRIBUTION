@@ -33,16 +33,24 @@
 
     g.column name: model_class.human_attribute_name(:amount), attribute: 'amount'
 
-    g.column name: model_class.human_attribute_name(:price), attribute: 'price' do |order_detail|
-      number_with_precision(order_detail.price, precision: 2)
-    end
-
     g.column name: model_class.human_attribute_name(:status), attribute: 'status', allow_multiple_selection: false, custom_filter: OrderDetail::STATUS_NAME.invert do |order_detail| 
       order_detail.status_name
     end
 
+    g.column name: model_class.human_attribute_name(:price), attribute: 'price' do |order_detail|
+      number_with_precision(order_detail.price, precision: 2)
+    end
+
+    g.column name: model_class.human_attribute_name(:cost_price), attribute: 'cost_price' do |order_detail|
+      number_with_precision(order_detail.cost_price, precision: 2)
+    end
+
     g.column name: model_class.human_attribute_name(:why_decline), attribute: 'why_decline' do |order_detail|
     end
+
+    g.column name: model_class.human_attribute_name(:branch_no), attribute: 'branch_no'
+
+    g.column name: model_class.human_attribute_name(:branch_name), attribute: 'branch_name'
 
     g.column name: model_class.human_attribute_name(:created_at), attribute: 'created_at' do |order_detail|
       l order_detail.created_at
