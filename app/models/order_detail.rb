@@ -13,6 +13,10 @@ class OrderDetail < ActiveRecord::Base
 
   validates :price, numericality: {:greater_than => 0 }
 
+  validates :branch_no, numericality: {only_integer: true}, length: { is: 8 }
+
+  validates :branch_name, presence: {:message => "不能为空"}
+
   validates :commodity, uniqueness: {scope: :order,:message => "该订单下已创建过同种商品的子订单"}
 
   enum status: { waiting: 'waiting', checking: 'checking', rechecking: 'rechecking', receiving: 'receiving', closed: 'closed', canceled: 'canceled' , pending: 'pending', declined: 'declined'}

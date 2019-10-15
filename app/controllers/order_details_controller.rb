@@ -120,8 +120,8 @@ class OrderDetailsController < ApplicationController
   # PATCH/PUT /order_details/1
   # PATCH/PUT /order_details/1.json
   def update
-    # @order = @order_detail.order
-    # @commodity = @order_detail.commodity
+    @order = @order_detail.order
+    @commodity = @order_detail.commodity
     respond_to do |format|
       if @order_detail.update(order_detail_params)
         format.html { redirect_to @order_detail, notice: I18n.t('controller.update_success_notice', model: '子订单') }
