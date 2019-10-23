@@ -113,7 +113,7 @@ class ReportsController < ApplicationController
       end
 
       if !params[:branch_no].blank? && !params[:branch_no][:branch_no].blank?
-        @selectorder_details = @selectorder_details.where("order_details.branch_no = ?", "%#{params[:branch_no][:branch_no]}%")
+        @selectorder_details = @selectorder_details.where("order_details.branch_no = ?", params[:branch_no][:branch_no])
         @filters["branch_no"] = params[:branch_no][:branch_no]
       end
 
